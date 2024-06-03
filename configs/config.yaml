@@ -1,0 +1,17 @@
+paths:
+  src_path: ./src/
+  configs_path: ../configs/
+  experiments_path: ../experiments/
+
+experiment:
+  name: my_awesome_experiment
+  distribution:
+    name: normal
+    params:
+      mean: 0
+      std: 1
+
+reproducibility:
+  seed: 42
+
+
