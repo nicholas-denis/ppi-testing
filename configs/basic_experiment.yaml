@@ -1,0 +1,31 @@
+paths:
+  src_path: ./src/
+  configs_path: ../configs/
+  experiments_path: ../experiments/
+
+
+experiment:
+  name: Basic Exerperiment
+  parameters:
+    alpha: 1
+    beta: 1
+    rho:
+      - 0.1
+      - 0.5
+      - 0.75
+      - 0.9
+    m: 2
+    train_sample = 10000
+    small_sample = 100
+    large_sample = 10000
+    n_its = 10000
+
+
+
+reproducibility:
+  seed: 42
+
+logging:
+  log_level: INFO
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_file: ../logs/log.log
