@@ -23,6 +23,10 @@ CYAN = '\033[96m'
 RESET = '\033[0m'
 
 
+
+
+
+
 def build_paths(config: dict):
     """
     summary:
