@@ -1,0 +1,17 @@
+Nick_Huang: Nick Huang
+experiment:
+  description: This is a test file
+  name: experiment
+logging:
+  log_file: ../logs/log.log
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_level: INFO
+paths:
+  configs_path: ./configs/
+  experiment_path: ./experiments/experiment_2024-06-04-18-41-42
+  experiments_path: ./experiments/
+  logging_path: ./experiments/experiment_2024-06-04-18-41-42\logs
+  plotting_path: ./experiments/experiment_2024-06-04-18-41-42\plots
+  src_path: ./src/
+reproducibility:
+  seed: 42

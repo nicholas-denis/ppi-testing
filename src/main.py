@@ -101,7 +101,7 @@ def main(config: dict):
     logger = create_logger(config)
 
     # copy the config file to the experiment folder
-    with open(os.path.join(config['paths']['experiments_path'], 'config.yaml'), 'w') as file:
+    with open(os.path.join(config['paths']['experiment_path'], 'config.yaml'), 'w') as file:
         yaml.dump(config, file)
 
     # do the ppi experiment
@@ -118,7 +118,7 @@ if __name__ == '__main__':
     # add argument for config file path
     parser.add_argument('--config', 
                         type=str, 
-                        default='../configs/config.yaml', 
+                        default='./configs/config.yaml', 
                         help='Path to config file')
 
     # print argparser
