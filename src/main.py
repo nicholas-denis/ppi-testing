@@ -14,6 +14,8 @@ import matplotlib.pyplot as plt
 import datetime
 import logging
 
+import ppi_experiments as ppi
+
 # colored text
 RED = '\033[91m'
 GREEN = '\033[92m'
@@ -22,9 +24,9 @@ MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 RESET = '\033[0m'
 
+# experiment parser
 
-
-
+exp_parser = {"Basic Experiment": ppi.basic_experiment}
 
 
 def build_paths(config: dict):
@@ -105,11 +107,13 @@ def main(config: dict):
     logger = create_logger(config)
 
     # copy the config file to the experiment folder
-    with open(os.path.join(config['paths']['experiment_path'], 'config.yaml'), 'w') as file:
+    with open(os.path.join(config['paths']['experiment_path'], 'experiment_config.yaml'), 'w') as file:
         yaml.dump(config, file)
 
     # do the ppi experiment
 
+    exp_func = exp_parser.get(config.get('experiment', {}).get('name'))
+    exp_func(config)
 
     # save results to disk
 
@@ -122,7 +126,7 @@ if __name__ == '__main__':
     # add argument for config file path
     parser.add_argument('--config', 
                         type=str, 
-                        default='./configs/config.yaml', 
+                        default='../configs/config.yaml', 
                         help='Path to config file')
 
     # print argparser

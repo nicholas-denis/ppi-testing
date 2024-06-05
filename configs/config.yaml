@@ -1,7 +1,7 @@
 paths:
   src_path: ./src/
-  configs_path: ./configs/
-  experiments_path: ./experiments/
+  configs_path: ../configs/
+  experiments_path: ../experiments/
 
 
 experiment:

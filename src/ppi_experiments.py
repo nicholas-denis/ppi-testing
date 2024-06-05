@@ -14,6 +14,33 @@ import matplotlib.pyplot as plt
 import datetime
 import logging
 
+
+# Fitting functions
+
+def build_fit_slr(x,y):
+    """
+    y_hat = model.predict(x)
+    """
+    model = LinearRegression()
+    model.fit(x,y)
+    return model
+
+def build_fit_dt(x,y):
+    """
+    y_hat = model.predict(x)
+    """
+    model = DecisionTreeRegressor()
+    model.fit(x,y)
+    return model
+
+def build_fit_rf(x,y):
+    """
+    y_hat = model.predict(x)
+    """
+    model = RandomForestRegressor()
+    model.fit(x,y)
+    return model
+
 # Population sampling functions
 
 def sample_y_linear(x, m, beta, rho):
@@ -86,7 +113,17 @@ def sample_mv_gamma_population(alpha, beta, sample_size, vec, rho=None):
     return x, y
 
 
-def basic_experiment(rho_vals, m, alpha, beta=1.0, train_sample=10000, small_sample=100, large_sample=10000, n_its=10000):
+def basic_experiment(config):
+
+    alpha = config['experiment']['alpha']
+    beta = config['experiment']['beta']
+    m = config['experiment']['m']
+    rho_vals = config['experiment']['rho']
+    n_its = config['experiment']['n_its']
+    train_sample = config['experiment']['train_sample']
+    small_sample = config['experiment']['small_sample']
+    large_sample = config['experiment']['large_sample']
+
     # Prepare storage for results
     ppi_mean_widths = []
     naive_mean_widths = []
@@ -211,3 +248,7 @@ def basic_experiment(rho_vals, m, alpha, beta=1.0, train_sample=10000, small_sam
     plt.legend()
     plt.show()
 
+    # Save the plot in new experiment folder
+    plt.savefig(os.path.join(config['paths']['experiment_path'], 'noiseplot.png'))
+    
+    print("We made it here")
