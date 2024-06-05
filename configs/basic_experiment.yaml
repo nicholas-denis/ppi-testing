@@ -5,8 +5,22 @@ paths:
 
 
 experiment:
-  name: experiment
-  description: This is a test file
+  name: Basic Exerperiment
+  parameters:
+    alpha: 1
+    beta: 1
+    rho:
+      - 0.1
+      - 0.5
+      - 0.75
+      - 0.9
+    m: 2
+    train_sample = 10000
+    small_sample = 100
+    large_sample = 10000
+    n_its = 10000
+
+
 
 reproducibility:
   seed: 42
