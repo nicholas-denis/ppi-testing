@@ -92,7 +92,7 @@ def sample_gamma_population(alpha,
     return x, y
 
 def sample_mv_y_linear(x, vec, beta, rho):
-    sigma_squared = abs(m)*beta*(1.-(rho**2))/(rho**2)
+    sigma_squared = np.linalg.norm(vec)*beta*(1.-(rho**2))/(rho**2)
 
     # sample noise (e_i)
     sampled_e = np.random.normal(loc=0,
