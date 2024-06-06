@@ -13,6 +13,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 import logging
+import pickle
 
 import ppi_experiments as ppi
 
@@ -113,10 +114,13 @@ def main(config: dict):
     # do the ppi experiment
 
     exp_func = exp_parser[config['experiment']['name']]
-    exp_func(config)
+    results = exp_func(config)
 
-    # save results to disk
+    # save results to disk using pickle
 
+    with open(os.path.join(config['paths']['experiment_path'], 'results.pkl'), 'wb') as file:
+        pickle.dump(results, file)
+    
     return
 
 

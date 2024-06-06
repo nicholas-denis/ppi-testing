@@ -2,6 +2,7 @@ paths:
   src_path: ./src/
   configs_path: ../configs/
   experiments_path: ../experiments/
+  data_path: ../data/
 
 
 experiment:
@@ -19,6 +20,8 @@ experiment:
     small_sample: 100
     large_sample: 10000
     n_its: 10000
+    ppi_lambda: 0
+    use_active_inference: False
 
 
 

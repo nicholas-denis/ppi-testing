@@ -6,6 +6,7 @@ from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import scipy.stats as stats
+import pandas as pd
 
 import yaml
 import os
@@ -126,6 +127,10 @@ def basic_experiment(config):
     small_sample = config['experiment']['parameters']['small_sample']
     large_sample = config['experiment']['parameters']['large_sample']
 
+    # Check if reproducibility is required
+    if config.get('reproducibility'):
+        np.random.seed(config['reproducibility'].get('seed'))
+
     # Prepare storage for results
     ppi_mean_widths = []
     naive_mean_widths = []
@@ -236,7 +241,7 @@ def basic_experiment(config):
         naive_mean_widths.append(np.mean(naive_widths))
         classical_mean_widths.append(np.mean(classical_widths))
 
-    plt.figure()
+    plt.figure(dpi=400)
 
     # Plot each y against x
     plt.plot(rho_vals, ppi_mean_widths, label='PPI Mean Widths', marker='o')
@@ -247,10 +252,17 @@ def basic_experiment(config):
     plt.xlabel('Rho Value (Level of noise)')
     plt.ylabel('Confidence Interval Width')
     plt.title('Confidence Interval Widths vs Amount of noise')
-    plt.legend()
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.show()
 
     # Save the plot in new experiment folder
     plt.savefig(os.path.join(config['paths']['plotting_path'], 'noiseplot.png'))
-    
-    print("We made it here")
+
+    # Save the widths in a pandas dataframe
+
+    data = {'PPI Mean Widths': ppi_mean_widths, 'Naive Mean Widths': naive_mean_widths, 'Classical Mean Widths': classical_mean_widths}
+    row_labels = [f"Rho: {r}" for r in rho_vals]
+
+    df = pd.DataFrame(data, index=row_labels)
+
+    return df
