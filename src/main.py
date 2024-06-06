@@ -112,7 +112,7 @@ def main(config: dict):
 
     # do the ppi experiment
 
-    exp_func = exp_parser.get(config.get('experiment', {}).get('name'))
+    exp_func = exp_parser[config['experiment']['name']]
     exp_func(config)
 
     # save results to disk

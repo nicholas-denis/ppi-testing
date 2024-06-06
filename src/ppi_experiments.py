@@ -4,6 +4,8 @@ import ppi_py
 from sklearn.linear_model import LinearRegression
 from sklearn.tree import DecisionTreeRegressor
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.model_selection import train_test_split
+import scipy.stats as stats
 
 import yaml
 import os
@@ -115,14 +117,14 @@ def sample_mv_gamma_population(alpha, beta, sample_size, vec, rho=None):
 
 def basic_experiment(config):
 
-    alpha = config['experiment']['alpha']
-    beta = config['experiment']['beta']
-    m = config['experiment']['m']
-    rho_vals = config['experiment']['rho']
-    n_its = config['experiment']['n_its']
-    train_sample = config['experiment']['train_sample']
-    small_sample = config['experiment']['small_sample']
-    large_sample = config['experiment']['large_sample']
+    alpha = config['experiment']['parameters']['alpha']
+    beta = config['experiment']['parameters']['beta']
+    m = config['experiment']['parameters']['m']
+    rho_vals = config['experiment']['parameters']['rho']
+    n_its = config['experiment']['parameters']['n_its']
+    train_sample = config['experiment']['parameters']['train_sample']
+    small_sample = config['experiment']['parameters']['small_sample']
+    large_sample = config['experiment']['parameters']['large_sample']
 
     # Prepare storage for results
     ppi_mean_widths = []
@@ -249,6 +251,6 @@ def basic_experiment(config):
     plt.show()
 
     # Save the plot in new experiment folder
-    plt.savefig(os.path.join(config['paths']['experiment_path'], 'noiseplot.png'))
+    plt.savefig(os.path.join(config['paths']['plotting_path'], 'noiseplot.png'))
     
     print("We made it here")
