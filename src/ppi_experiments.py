@@ -16,6 +16,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import datetime
 import logging
+import warnings
 
 
 # Fitting functions
@@ -266,3 +267,208 @@ def basic_experiment(config):
     df = pd.DataFrame(data, index=row_labels)
 
     return df
+
+def sample_population(population_dict):
+    """
+    Sample a population from a given dictionary of parameters
+
+    TODO:
+    - Add custom distributions, not modular right now
+
+    Args:
+    x_dict (dict): dictionary of parameters for x
+    y_dict (dict): dictionary of parameters for y
+
+    Returns:
+    x (np.array): sampled x
+    y (np.array): sampled y
+    """
+    x_dict = population_dict['x']
+    y_dict = population_dict['y']
+    # Sample x
+    if x_dict['distribution'] == 'gamma_univariate':
+        x = np.random.gamma(x_dict['alpha'], x_dict['beta'], x_dict['size'])
+    else:
+        raise ValueError("Distribution not supported")
+    # Sample y based on x
+    if y_dict['transformation'] == 'linear':
+        pass
+
+def train_model(x_train, y_train, model_config):
+    """
+    Train a model based on the configuration
+
+    Args:
+    x_train (np.array): training x
+    y_train (np.array): training y
+    model_config (dict): configuration for the model
+
+    Returns:
+    model: trained model
+    """
+    if model_config['name'] == 'linear_regression':
+        model = build_fit_slr(x_train, y_train)
+    elif model_config['name'] == 'decision_tree':
+        model = build_fit_dt(x_train, y_train)
+    elif model_config['name'] == 'random_forest':
+        model = build_fit_rf(x_train, y_train)
+    else:
+        raise ValueError("Model not supported")
+    return model
+    
+
+
+def compute_metric(config):
+    """
+    A general metric function to be used in the experiment.
+    BIG TODO, WILL NEED A LOT OF WORK
+    """
+    if config['experiment']['metric'] == 'width':
+        pass
+
+def get_submetrics(metrics):
+    """
+    Returns a dictionary of submetrics to be computed for a given metric
+
+    A bunch of if statements is fine since we won't be adding too many metrics
+
+    I'm doing this because submetrics are determined by the metrics to be computed,
+    we just need the lists to be initialized compute_metric will handle the rest since it is
+    only called within the internal loop
+
+    Args:
+    metrics (list): list of metrics to compute
+    """
+    submetrics = {}
+    if len(metrics) == 0:
+        warnings.warn("No metrics to compute!")
+    if 'width' in metrics:
+        submetrics['ppi_' + 'preds'] = []
+        submetrics['ppi_' + 'lowers'] = []
+        submetrics['ppi_' + 'uppers'] = []
+        submetrics['ppi_' + 'widths'] = []
+
+        submetrics['naive_' + 'preds'] = []
+        submetrics['naive_' + 'lowers'] = []
+        submetrics['naive_' + 'uppers'] = []
+        submetrics['naive_' + 'widths'] = []
+        
+        submetrics['classical_' + 'preds'] = []
+        submetrics['classical_' + 'lowers'] = []
+        submetrics['classical_' + 'uppers'] = []
+        submetrics['classical_' + 'widths'] = []
+    if 'coverage' in metrics:
+        submetrics['ppi_' + 'coverage'] = []
+        submetrics['naive_' + 'coverage'] = []
+        submetrics['classical_' + 'coverage'] = []
+    return submetrics
+
+def single_iteration(config):
+    """
+    A single iteration of the experiment
+
+    Note to self: Return all the variables for appending later
+
+    Experiment components:
+    - Sampling
+    - Reshaping for scikitlearn
+    - Training
+    - Residual testing
+    """
+    x_train, y_train = sample_population(config['experiment']['parameters']['training_population'])
+    x_gold, y_gold = sample_population(config['experiment']['parameters']['gold_population'])
+    x_ppi, y_ppi = sample_population(config['experiment']['parameters']['ppi_population'])
+
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, config['experiment']['parameters'].get('test_size', 0.2))
+
+    model = train_model(x_train, y_train, config['experiment']['model'])  # Placeholder
+
+    # Residual testing
+    y_test_pred = model.predict(x_test)
+    residual = np.sqrt(np.mean((y_test_pred - y_test)**2))  # Mean squared deviation
+
+    # Fitting
+    y_gold_fitted = model.predict(x_gold)  # Gold standard fitted
+    y_fitted = model.predict(x_ppi)  # Unlabelled fitted
+
+    # Manual rectifier computation
+    rectifier = np.mean(y_gold_fitted - y_ppi)
+
+    # True bias computation if called for
+    if config['experiment']['parameters']['unlabelled_population'].get('include', False):
+        true_bias = np.mean(y_fitted - y_ppi)
+
+    # Metric computation
+
+    metrics_d = compute_metric(config)
+
+    return metrics_d
+
+def experiment(config):
+    """
+    WIP - This is the main experiment function
+    Intended use: modular framework for running ppi experiments
+
+    Each experiment has the following components:
+    - Variable unpacking
+    - Checking reproducibility
+    - Metric storage
+    - Iterating over independent variables
+    - A single iteration of the experiment
+    - Graphing the results
+    """
+
+    # unpack experiment parameters
+
+    params = config['experiment']['parameters'] # dictionary
+
+    # check if reproducibility is required
+    if config.get('reproducibility'):
+        np.random.seed(config['reproducibility'].get('seed'))
+
+    # prepare metric results storage
+
+    metrics_dict = {}
+
+    for metric in config['experiment'].get('metrics', []):
+        metrics_dict["ppi_" + metric] = []
+        metrics_dict["naive_" + metric] = []
+        metrics_dict["classical_" + metric] = []
+
+    # iterate over independent variables
+
+
+    for x in config['experiment']['ind_var']['vals']:
+        # submetrics are values to be computed for key metrics
+        submetrics = get_submetrics(config['experiment']['metrics'])
+        # parse and update the indepdent variable
+        for path in config['experiment']['ind_var']['paths']:
+            keys = path.split('.')  # Split the path
+            # update the independent variable, I'm about to update the original config in place.
+            # I DON'T KNOW IF THIS IS BAD PRACTICE
+            temp = config
+            for key in keys[:-1]:
+                temp = temp[key]
+            # Copilot code, I don't know if this is correct. It should be.
+            # Assign a new value to the last key
+            temp[keys[-1]] = x
+        for i in range(params['n_its']):
+            # single iteration of the experiment
+            iter_d = single_iteration(config) 
+            # update the metrics
+            for key, value in iter_d.items():
+                submetrics[key].append(value)
+
+    # Plot figures from metrics
+
+    # Save the plot in new experiment folder
+
+    # Save results in a pandas dataframe
+
+    return
+
+
+# TODO
+# Finish metrics function
+# Finish the rest of the experiment function
+# Write README

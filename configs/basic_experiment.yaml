@@ -8,21 +8,61 @@ paths:
 experiment:
   name: Basic Experiment
   parameters:
-    alpha: 1
-    beta: 1
-    rho:
-      - 0.1
-      - 0.5
-      - 0.75
-      - 0.9
-    m: 2
-    train_sample: 10000
-    small_sample: 100
-    large_sample: 10000
+    training_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 1
+        beta: 1
+        size: 10000
+      y_population:
+        y_transformation: linear  # linear, random, or custom
+        m: 2
+        rho: None
+    gold_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 1
+        beta: 1
+        size: 10000
+      y_population:
+        y_transformation: linear  # linear, random, or custom
+        m: 2
+        rho: None
+    unlabelled_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 1
+        beta: 1
+        size: 10000
+      y_population:
+        include: True  # Include a true y value if we want oracle 
+        y_transformation: linear  # linear, random, or custom
+        m: 2
+        rho: None
+    ind_var:
+      name: rho
+      vals:
+        - 0.1
+        - 0.25
+        - 0.5
+        - 0.9
+      paths:
+        - experiment.parameters.training_population.y_population.rho
+        - experiment.parameters.gold_population.y_population.rho
+        - experiment.parameters.unlabelled_population.y_population.rho
     n_its: 10000
+    test_size: 0.2
     ppi_lambda: 0
     use_active_inference: False
+  model:
+    name: linear_regression
+    # parameters: Will add later
 
+      
+  metrics:
+    - width
+    - coverage
+  
 
 
 reproducibility:

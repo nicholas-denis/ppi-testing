@@ -116,10 +116,11 @@ def main(config: dict):
     exp_func = exp_parser[config['experiment']['name']]
     results = exp_func(config)
 
-    # save results to disk using pickle
+    # save results to disk using csv
 
-    with open(os.path.join(config['paths']['experiment_path'], 'results.pkl'), 'wb') as file:
-        pickle.dump(results, file)
+    with open(os.path.join(config['paths']['experiment_path'], 'results.csv'), 'w') as file:
+        for key, value in results.items():
+            file.write(f"{key}, {value}\n")
     
     return
 
