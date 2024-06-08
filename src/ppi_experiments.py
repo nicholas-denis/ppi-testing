@@ -318,13 +318,73 @@ def train_model(x_train, y_train, model_config):
     
 
 
-def compute_metric(config):
+def compute_metric(config, estimates_d):
     """
     A general metric function to be used in the experiment.
     BIG TODO, WILL NEED A LOT OF WORK
+    Currently only computes mean and CI for width
+
+    Will probably split this function into estimation + CI function
+    and a function to compute the metrics
     """
+    metrics_d = {}
     if config['experiment']['metric'] == 'width':
-        pass
+        metrics_d['ppi_preds'] = estimates_d['ppi_theta']
+        metrics_d['ppi_lowers'] = estimates_d['ppi_theta_ci'][0]
+        metrics_d['ppi_uppers'] = estimates_d['ppi_theta_ci'][1]
+        metrics_d['ppi_widths'] = estimates_d['ppi_theta_ci'][1] - estimates_d['ppi_theta_ci'][0]
+
+        metrics_d['naive_preds'] = estimates_d['naive_theta']
+        metrics_d['naive_lowers'] = estimates_d['naive_theta_ci'][0]
+        metrics_d['naive_uppers'] = estimates_d['naive_theta_ci'][1]
+        metrics_d['naive_widths'] = estimates_d['naive_theta_ci'][1] - estimates_d['naive_theta_ci'][0]
+
+        metrics_d['classical_preds'] = estimates_d['classical_theta']
+        metrics_d['classical_lowers'] = estimates_d['classical_ci'][0]
+        metrics_d['classical_uppers'] = estimates_d['classical_ci'][1]
+        metrics_d['classical_widths'] = estimates_d['classical_ci'][1] - estimates_d['classical_ci'][0]
+    if metrics_d.keys.isempty():
+        warnings.warn("No metrics computed!")
+
+    return metrics_d
+
+
+def compute_ci(config, y_gold, y_gold_fitted, y_fitted):
+    """
+    Computes confidence interval and estimate.
+
+    Currently only computes 1 estimate, but hopefully will compute multiple in the future
+
+    return: tuple of (ppi_theta, ppi_theta_ci, naive_theta, naive_theta_ci, classical_theta, classical_ci)
+    """
+    d = {}
+    if config['experiment']['estimate'] == 'mean':
+        # PPI CI
+        ppi_theta = ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted)
+        ppi_theta_ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted)
+        
+        # Naive CI
+        concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
+        naive_theta = np.mean(concat)  # Compute mean
+        naive_sigma = np.std(concat)  # Compute std dev
+        n_tot = concat.shape[0]
+        naive_theta_ci = stats.norm.interval(0.9, loc=naive_theta, scale=naive_sigma/np.sqrt(n_tot))  # Use norm as N is large
+
+        # Classical CI
+        small_sample = y_gold.shape[0]
+        classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
+        h = classical_se * stats.t.ppf((1 + .9) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
+
+        d['ppi_theta'] = ppi_theta
+        d['ppi_theta_ci'] = ppi_theta_ci
+        d['naive_theta'] = naive_theta
+        d['naive_theta_ci'] = naive_theta_ci
+        d['classical_theta'] = classical_theta
+        d['classical_ci'] = (classical_theta - h, classical_theta + h)
+    if d.keys.isempty():
+        warnings.warn("No estimates computed!")
+    
+    return d
 
 def get_submetrics(metrics):
     """
@@ -456,8 +516,11 @@ def experiment(config):
             # single iteration of the experiment
             iter_d = single_iteration(config) 
             # update the metrics
+            # there's a clever thing happening where the dict outside of the loop
+            # has the same keys as the dict inside the loop even if they do differnt things
+            # the outside loop has mean values per iter, the inside loop has all the values
             for key, value in iter_d.items():
-                submetrics[key].append(value)
+                submetrics[key].append(np.mean(value))
 
     # Plot figures from metrics
 
