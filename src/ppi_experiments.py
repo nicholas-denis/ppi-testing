@@ -318,7 +318,7 @@ def train_model(x_train, y_train, model_config):
     
 
 
-def compute_metric(config, estimates_d):
+def compute_metrics(config, estimates_d):
     """
     A general metric function to be used in the experiment.
     BIG TODO, WILL NEED A LOT OF WORK
@@ -460,9 +460,37 @@ def single_iteration(config):
 
     # Metric computation
 
-    metrics_d = compute_metric(config)
+    metrics_d = compute_metric(config) # should be an extend here
 
     return metrics_d
+
+def plot_metrics(metrics_dict, config):
+    """
+    Plot the metrics from the experiment
+
+    Args:
+    metrics_dict (dict): dictionary of dictionaries of metrics each key is the independent variable
+    config (dict): configuration for the experiment
+    """
+    plt_title = config['experiment']['plot_description']
+    if config['experiment']['metric'] == 'width':
+        if 'width' in config['experiment']['metrics']:
+            plt.figure(dpi=400)
+
+            # Plot each y against x
+            plt.plot(config['experiment']['ind_var']['vals'], ppi_mean_widths, label='PPI Mean Widths', marker='o')
+            plt.plot(config['experiment']['ind_var']['vals'], naive_mean_widths, label='Naive Mean Widths', marker='x')
+            plt.plot(config['experiment']['ind_var']['vals'], classical_mean_widths, label='Classical Mean Widths', marker='s')
+
+            # Add labels and title
+            plt.xlabel('Rho Value (Level of noise)')
+            plt.ylabel('Confidence Interval Width')
+            plt.title('Confidence Interval Widths vs Amount of noise')
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.show()
+
+            # Save the plot in new experiment folder
+            plt.savefig(os.path.join(config['paths']['plotting_path'], 'noiseplot.png'))
 
 def experiment(config):
     """
@@ -521,8 +549,13 @@ def experiment(config):
             # the outside loop has mean values per iter, the inside loop has all the values
             for key, value in iter_d.items():
                 submetrics[key].append(np.mean(value))
+        # compute the metrics
+        metrics_dict[x] = compute_metrics(config, submetrics) 
+        # The dictionary is a dictionary of dictionaries where the key is the independent variable
 
     # Plot figures from metrics
+
+    plot_metrics(metrics_dict, config)
 
     # Save the plot in new experiment folder
 

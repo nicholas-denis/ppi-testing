@@ -50,6 +50,7 @@ experiment:
         - experiment.parameters.training_population.y_population.rho
         - experiment.parameters.gold_population.y_population.rho
         - experiment.parameters.unlabelled_population.y_population.rho
+      plot_description: Noise between x and y
     n_its: 10000
     test_size: 0.2
     ppi_lambda: 0
