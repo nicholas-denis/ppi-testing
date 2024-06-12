@@ -99,7 +99,7 @@ def create_logger(config: dict):
 
     return logger
 
-def main(config: dict):
+def main_old(config: dict):
     
     # create paths
     config = build_paths(config)
@@ -115,6 +115,30 @@ def main(config: dict):
 
     exp_func = exp_parser[config['experiment']['name']]
     results = exp_func(config)
+
+    # save results to disk using csv
+
+    with open(os.path.join(config['paths']['experiment_path'], 'results.csv'), 'w') as file:
+        for key, value in results.items():
+            file.write(f"{key}, {value}\n")
+    
+    return
+
+def main(config: dict):
+    
+    # create paths
+    config = build_paths(config)
+
+    # create logger
+    logger = create_logger(config)
+
+    # copy the config file to the experiment folder
+    with open(os.path.join(config['paths']['experiment_path'], 'experiment_config.yaml'), 'w') as file:
+        yaml.dump(config, file)
+
+    # do the ppi experiment
+
+    results = ppi.experiment(config)
 
     # save results to disk using csv
 

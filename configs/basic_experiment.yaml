@@ -25,7 +25,7 @@ experiment:
         beta: 1
         size: 10000
       y_population:
-        y_transformation: linear  # linear, random, or custom
+        y_transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 2
         rho: None
     unlabelled_population:
@@ -39,6 +39,7 @@ experiment:
         y_transformation: linear  # linear, random, or custom
         m: 2
         rho: None
+    true_value: None  # Compute the true value, if it exists
     ind_var:
       name: rho
       vals:
@@ -51,6 +52,7 @@ experiment:
         - experiment.parameters.gold_population.y_population.rho
         - experiment.parameters.unlabelled_population.y_population.rho
       plot_description: Noise between x and y
+      label_description: Level of noise
     n_its: 10000
     test_size: 0.2
     ppi_lambda: 0
@@ -60,9 +62,11 @@ experiment:
     # parameters: Will add later
 
       
-  metrics:
-    - width
-    - coverage
+  metrics:  # Make sure these are plural
+    primary:  # metrics to be graphed
+      - widths
+    secdonary:  # metrics to be stored but not graphed
+      - coverages  
   
 
 
