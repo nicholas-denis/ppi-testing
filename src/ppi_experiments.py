@@ -315,7 +315,7 @@ def plot_metrics(metrics_dict, config):
     metrics_dict (dict): dictionary of dictionaries of metrics each key is the independent variable
     config (dict): configuration for the experiment
     """
-    plt_title = config['experiment']['plot_description']
+    plt_title = config['experiment']['ind_var']['plot_description']
     for metric in config['experiment']['metrics']['primary']:
         if metric == 'widths':
             if 'width' in config['experiment']['metrics']:

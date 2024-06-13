@@ -1,0 +1,75 @@
+Nick_Huang: Nick Huang
+experiment:
+  estimate: mean
+  ind_var:
+    label_description: Level of noise
+    name: rho
+    paths:
+    - experiment.parameters.training_population.y_population.rho
+    - experiment.parameters.gold_population.y_population.rho
+    - experiment.parameters.unlabelled_population.y_population.rho
+    plot_description: Noise between x and y
+    vals:
+    - 0.1
+    - 0.25
+    - 0.5
+    - 0.9
+  metrics:
+    primary:
+    - widths
+    secondary:
+    - coverages
+  model:
+    name: linear_regression
+  name: Basic Experiment
+  parameters:
+    gold_population:
+      x_population:
+        alpha: 1
+        beta: 1
+        distribution: gamma_univariate
+        size: 10000
+      y_population:
+        m: 2
+        rho: None
+        transformation: linear_univariate
+    n_its: 10000
+    ppi_lambda: 0
+    test_size: 0.2
+    training_population:
+      x_population:
+        alpha: 1
+        beta: 1
+        distribution: gamma_univariate
+        size: 10000
+      y_population:
+        m: 2
+        rho: None
+        transformation: linear_univariate
+    true_value: 2
+    unlabelled_population:
+      x_population:
+        alpha: 1
+        beta: 1
+        distribution: gamma_univariate
+        size: 10000
+      y_population:
+        include: true
+        m: 2
+        rho: None
+        transformation: linear_univariate
+    use_active_inference: false
+logging:
+  log_file: ../logs/log.log
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_level: INFO
+paths:
+  configs_path: ../configs/
+  data_path: ../data/
+  experiment_path: ../experiments/Basic Experiment_2024-06-12-20-23-46
+  experiments_path: ../experiments/
+  logging_path: ../experiments/Basic Experiment_2024-06-12-20-23-46\logs
+  plotting_path: ../experiments/Basic Experiment_2024-06-12-20-23-46\plots
+  src_path: ./src/
+reproducibility:
+  seed: 42
