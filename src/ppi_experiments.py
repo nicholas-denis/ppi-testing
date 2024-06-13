@@ -132,16 +132,16 @@ def sample_population(population_dict):
     x (np.array): sampled x
     y (np.array): sampled y
     """
-    x_dict = population_dict['x']
-    y_dict = population_dict['y']
+    x_dict = population_dict['x_population']
+    y_dict = population_dict['y_population']
     # Sample x
     if x_dict['distribution'] == 'gamma_univariate':
-        x = np.random.gamma(x_dict['alpha'], x_dict['beta'], x_dict['size'])
+        x = np.random.gamma(x_dict['alpha'], x_dict['beta'], x_dict['size']).reshape(-1, 1)
     else:
         raise ValueError("Distribution not supported")
     # Sample y based on x
     if y_dict['transformation'] == 'linear_univariate':
-        y = sample_y_linear(x, y_dict['m'], y_dict['beta'], y_dict['rho'])
+        y = sample_y_linear(x, y_dict['m'], x_dict['beta'], y_dict['rho']).reshape(-1, 1)
 
     return x, y
 
@@ -201,12 +201,12 @@ def compute_metrics(metric_list, estimates_d, config, secondary=False):
             metrics['naive_widths'] = estimates_d['naive_theta_ci'][1] - estimates_d['naive_theta_ci'][0]
             metrics['classical_widths'] = estimates_d['classical_ci'][1] - estimates_d['classical_ci'][0]
         elif metric == 'coverages':
-            true_value = config['experiment']['parameters'].get(['true_value'], None)
+            true_value = config['experiment']['parameters'].get('true_value', None)
             if true_value is None:
                 raise ValueError("True value not provided for coverage computation")
-            metrics['ppi_coverage'] = np.mean([1 if true_value >= estimates_d['ppi_theta_ci'][0] and true_value <= estimates_d['ppi_theta_ci'][1] else 0])
-            metrics['naive_coverage'] = np.mean([1 if true_value >= estimates_d['naive_theta_ci'][0] and true_value <= estimates_d['naive_theta_ci'][1] else 0])
-            metrics['classical_coverage'] = np.mean([1 if true_value >= estimates_d['classical_ci'][0] and true_value <= estimates_d['classical_ci'][1] else 0])
+            metrics['ppi_coverages'] = np.mean([1 if true_value >= estimates_d['ppi_theta_ci'][0] and true_value <= estimates_d['ppi_theta_ci'][1] else 0])
+            metrics['naive_coverages'] = np.mean([1 if true_value >= estimates_d['naive_theta_ci'][0] and true_value <= estimates_d['naive_theta_ci'][1] else 0])
+            metrics['classical_coverages'] = np.mean([1 if true_value >= estimates_d['classical_ci'][0] and true_value <= estimates_d['classical_ci'][1] else 0])
     
     return metrics
 
@@ -243,8 +243,6 @@ def compute_ci(config, y_gold, y_gold_fitted, y_fitted):
         d['naive_theta_ci'] = naive_theta_ci
         d['classical_theta'] = classical_theta
         d['classical_ci'] = (classical_theta - h, classical_theta + h)
-    if d.keys.isempty():
-        warnings.warn("No estimates computed!")
     
     return d
 
@@ -262,9 +260,9 @@ def single_iteration(config):
     """
     x_train, y_train = sample_population(config['experiment']['parameters']['training_population'])
     x_gold, y_gold = sample_population(config['experiment']['parameters']['gold_population'])
-    x_ppi, y_ppi = sample_population(config['experiment']['parameters']['ppi_population'])
+    x_ppi, y_ppi = sample_population(config['experiment']['parameters']['unlabelled_population'])
 
-    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, config['experiment']['parameters'].get('test_size', 0.2))
+    x_train, x_test, y_train, y_test = train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
 
     model = train_model(x_train, y_train, config['experiment']['model'])  # Placeholder
 
@@ -434,7 +432,7 @@ def experiment(config):
 
     # Save the plot in new experiment folder
 
-    row_labels = [f"Rho: {r}" for r in config['experiment']['parameters']['ind_var']['vals']]
+    row_labels = [f"Rho: {r}" for r in config['experiment']['ind_var']['vals']]
     primary_df = pd.DataFrame(primary_metrics, index=row_labels)
     secondary_df = pd.DataFrame(secondary_metrics, index=row_labels)
 

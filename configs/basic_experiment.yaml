@@ -15,7 +15,7 @@ experiment:
         beta: 1
         size: 10000
       y_population:
-        y_transformation: linear  # linear, random, or custom
+        transformation: linear_univariate  # linear_univariate, random, or custom
         m: 2
         rho: None
     gold_population:
@@ -25,7 +25,7 @@ experiment:
         beta: 1
         size: 10000
       y_population:
-        y_transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 2
         rho: None
     unlabelled_population:
@@ -35,37 +35,38 @@ experiment:
         beta: 1
         size: 10000
       y_population:
-        include: True  # Include a true y value if we want oracle 
-        y_transformation: linear  # linear, random, or custom
+        include: True  # Include a true y value if we want oracle, useles right now
+        transformation: linear_univariate  # linear_univariate, random, or custom
         m: 2
         rho: None
-    true_value: None  # Compute the true value, if it exists
-    ind_var:
-      name: rho
-      vals:
-        - 0.1
-        - 0.25
-        - 0.5
-        - 0.9
-      paths:
-        - experiment.parameters.training_population.y_population.rho
-        - experiment.parameters.gold_population.y_population.rho
-        - experiment.parameters.unlabelled_population.y_population.rho
-      plot_description: Noise between x and y
-      label_description: Level of noise
+    true_value: 2  # Compute this yourself, if not available, set to None
     n_its: 10000
     test_size: 0.2
     ppi_lambda: 0
     use_active_inference: False
+  ind_var:
+    name: rho
+    vals:
+      - 0.1
+      - 0.25
+      - 0.5
+      - 0.9
+    paths:
+      - experiment.parameters.training_population.y_population.rho
+      - experiment.parameters.gold_population.y_population.rho
+      - experiment.parameters.unlabelled_population.y_population.rho
+    plot_description: Noise between x and y
+    label_description: Level of noise
   model:
     name: linear_regression
     # parameters: Will add later
+  estimate: mean
 
       
   metrics:  # Make sure these are plural
     primary:  # metrics to be graphed
       - widths
-    secdonary:  # metrics to be stored but not graphed
+    secondary:  # metrics to be stored but not graphed
       - coverages  
   
 
