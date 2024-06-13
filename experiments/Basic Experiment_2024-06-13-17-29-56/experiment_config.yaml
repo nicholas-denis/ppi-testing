@@ -33,7 +33,7 @@ experiment:
         m: 2
         rho: None
         transformation: linear_univariate
-    n_its: 10000
+    n_its: 1
     ppi_lambda: 0
     test_size: 0.2
     training_population:
@@ -66,10 +66,10 @@ logging:
 paths:
   configs_path: ../configs/
   data_path: ../data/
-  experiment_path: ../experiments/Basic Experiment_2024-06-12-20-23-46
+  experiment_path: ../experiments/Basic Experiment_2024-06-13-17-29-56
   experiments_path: ../experiments/
-  logging_path: ../experiments/Basic Experiment_2024-06-12-20-23-46\logs
-  plotting_path: ../experiments/Basic Experiment_2024-06-12-20-23-46\plots
-  src_path: ./src/
+  logging_path: ../experiments/Basic Experiment_2024-06-13-17-29-56\logs
+  plotting_path: ../experiments/Basic Experiment_2024-06-13-17-29-56\plots
+  src_path: ../experiments/Basic Experiment_2024-06-13-17-29-56\src
 reproducibility:
   seed: 42
