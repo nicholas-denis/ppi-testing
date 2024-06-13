@@ -40,7 +40,7 @@ experiment:
         m: 2
         rho: None
     true_value: 2  # Compute this yourself, if not available, set to None
-    n_its: 10000
+    n_its: 1
     test_size: 0.2
     ppi_lambda: 0
     use_active_inference: False
