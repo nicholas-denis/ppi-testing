@@ -18,6 +18,7 @@ experiment:
         transformation: linear_univariate  # linear_univariate, random, or custom
         m: 2
         rho: None
+        b: 0
     gold_population:
       x_population: 
         distribution: gamma_univariate
@@ -28,6 +29,7 @@ experiment:
         transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 2
         rho: None
+        b: 0
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -39,6 +41,7 @@ experiment:
         transformation: linear_univariate  # linear_univariate, random, or custom
         m: 2
         rho: None
+        b: 0
     true_value: 2  # Compute this yourself, if not available, set to None
     n_its: 1
     test_size: 0.2

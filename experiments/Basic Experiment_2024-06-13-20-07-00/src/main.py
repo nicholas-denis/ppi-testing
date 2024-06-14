@@ -1,0 +1,199 @@
+import numpy as np
+import matplotlib.pyplot as plt
+import ppi_py
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
+
+import yaml
+import os
+import sys
+import argparse
+import numpy as np
+import matplotlib.pyplot as plt
+import datetime
+import logging
+import pickle
+import shutil
+
+import ppi_experiments as ppi
+
+# colored text
+RED = '\033[91m'
+GREEN = '\033[92m'
+YELLOW = '\033[93m'
+MAGENTA = '\033[95m'
+CYAN = '\033[96m'
+RESET = '\033[0m'
+
+# experiment parser
+
+exp_parser = {"Basic Experiment": ppi.basic_experiment}
+
+
+def build_paths(config: dict):
+    """
+    summary:
+    build paths for this experiment
+
+    args:
+    config: dict, config file
+
+    returs:
+    config: dict, updated config file
+    
+    """
+
+    # get from config experiment name
+    experiment_name = config.get('experiment', {}).get('name')
+    
+    # add a time stamp to experiment_name
+    time_stamp = datetime.datetime.now().strftime('%Y-%m-%d-%H-%M-%S')
+    experiment_name = f"{experiment_name}_{time_stamp}"
+
+
+    # get the experiments path
+    experiments_path = config.get('paths', {}).get('experiments_path')
+
+    # check if it exists, if not create
+    if not os.path.exists(experiments_path):
+        os.makedirs(experiments_path)
+        print(f"{YELLOW}Created experiments path: {experiments_path}{RESET}")
+
+    # let's create a folder for THIS experiment
+    experiment_path = os.path.join(experiments_path, experiment_name)
+
+    config['paths']['experiment_path'] = experiment_path
+
+    # check if it exists, if not create
+    if not os.path.exists(experiment_path):
+        os.makedirs(experiment_path)
+        print(f"{YELLOW}Created experiment path: {experiment_path}{RESET}")
+    
+    # create logging folder
+    if not os.path.exists(os.path.join(experiment_path, 'logs')):
+        os.makedirs(os.path.join(experiment_path, 'logs'))
+        print(f"{YELLOW}Created logging folder: {os.path.join(experiment_path, 'logs')}{RESET}")
+        # write the logging folder path to the config file
+        config['paths']['logging_path'] = os.path.join(experiment_path, 'logs')
+
+
+    # create plotting folder
+    if not os.path.exists(os.path.join(experiment_path, 'plots')):
+        os.makedirs(os.path.join(experiment_path, 'plots'))
+        print(f"{YELLOW}Created plotting folder: {os.path.join(experiment_path, 'plots')}{RESET}")
+        # write the plotting folder path to the config file
+        config['paths']['plotting_path'] = os.path.join(experiment_path, 'plots')
+
+    # create src folder
+    if not os.path.exists(os.path.join(experiment_path, 'src')):
+        os.makedirs(os.path.join(experiment_path, 'src'))
+        print(f"{YELLOW}Created src folder: {os.path.join(experiment_path, 'src')}{RESET}")
+        # write the src folder path to the config file
+        config['paths']['src_path'] = os.path.join(experiment_path, 'src')
+    
+
+    return config
+
+def create_logger(config: dict):
+    """
+    Create a logger file
+    """
+    logger = logging.getLogger(__name__)
+    handler = logging.FileHandler(os.path.join(config['paths']['logging_path'], 'log.log'), 'w')
+    handler.setLevel(logging.INFO)
+    logger.addHandler(handler)
+
+    return logger
+
+def main_old(config: dict):
+    
+    # create paths
+    config = build_paths(config)
+
+    # create logger
+    logger = create_logger(config)
+
+    # copy the config file to the experiment folder
+    with open(os.path.join(config['paths']['experiment_path'], 'experiment_config.yaml'), 'w') as file:
+        yaml.dump(config, file)
+
+    
+    # do the ppi experiment
+
+    exp_func = exp_parser[config['experiment']['name']]
+    results = exp_func(config)
+
+    # save results to disk using csv
+
+    with open(os.path.join(config['paths']['experiment_path'], 'results.csv'), 'w') as file:
+        for key, value in results.items():
+            file.write(f"{key}, {value}\n")
+    
+    return
+
+def main(config: dict):
+    
+    # create paths
+    config = build_paths(config)
+
+    # create logger
+    logger = create_logger(config)
+
+    # copy the config file to the experiment folder
+    with open(os.path.join(config['paths']['experiment_path'], 'experiment_config.yaml'), 'w') as file:
+        yaml.dump(config, file)
+
+    # copy the src file to the experiment folder
+    src_path = './'
+    src_files = os.listdir(src_path)
+    print(src_files)
+    for file in src_files:
+        if file.endswith('.py'):
+            source_file = os.path.join(src_path, file)
+            destination_dir = os.path.join(config['paths']['experiment_path'], 'src')
+            shutil.copy(source_file, destination_dir)
+    # Don't know how this works, but it should according to copilot, seems common enough
+
+    # do the ppi experiment
+
+    results = ppi.experiment(config)
+
+    # save results to disk using csv
+
+    with open(os.path.join(config['paths']['experiment_path'], 'results.csv'), 'w') as file:
+        for key, value in results.items():
+            file.write(f"{key}, {value}\n")
+    
+    return
+
+
+if __name__ == '__main__':
+    # arg parser
+    parser = argparse.ArgumentParser(description='Main function')
+    # add argument for config file path
+    parser.add_argument('--config', 
+                        type=str, 
+                        default='../configs/config.yaml', 
+                        help='Path to config file')
+
+    # print argparser
+    args = parser.parse_args()
+    print(f"{RED}args: {CYAN}{args}{RESET}")
+
+    # load config file
+    with open(args.config, 'r') as file:
+        config = yaml.safe_load(file)
+    
+    print(f"{RED}config: {CYAN}{config}{RESET}")
+    print(f"{RED}type(config): {CYAN}{type(config)}{RESET}")
+
+    paths = config.get('paths')
+    print(f"{RED}paths: {CYAN}{paths}{RESET}")
+    config['Nick_Huang'] = 'Nick Huang'
+
+    # print configs again
+    print(f"{RED}config: {CYAN}{config}{RESET}")
+    main(config)
+
+    print(f"{MAGENTA}All done! {RESET}")
