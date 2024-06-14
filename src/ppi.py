@@ -125,7 +125,7 @@ def single_iteration(config):
 
     # Residual testing
     y_test_pred = model.predict(x_test)
-    residual = np.sqrt(np.mean((y_test_pred - y_test)**2))  # Mean squared deviation
+    residual = np.mean(np.abs(y_test_pred - y_test))  # Mean abs error
 
     # Fitting
     y_gold_fitted = model.predict(x_gold)  # Gold standard fitted
@@ -311,3 +311,6 @@ def experiment(config):
     # Save results in a pandas dataframe
 
     return metrics_df
+
+#TODO
+#Save all data to csv, not just means, maybe a separate csv, by all data, we want to look at data per iteration of single exp
