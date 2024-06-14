@@ -168,6 +168,10 @@ def plot_metrics(metrics_dict, config):
     """
     Plot the metrics from the experiment, and saves them in the plotting folder
 
+    Add alpha (transparency values)
+
+    Include a few more plots.
+
     Args:
     metrics_dict (dict): dictionary of dictionaries of metrics each key is the independent variable
     config (dict): configuration for the experiment
