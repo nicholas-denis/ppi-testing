@@ -100,7 +100,7 @@ transformations = {
 
 # Distribution distance functions
 
-def total_variation_distance(x, y):
+def total_variation_distance(x, y, bins=100):
     """
     Compute the total variation distance between two distributions using
     monte carlo methods
@@ -110,8 +110,8 @@ def total_variation_distance(x, y):
     y (np.array): y
     """
     # Compute the histogram for x
-    hist_x, bins_x = np.histogram(x, bins=100, density=True)
-    hist_y, bins_y = np.histogram(y, bins=100, density=True)
+    hist_x, bins_x = np.histogram(x, bins, density=True)
+    hist_y, bins_y = np.histogram(y, bins, density=True)
 
     # Compute the total variation distance
     tvd = np.max(np.abs(hist_x - hist_y))  # can be either max or abs
