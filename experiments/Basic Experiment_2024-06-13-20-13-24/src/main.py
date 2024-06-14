@@ -16,7 +16,7 @@ import logging
 import pickle
 import shutil
 
-import ppi_experiments as ppi
+import ppi
 
 # colored text
 RED = '\033[91m'
@@ -25,11 +25,6 @@ YELLOW = '\033[93m'
 MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 RESET = '\033[0m'
-
-# experiment parser
-
-exp_parser = {"Basic Experiment": ppi.basic_experiment}
-
 
 def build_paths(config: dict):
     """
