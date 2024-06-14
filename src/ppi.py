@@ -172,6 +172,14 @@ def plot_metrics(metrics_dict, config):
 
     Include a few more plots.
 
+    Look at violin plots
+
+    Error bars
+
+    CI Plots
+
+    Biases
+
     Args:
     metrics_dict (dict): dictionary of dictionaries of metrics each key is the independent variable
     config (dict): configuration for the experiment
