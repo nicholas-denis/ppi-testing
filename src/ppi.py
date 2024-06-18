@@ -330,11 +330,12 @@ def experiment(config):
 
     x_lab = config['experiment']['ind_var']['name']
 
-    row_labels = [f"{x_lab}: {r}" for r in config['experiment']['ind_var']['vals']]
-    primary_means_df = pd.DataFrame(primary_means, index=row_labels)
-    secondary_means_df = pd.DataFrame(secondary_means, index=row_labels)
+    primary_means_df = pd.DataFrame(primary_means)
+    secondary_means_df = pd.DataFrame(secondary_means)
 
     metrics_means_df = pd.concat([primary_means_df, secondary_means_df], axis=1)
+
+    metrics_means_df['rho'] = config['experiment']['ind_var']['vals']
 
     print(metrics_means_df)
 

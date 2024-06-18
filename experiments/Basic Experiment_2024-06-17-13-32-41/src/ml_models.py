@@ -21,28 +21,28 @@ import time
 
 # Fitting functions
 
-def build_fit_slr(x,y):
+def build_fit_slr(x, y, model_config):
     """
     y_hat = model.predict(x)
     """
     model = LinearRegression()
-    model.fit(x,y)
+    model.fit(x, y)
     return model
 
-def build_fit_dt(x,y):
+def build_fit_dt(x, y, model_config):
     """
     y_hat = model.predict(x)
     """
     model = DecisionTreeRegressor()
-    model.fit(x,y)
+    model.fit(x ,y)
     return model
 
-def build_fit_rf(x,y):
+def build_fit_rf(x, y, model_config):
     """
     y_hat = model.predict(x)
     """
     model = RandomForestRegressor()
-    model.fit(x,y)
+    model.fit(x ,y)
     return model
 
 def train_model(x_train, y_train, model_config):
@@ -58,11 +58,11 @@ def train_model(x_train, y_train, model_config):
     model: trained model
     """
     if model_config['name'] == 'linear_regression':
-        model = build_fit_slr(x_train, y_train)
+        model = build_fit_slr(x_train, y_train, model_config)
     elif model_config['name'] == 'decision_tree':
-        model = build_fit_dt(x_train, y_train)
+        model = build_fit_dt(x_train, y_train, model_config)
     elif model_config['name'] == 'random_forest':
-        model = build_fit_rf(x_train, y_train)
+        model = build_fit_rf(x_train, y_train, model_config)
     else:
         raise ValueError("Model not supported")
     return model

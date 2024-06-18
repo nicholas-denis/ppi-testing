@@ -69,11 +69,11 @@ logging:
 paths:
   configs_path: ../configs/
   data_path: ../data/
-  experiment_path: ../experiments/Basic Experiment_2024-06-14-19-59-08
+  experiment_path: ../experiments/Basic Experiment_2024-06-17-13-32-41
   experiments_path: ../experiments/
-  logging_path: ../experiments/Basic Experiment_2024-06-14-19-59-08\logs
-  plotting_path: ../experiments/Basic Experiment_2024-06-14-19-59-08\plots
-  results_path: ../experiments/Basic Experiment_2024-06-14-19-59-08\results
-  src_path: ../experiments/Basic Experiment_2024-06-14-19-59-08\src
+  logging_path: ../experiments/Basic Experiment_2024-06-17-13-32-41\logs
+  plotting_path: ../experiments/Basic Experiment_2024-06-17-13-32-41\plots
+  results_path: ../experiments/Basic Experiment_2024-06-17-13-32-41\results
+  src_path: ../experiments/Basic Experiment_2024-06-17-13-32-41\src
 reproducibility:
   seed: 42

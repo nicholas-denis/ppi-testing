@@ -1,0 +1,75 @@
+ppi_widths, rho: 0.1     9.170576
+rho: 0.25    1.398281
+rho: 0.5     0.287404
+rho: 0.9     0.050452
+Name: ppi_widths, dtype: float64
+naive_widths, rho: 0.1     4.590731
+rho: 0.25    0.700250
+rho: 0.5     0.147731
+rho: 0.9     0.047413
+Name: naive_widths, dtype: float64
+classical_widths, rho: 0.1     9.173476
+rho: 0.25    1.399643
+rho: 0.5     0.290445
+rho: 0.9     0.067931
+Name: classical_widths, dtype: float64
+ppi_preds, rho: 0.1     1.005010
+rho: 0.25    1.981404
+rho: 0.5     1.946993
+rho: 0.9     1.989952
+Name: ppi_preds, dtype: float64
+ppi_lowers, rho: 0.1    -3.580277
+rho: 0.25    1.282263
+rho: 0.5     1.803291
+rho: 0.9     1.964726
+Name: ppi_lowers, dtype: float64
+ppi_uppers, rho: 0.1     5.590298
+rho: 0.25    2.680544
+rho: 0.5     2.090695
+rho: 0.9     2.015178
+Name: ppi_uppers, dtype: float64
+naive_preds, rho: 0.1     2.583883
+rho: 0.25    1.760136
+rho: 0.5     1.979732
+rho: 0.9     1.995662
+Name: naive_preds, dtype: float64
+naive_lowers, rho: 0.1     0.288518
+rho: 0.25    1.410012
+rho: 0.5     1.905867
+rho: 0.9     1.971956
+Name: naive_lowers, dtype: float64
+naive_uppers, rho: 0.1     4.879248
+rho: 0.25    2.110261
+rho: 0.5     2.053598
+rho: 0.9     2.019369
+Name: naive_uppers, dtype: float64
+classical_preds, rho: 0.1     0.982890
+rho: 0.25    1.997497
+rho: 0.5     1.950315
+rho: 0.9     1.984090
+Name: classical_preds, dtype: float64
+classical_lowers, rho: 0.1    -3.603848
+rho: 0.25    1.297676
+rho: 0.5     1.805093
+rho: 0.9     1.950125
+Name: classical_lowers, dtype: float64
+classical_uppers, rho: 0.1     5.569628
+rho: 0.25    2.697319
+rho: 0.5     2.095538
+rho: 0.9     2.018055
+Name: classical_uppers, dtype: float64
+ppi_coverages, rho: 0.1     1.0
+rho: 0.25    1.0
+rho: 0.5     1.0
+rho: 0.9     1.0
+Name: ppi_coverages, dtype: float64
+naive_coverages, rho: 0.1     1.0
+rho: 0.25    1.0
+rho: 0.5     1.0
+rho: 0.9     1.0
+Name: naive_coverages, dtype: float64
+classical_coverages, rho: 0.1     1.0
+rho: 0.25    1.0
+rho: 0.5     1.0
+rho: 0.9     1.0
+Name: classical_coverages, dtype: float64
