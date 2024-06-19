@@ -8,6 +8,7 @@ import yaml
 import os
 import sys
 import argparse
+import matplotlib.pyplot as plt
 import datetime
 import logging
 import warnings
@@ -327,6 +328,14 @@ def experiment(config):
 
     print(metrics_df)
 
+    df = metrics_df
+
+    df['measurement'], df['rho'] = df.index.str.split(': ').str
+    df['rho'] = df['rho'].astype(float)
+    df = df.pivot(index='rho', columns='measurement')
+
+    metrics_df = df
+
     x_lab = config['experiment']['ind_var']['name']
 
     row_labels = [f"{x_lab}: {r}" for r in config['experiment']['ind_var']['vals']]
@@ -335,10 +344,19 @@ def experiment(config):
 
     metrics_means_df = pd.concat([primary_means_df, secondary_means_df], axis=1)
 
+    df = metrics_means_df
+    
+    df['measurement'], df['rho'] = df.index.str.split(': ').str
+    df['rho'] = df['rho'].astype(float)
+    df = df.pivot(index='rho', columns='measurement')
+
+    metrics_means_df = df
+
     print(metrics_means_df)
 
     return metrics_df, metrics_means_df
 
-# TODO
+#TODO
+#Save all data to csv, not just means, maybe a separate csv, by all data, we want to look at data per iteration of single exp
 # Change the plotting to be done after everything is put in the dataframe
 # Also, add a plotting section to config

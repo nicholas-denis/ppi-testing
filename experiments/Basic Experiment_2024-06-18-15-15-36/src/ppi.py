@@ -8,6 +8,7 @@ import yaml
 import os
 import sys
 import argparse
+import matplotlib.pyplot as plt
 import datetime
 import logging
 import warnings
@@ -339,6 +340,7 @@ def experiment(config):
 
     return metrics_df, metrics_means_df
 
-# TODO
+#TODO
+#Save all data to csv, not just means, maybe a separate csv, by all data, we want to look at data per iteration of single exp
 # Change the plotting to be done after everything is put in the dataframe
 # Also, add a plotting section to config
