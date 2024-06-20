@@ -132,6 +132,8 @@ def main(config: dict):
 
     results_raw, results_mean = ppi.experiment(config)
 
+    # use pd to csv
+
     # save results to disk using csv I think this is what's causing the ugly csv file
 
     with open(os.path.join(config['paths']['results_path'], 'results.csv'), 'w') as file:
