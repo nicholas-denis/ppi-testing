@@ -132,15 +132,20 @@ def main(config: dict):
 
     results_raw, results_mean = ppi.experiment(config)
 
+    # use pd to csv
+
+    results_raw.to_csv(os.path.join(config['paths']['results_path'], 'results.csv'))
+    results_mean.to_csv(os.path.join(config['paths']['results_path'], 'results_mean.csv'))
+
     # save results to disk using csv I think this is what's causing the ugly csv file
 
-    with open(os.path.join(config['paths']['results_path'], 'results.csv'), 'w') as file:
-        for key, value in results_raw.items():
-            file.write(f"{key}, {value}\n")
+    #with open(os.path.join(config['paths']['results_path'], 'results.csv'), 'w') as file:
+    #    for key, value in results_raw.items():
+    #        file.write(f"{key}, {value}\n")
 
-    with open(os.path.join(config['paths']['results_path'], 'results_mean.csv'), 'w') as file:
-        for key, value in results_mean.items():
-            file.write(f"{key}, {value}\n")
+    #with open(os.path.join(config['paths']['results_path'], 'results_mean.csv'), 'w') as file:
+    #    for key, value in results_mean.items():
+    #        file.write(f"{key}, {value}\n")
     
     return
 

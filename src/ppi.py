@@ -342,3 +342,7 @@ def experiment(config):
 # TODO
 # Change the plotting to be done after everything is put in the dataframe
 # Also, add a plotting section to config
+
+# 1: PPI++ implementation
+# 2: Check if .tocsv is a quick fix DONE
+# 3: Read the experiments email to make sure if code can run the experiments needed.
