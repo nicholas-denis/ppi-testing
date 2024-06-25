@@ -48,7 +48,7 @@ experiment:
     ppi_lambda: 0
     use_active_inference: False
   ind_var:
-    name: rho
+    name: noise  # this is really confusing right now because of rho/noise, will think of solution later
     vals:
       - 0.1
       - 0.25
@@ -64,13 +64,18 @@ experiment:
     name: linear_regression
     # parameters: Will add later
   estimate: mean
+  methods:
+    - type: ppi
+    - type: naive
+    - type: classical
+    #- type: ppi_pp
+    #  lambda: 0.1
+    #- type: stratified_ppi
 
       
   metrics:  # Make sure these are plural
-    primary:  # metrics to be graphed
-      - widths
-    secondary:  # metrics to be stored but not graphed
-      - coverages  
+    - widths
+    - coverages 
   
 plotting:
   plots:
