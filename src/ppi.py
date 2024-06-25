@@ -66,6 +66,21 @@ def compute_metrics_old(metric_list, estimates_d, config):
     
     return metrics
 
+def compute_metrics(config, conf_int):
+    """
+    Given a confidence interval tuple, computes and retruns metrics
+    """
+    metrics = {} 
+    for metric in config['experiment']['metrics']:
+        if metric == 'widths':
+            metrics['widths'] = conf_int[1] - conf_int[0]
+        elif metric == 'coverages':
+            true_value = config['experiment']['parameters'].get('true_value', None)
+            if true_value is None:
+                raise ValueError("True value not provided for coverage computation")
+            metrics['coverage'] = np.mean([1 if true_value >= conf_int[0] and true_value <= conf_int[1] else 0])
+
+
 def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0):
     alpha = 1 - conf
     return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted), ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha)
@@ -96,22 +111,27 @@ def compute_ci(config, y_gold, y_gold_fitted, y_fitted):
     if config['experiment']['estimate'] == 'mean':
         conf = config['experiment']['parameters'].get('confidence', 0.9)
 
-        lam = config['experiment']['parameters'].get('lambda', 1.0)
-        # PPI CI
-        ppi_theta, ppi_theta_ci = do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=lam)
-        
-        # Naive CI
-        naive_theta, naive_theta_ci = do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
-
-        # Classical CI
-        classical_theta, classical_ci = do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
-
-        d['ppi_theta'] = ppi_theta
-        d['ppi_theta_ci'] = ppi_theta_ci
-        d['naive_theta'] = naive_theta
-        d['naive_theta_ci'] = naive_theta_ci
-        d['classical_theta'] = classical_theta
-        d['classical_ci'] = classical_ci
+        for method in config['experiment']['methods']:
+            if method['type'] == 'ppi':
+                # PPI CI
+                ppi_theta, ppi_theta_ci = do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
+                d['ppi'] = (ppi_theta, ppi_theta_ci)
+            elif method['type'] == 'naive':
+                # Naive CI
+                naive_theta, naive_theta_ci = do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
+                d['naive'] = (naive_theta, naive_theta_ci)
+            elif method['type'] == 'classical':
+                # Classical CI
+                classical_theta, classical_ci = do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
+                d['classical'] = (classical_theta, classical_ci)
+            elif method['type'] == 'ppi_pp':
+                # PPI++ CI
+                ppi_theta, ppi_theta_ci = do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=method['lam'])
+                d['ppi_pp'] = (ppi_theta, ppi_theta_ci)
+            elif method['type'] == 'stratified_ppi':
+                print("Yet to be implemented")
+            else:
+                print("Method not recognized")
     
     return d
 
@@ -152,13 +172,15 @@ def single_iteration(config):
 
     # Confidence interval computation
 
+    metrics = create_metrics_dict(config)
+
     ci_results = compute_ci(config, y_gold, y_gold_fitted, y_fitted)
 
-    # Config will tell us the ordering of the methods i guess.
-
-    
-
     # Metric computation
+
+    for key, value in ci_results.items():
+        metrics = compute_metrics(config, value)
+        
 
     metrics = compute_metrics(config['experiment']['metrics'], ci_results, config)
 
@@ -327,12 +349,12 @@ def experiment(config):
             temp[keys[-1]] = x
         for i in range(params['n_its']):
             # single iteration of the experiment
-            iter = single_iteration(config) 
+            iter_metrics = single_iteration(config) 
             # update the metrics
             # there's a clever thing happening where the dict outside of the loop
             # has the same keys as the dict inside the loop even if they do differnt things
             # the outside loop has mean values per iter, the inside loop has all the values
-            for key, value in iter.items():
+            for key, value in iter_metrics.items():
                 ind_var[key].append(value)
         # compute the metrics
         for key, value in ind_var.items():

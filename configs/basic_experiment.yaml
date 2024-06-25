@@ -45,7 +45,6 @@ experiment:
     true_value: 2  # Compute this yourself, if not available, set to None
     n_its: 1
     test_size: 0.2
-    ppi_lambda: 0
     use_active_inference: False
     confidence_level: 0.95
   ind_var:
