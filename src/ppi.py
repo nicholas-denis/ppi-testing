@@ -66,6 +66,23 @@ def compute_metrics(metric_list, estimates_d, config, secondary=False):
     
     return metrics
 
+def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0):
+    alpha = 1 - conf
+    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted), ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha)
+
+def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
+    concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
+    naive_theta = np.mean(concat)  # Compute mean
+    naive_sigma = np.std(concat)  # Compute std dev
+    n_tot = concat.shape[0]
+    return naive_theta, stats.norm.interval(conf, loc=naive_theta, scale=naive_sigma/np.sqrt(n_tot))
+
+def do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
+    small_sample = y_gold.shape[0]
+    classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
+    h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
+    return classical_theta, (classical_theta - h, classical_theta + h)
+
 
 def compute_ci(config, y_gold, y_gold_fitted, y_fitted):
     """
@@ -77,28 +94,24 @@ def compute_ci(config, y_gold, y_gold_fitted, y_fitted):
     """
     d = {}
     if config['experiment']['estimate'] == 'mean':
+        conf = config['experiment']['parameters'].get('confidence', 0.9)
+
+        lam = config['experiment']['parameters'].get('lambda', 1.0)
         # PPI CI
-        ppi_theta = ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted)
-        ppi_theta_ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted)
+        ppi_theta, ppi_theta_ci = do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=lam)
         
         # Naive CI
-        concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
-        naive_theta = np.mean(concat)  # Compute mean
-        naive_sigma = np.std(concat)  # Compute std dev
-        n_tot = concat.shape[0]
-        naive_theta_ci = stats.norm.interval(0.9, loc=naive_theta, scale=naive_sigma/np.sqrt(n_tot))  # Use norm as N is large
+        naive_theta, naive_theta_ci = do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
 
         # Classical CI
-        small_sample = y_gold.shape[0]
-        classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
-        h = classical_se * stats.t.ppf((1 + .9) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
+        classical_theta, classical_ci = do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
 
         d['ppi_theta'] = ppi_theta
         d['ppi_theta_ci'] = ppi_theta_ci
         d['naive_theta'] = naive_theta
         d['naive_theta_ci'] = naive_theta_ci
         d['classical_theta'] = classical_theta
-        d['classical_ci'] = (classical_theta - h, classical_theta + h)
+        d['classical_ci'] = classical_ci
     
     return d
 
