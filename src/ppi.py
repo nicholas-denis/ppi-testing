@@ -24,7 +24,7 @@ MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 RESET = '\033[0m'
 
-def compute_metrics(metric_list, estimates_d, config, secondary=False):
+def compute_metrics_old(metric_list, estimates_d, config):
     """
     A general metric function to be used in the experiment.
     BIG TODO, WILL NEED A LOT OF WORK
@@ -154,12 +154,15 @@ def single_iteration(config):
 
     ci_results = compute_ci(config, y_gold, y_gold_fitted, y_fitted)
 
+    # Config will tell us the ordering of the methods i guess.
+
+    
+
     # Metric computation
 
-    primary_metrics = compute_metrics(config['experiment']['metrics']['primary'], ci_results, config, secondary=False)
-    secondary_metrics = compute_metrics(config['experiment']['metrics']['secondary'], ci_results, config, secondary=True)
+    metrics = compute_metrics(config['experiment']['metrics'], ci_results, config)
 
-    return primary_metrics, secondary_metrics
+    return metrics
 
 def extend_metrics(metrics_dict, metrics_d):
     """
@@ -222,7 +225,7 @@ def plot_metrics(metrics_dict, config):
     return 
 
 
-def create_metrics_dict(config):
+def create_metrics_dict_old(config):
     """
     Create a dictionary of metrics to be updated in the experiment
     """
@@ -254,6 +257,25 @@ def create_metrics_dict(config):
     
     return primary_metrics, secondary_metrics
 
+def create_metrics_dict(config):
+    """
+    Parse through config file and create empty metrics dict based off methods and metrics
+    """
+    metrics = {}
+    metrics['estimate'] = []
+    metrics['true_parameter'] = []
+    metrics['ci_low'] = []
+    metrics['ci_high'] = []
+    metrics['ci_width'] = []
+    metrics['empirical_coverage'] = []
+    metrics['desired_coverage'] = []
+    metrics['noise'] = []
+    metrics['technique'] = []
+    metrics['model'] = []
+    metrics['iteration'] = []
+
+    return metrics
+
 def experiment(config):
     """
     WIP - This is the main experiment function
@@ -278,11 +300,10 @@ def experiment(config):
 
     # prepare metric results storage
 
-    primary_metrics, secondary_metrics = create_metrics_dict(config) 
+    metrics = create_metrics_dict(config) 
     ind_var = config['experiment']['ind_var']['name']
-    secondary_metrics[ind_var] = []
-    secondary_metrics['iteration'] = []
-    primary_means, secondary_means = create_metrics_dict(config)  # These will be means
+    metrics[ind_var] = []
+    means = create_metrics_dict(config)  # These will be means
 
     # iterate over independent variables
 
@@ -292,9 +313,9 @@ def experiment(config):
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
         # begin timing
         start = time.time()
-        ind_var_primary, ind_var_secondary = create_metrics_dict(config)
-        ind_var_secondary[ind_var] = [x for _ in range(params['n_its'])]
-        ind_var_secondary['iteration'] = list(range(params['n_its']))
+        ind_var = create_metrics_dict(config)
+        ind_var[ind_var] = [x for _ in range(params['n_its'])]
+        ind_var['iteration'] = list(range(params['n_its']))
         for path in config['experiment']['ind_var']['paths']:
             keys = path.split('.')  # Split the path
             # update the independent variable, I'm about to update the original config in place.
@@ -306,23 +327,19 @@ def experiment(config):
             temp[keys[-1]] = x
         for i in range(params['n_its']):
             # single iteration of the experiment
-            iter_primary, iter_secondary = single_iteration(config) 
+            iter = single_iteration(config) 
             # update the metrics
             # there's a clever thing happening where the dict outside of the loop
             # has the same keys as the dict inside the loop even if they do differnt things
             # the outside loop has mean values per iter, the inside loop has all the values
-            for key, value in iter_primary.items():
-                ind_var_primary[key].append(value)
-            for key, value in iter_secondary.items():
-                ind_var_secondary[key].append(value)
+            for key, value in iter.items():
+                ind_var[key].append(value)
         # compute the metrics
-        for key, value in ind_var_primary.items():
-            primary_metrics[key].extend(value)
-            primary_means[key].append(np.mean(value))
-        for key, value in ind_var_secondary.items():
-            secondary_metrics[key].extend(value)
+        for key, value in ind_var.items():
+            metrics[key].extend(value)
+            means[key].append(np.mean(value))
             if key not in [ind_var, 'iteration']:  # We don't need this in the means
-                secondary_means[key].append(np.mean(value))
+                means[key].append(np.mean(value))
         # end timing
         end = time.time()
         print(f"{GREEN}Finished experiment with {config['experiment']['ind_var']['name']} = {x} took {end - start} seconds{RESET}")
@@ -333,24 +350,18 @@ def experiment(config):
 
     # Create a dataframe of the metrics
 
-    primary_df = pd.DataFrame(primary_metrics)
-    secondary_df = pd.DataFrame(secondary_metrics)
-
-    metrics_df = pd.concat([primary_df, secondary_df], axis=1)
+    metrics_df = pd.DataFrame(metrics)
 
     print(metrics_df)
 
     x_lab = config['experiment']['ind_var']['name']
 
     row_labels = [f"{x_lab}: {r}" for r in config['experiment']['ind_var']['vals']]
-    primary_means_df = pd.DataFrame(primary_means, index=row_labels)
-    secondary_means_df = pd.DataFrame(secondary_means, index=row_labels)
+    means_df = pd.DataFrame(means, index=row_labels)
 
-    metrics_means_df = pd.concat([primary_means_df, secondary_means_df], axis=1)
+    print(means_df)
 
-    print(metrics_means_df)
-
-    return metrics_df, metrics_means_df
+    return metrics_df, means_df
 
 # TODO
 # Change the plotting to be done after everything is put in the dataframe

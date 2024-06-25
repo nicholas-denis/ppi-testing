@@ -34,7 +34,7 @@ def line_plot(data, plot_config, config, x=None):
 
     plt.plot(data)
 
-    if plot_config.get('show'):
+    if plot_config.get('show', None):
         plt.show()
 
 def violin_plot(data, plot_config, config):
