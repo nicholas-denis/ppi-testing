@@ -223,7 +223,6 @@ def experiment(config):
             iter_metrics = single_iteration(config) 
             iter_metrics['iteration'] = [i] * num_methods
             iter_metrics[ind_var] = [x] * (params['n_its'] * num_methods)
-            print(iter_metrics)
             metrics = extend_metrics(metrics, iter_metrics)
         # end timing
         end = time.time()
@@ -236,7 +235,5 @@ def experiment(config):
     # Create a dataframe of the metrics
 
     metrics_df = pd.DataFrame(metrics)
-
-    print(metrics_df)
 
     return metrics_df
