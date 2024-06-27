@@ -80,6 +80,8 @@ def compute_metrics(config, conf_int):
                 raise ValueError("True value not provided for coverage computation")
             metrics['coverage'] = np.mean([1 if true_value >= conf_int[0] and true_value <= conf_int[1] else 0])
 
+    return metrics
+
 
 def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0):
     alpha = 1 - conf
@@ -174,12 +176,20 @@ def single_iteration(config):
 
     metrics = create_metrics_dict(config)
 
-    ci_results = compute_ci(config, y_gold, y_gold_fitted, y_fitted)
+    ###########################################
+    # REWRITE THIS TOMORROW INTO THE FOLLOWING:
+    # CALL COMPUTE_CI FOR A SINGLE METHOD, THEN APPEND THE RESULTS TO THE METRICS
+    # THIS SHOULD ONLY BE A SINGLE FOR LOOP PER METHOD SO NOT SLOW
+    # OK LET DO THIS YES
+    ###########################################
+
+    ci_results = compute_ci(config, y_gold, y_gold_fitted, y_fitted)  # dictionary of every estimate, CI
 
     # Metric computation
 
     for key, value in ci_results.items():
         metrics = compute_metrics(config, value)
+        metrics
         
 
     metrics = compute_metrics(config['experiment']['metrics'], ci_results, config)
@@ -389,6 +399,6 @@ def experiment(config):
 # Change the plotting to be done after everything is put in the dataframe
 # Also, add a plotting section to config
 
-# 1: PPI++ implementation
+# 1: PPI++ implementation DONE
 # 2: Check if .tocsv is a quick fix DONE
 # 3: Read the experiments email to make sure if code can run the experiments needed.
