@@ -71,8 +71,6 @@ experiment:
     #- type: ppi_pp
     #  lambda: 0.1
     #- type: stratified_ppi
-
-      
   metrics:  # Make sure these are plural
     - widths
     - coverages 
