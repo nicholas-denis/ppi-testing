@@ -1,4 +1,3 @@
-
 import numpy as np
 import matplotlib.pyplot as plt
 import ppi_py
@@ -13,12 +12,10 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime
-
 import logging
 import shutil
 
 import ppi
-
 
 # colored text
 RED = '\033[91m'
@@ -27,14 +24,6 @@ YELLOW = '\033[93m'
 MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 RESET = '\033[0m'
-
-
-
-# helper functions
-
-
-
-# build paths
 
 def build_paths(config: dict):
     """
@@ -76,7 +65,6 @@ def build_paths(config: dict):
         print(f"{YELLOW}Created experiment path: {experiment_path}{RESET}")
     
     # create logging folder
-
     if not os.path.exists(os.path.join(experiment_path, 'logs')):
         os.makedirs(os.path.join(experiment_path, 'logs'))
         print(f"{YELLOW}Created logging folder: {os.path.join(experiment_path, 'logs')}{RESET}")
@@ -119,14 +107,12 @@ def create_logger(config: dict):
 
     return logger
 
-
 def main(config: dict):
     
     # create paths
     config = build_paths(config)
 
     # create logger
-
     logger = create_logger(config)
 
     # copy the config file to the experiment folder
@@ -144,11 +130,17 @@ def main(config: dict):
 
     # do the ppi experiment
 
-    results = ppi.experiment(config)
+    results_raw, results_mean = ppi.experiment(config)
 
-    # use pd to csv
+    # save results to disk using csv I think this is what's causing the ugly csv file
 
-    results.to_csv(os.path.join(config['paths']['results_path'], 'results.csv'))
+    with open(os.path.join(config['paths']['results_path'], 'results.csv'), 'w') as file:
+        for key, value in results_raw.items():
+            file.write(f"{key}, {value}\n")
+
+    with open(os.path.join(config['paths']['results_path'], 'results_mean.csv'), 'w') as file:
+        for key, value in results_mean.items():
+            file.write(f"{key}, {value}\n")
     
     return
 
@@ -179,8 +171,6 @@ if __name__ == '__main__':
 
     # print configs again
     print(f"{RED}config: {CYAN}{config}{RESET}")
-
     main(config)
 
     print(f"{MAGENTA}All done! {RESET}")
-
