@@ -1,3 +1,4 @@
+
 import numpy as np
 import matplotlib.pyplot as plt
 import ppi_py
@@ -12,10 +13,12 @@ import argparse
 import numpy as np
 import matplotlib.pyplot as plt
 import datetime
+
 import logging
 import shutil
 
 import ppi
+
 
 # colored text
 RED = '\033[91m'
@@ -24,6 +27,14 @@ YELLOW = '\033[93m'
 MAGENTA = '\033[95m'
 CYAN = '\033[96m'
 RESET = '\033[0m'
+
+
+
+# helper functions
+
+
+
+# build paths
 
 def build_paths(config: dict):
     """
@@ -65,6 +76,7 @@ def build_paths(config: dict):
         print(f"{YELLOW}Created experiment path: {experiment_path}{RESET}")
     
     # create logging folder
+
     if not os.path.exists(os.path.join(experiment_path, 'logs')):
         os.makedirs(os.path.join(experiment_path, 'logs'))
         print(f"{YELLOW}Created logging folder: {os.path.join(experiment_path, 'logs')}{RESET}")
@@ -107,12 +119,14 @@ def create_logger(config: dict):
 
     return logger
 
+
 def main(config: dict):
     
     # create paths
     config = build_paths(config)
 
     # create logger
+
     logger = create_logger(config)
 
     # copy the config file to the experiment folder
@@ -169,3 +183,4 @@ if __name__ == '__main__':
     main(config)
 
     print(f"{MAGENTA}All done! {RESET}")
+

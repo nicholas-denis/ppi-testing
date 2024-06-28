@@ -3,10 +3,10 @@ paths:
   configs_path: ../configs/
   experiments_path: ../experiments/
 
-
 experiment:
   name: experiment
   description: This is a test file
+
 
 reproducibility:
   seed: 42
