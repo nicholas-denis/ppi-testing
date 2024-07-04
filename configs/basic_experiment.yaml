@@ -3,7 +3,7 @@ paths:
   configs_path: ../configs/
   experiments_path: ../experiments/
   data_path: ../data/
-
+  plotting_path: ./experiments/Sample_experiment_keep_3\plots
 
 experiment:
   name: Basic Experiment
@@ -78,32 +78,21 @@ experiment:
 plotting:
   plots:
       - type: line
-        x: rho
-        y:
-          - data: ppi_widths
+        x: noise
+        y_metric: ci_width
+        y_techniques:
+          - technique: ppi
             label: PPI Widths
-          - data: naive_widths
+          - technique: naive
             label: Naive Widths
-          - data: classic_widths
+          - technique: classical
             label: Classic Widths
         title: Widths vs rho (noise)
         x_label: Rho values
         y_label: Widths
         file_name: widthsplot.png
         show: False
-      - type: violin
-        y:
-          - data: ppi_widths
-            label: PPI Widths
-          - data: naive_widths
-            label: Naive Widths
-          - data: classic_widths
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Method
-        y_label: Widths
-        file_name: widthsviolin.png
-        show: True
+      
 
 reproducibility:
   seed: 42

@@ -18,6 +18,7 @@ import logging
 import shutil
 
 import ppi
+from plotting import plot_data
 
 
 # colored text
@@ -149,6 +150,8 @@ def main(config: dict):
     # use pd to csv
 
     results.to_csv(os.path.join(config['paths']['results_path'], 'results.csv'))
+
+    plot_data(results, config)
     
     return
 
