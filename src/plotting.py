@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import yaml
 import os
+import numpy as np
 
 def line_plot(data, plot_config, config, x=None):
     """
@@ -23,8 +24,19 @@ def line_plot(data, plot_config, config, x=None):
         for tech in plot_config['y_techniques']:
             # create a df with only the data for the technique
             tech_data = data[data['technique'] == tech['technique']]
-            plt.plot(tech_data[x], tech_data[plot_config.get('y_metric', None)], label=tech['label'])
-            
+            x_values = config['experiment']['ind_var']['vals']
+            ind_var = config['experiment']['ind_var']['name']
+            y_means = []
+            y_lower_percentiles = []
+            y_upper_percentiles = []
+            for x_val in x_values:
+                y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['y_metric']]
+                y_means.append(np.mean(y_series))
+                y_lower_percentiles.append(np.percentile(y_series, 10))
+                y_upper_percentiles.append(np.percentile(y_series, 90))
+            plt.plot(tech_data[x], y_means, label=tech['label'], alpha=0.7)
+            plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.2)
+
 
     # Add labels and title
     plt.xlabel(plot_config['x_label'])
@@ -71,8 +83,7 @@ def plot_results(data, config):
     summary:
     plot the results
     """
-    plot_config = config['plotting']
-    for plot in plot_config['plots']:
+    for plot in config['plotting']['plots']:
         if plot['type'] == 'line':
             line_plot(data, plot, config)
         elif plot['type'] == 'violin':
