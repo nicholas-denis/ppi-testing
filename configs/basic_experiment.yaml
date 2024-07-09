@@ -3,7 +3,7 @@ paths:
   configs_path: ../configs/
   experiments_path: ../experiments/
   data_path: ../data/
-  plotting_path: ./experiments/Sample_experiment_keep_3\plots
+  plotting_path: ./experiments/Keep_5\plots
 
 experiment:
   name: Basic Experiment
@@ -11,39 +11,39 @@ experiment:
     training_population:
       x_population: 
         distribution: gamma_univariate
-        alpha: 1
-        beta: 1
+        alpha: 2
+        beta: 2
         size: 10000
       y_population:
         transformation: linear_univariate  # linear_univariate, random, or custom
-        m: 2
+        m: 4
         rho: None
         b: 0
     gold_population:
       x_population: 
         distribution: gamma_univariate
-        alpha: 1
-        beta: 1
+        alpha: 2
+        beta: 2
         size: 10000
       y_population:
         transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
-        m: 2
+        m: 4
         rho: None
         b: 0
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
-        alpha: 1
-        beta: 1
+        alpha: 2
+        beta: 2
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: linear_univariate  # linear_univariate, random, or custom
-        m: 2
+        m: 4
         rho: None
         b: 0
-    true_value: 2  # Compute this yourself, if not available, set to None
-    n_its: 2
+    true_value: 8  # Compute this yourself, if not available, set to None
+    n_its: 10000
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
@@ -68,8 +68,8 @@ experiment:
     - type: ppi
     - type: naive
     - type: classical
-    #- type: ppi_pp
-    #  lambda: 0.1
+    - type: ppi_pp
+      lambda: None  # Set None here for estimated optimal lambda
     #- type: stratified_ppi
   metrics:  # Make sure these are plural
     - widths
@@ -82,8 +82,6 @@ plotting:
         y_techniques:
           - technique: ppi
             label: PPI Widths
-          - technique: naive
-            label: Naive Widths
           - technique: classical
             label: Classic Widths
         title: Widths vs rho (noise)
@@ -97,8 +95,6 @@ plotting:
         y_techniques:
           - technique: ppi
             label: PPI Widths
-          - technique: naive
-            label: Naive Widths
           - technique: classical
             label: Classic Widths
         title: Widths vs rho (noise)

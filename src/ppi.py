@@ -49,9 +49,9 @@ def compute_metrics(config, conf_int):
 
 def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0):
     alpha = 1 - conf
-    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha)
+    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha, lam=lam)
     ci = (ci[0][0], ci[1][0])  # Remove the array
-    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted)[0], ci
+    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted, lam=lam)[0], ci
 
 def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
@@ -215,14 +215,12 @@ def experiment(config):
             temp = config
             for key in keys[:-1]:
                 temp = temp[key]
-            # Copilot code, I don't know if this is correct. It should be.
-            # Assign a new value to the last key
             temp[keys[-1]] = x
         for i in range(params['n_its']):
             # single iteration of the experiment
             iter_metrics = single_iteration(config) 
             iter_metrics['iteration'] = [i] * num_methods
-            iter_metrics[ind_var] = [x] * (params['n_its'] * num_methods)
+            iter_metrics[ind_var] = [x] * num_methods
             metrics = extend_metrics(metrics, iter_metrics)
         # end timing
         end = time.time()
@@ -233,8 +231,6 @@ def experiment(config):
     #plot_metrics(primary_means, config)
 
     # Create a dataframe of the metrics
-
-    print(metrics)
 
     metrics_df = pd.DataFrame(metrics)
 

@@ -1,0 +1,85 @@
+ppi_widths, 0       [9.17057550291422]
+1     [1.3982806938607897]
+2    [0.28740421117920323]
+3    [0.05045205989320056]
+Name: ppi_widths, dtype: object
+naive_widths, 0    4.590731
+1    0.700250
+2    0.147731
+3    0.047413
+Name: naive_widths, dtype: float64
+classical_widths, 0    9.173476
+1    1.399643
+2    0.290445
+3    0.067931
+Name: classical_widths, dtype: float64
+ppi_preds, 0     [1.005010457217001]
+1    [1.9814038384404866]
+2    [1.9469933362881702]
+3    [1.9899518246669028]
+Name: ppi_preds, dtype: object
+ppi_lowers, 0    [-3.580277294240109]
+1     [1.282263491510092]
+2    [1.8032912306985687]
+3    [1.9647257947203025]
+Name: ppi_lowers, dtype: object
+ppi_uppers, 0    [5.5902982086741115]
+1    [2.6805441853708816]
+2     [2.090695441877772]
+3     [2.015177854613503]
+Name: ppi_uppers, dtype: object
+naive_preds, 0    2.583883
+1    1.760136
+2    1.979732
+3    1.995662
+Name: naive_preds, dtype: float64
+naive_lowers, 0    0.288518
+1    1.410012
+2    1.905867
+3    1.971956
+Name: naive_lowers, dtype: float64
+naive_uppers, 0    4.879248
+1    2.110261
+2    2.053598
+3    2.019369
+Name: naive_uppers, dtype: float64
+classical_preds, 0    0.982890
+1    1.997497
+2    1.950315
+3    1.984090
+Name: classical_preds, dtype: float64
+classical_lowers, 0   -3.603848
+1    1.297676
+2    1.805093
+3    1.950125
+Name: classical_lowers, dtype: float64
+classical_uppers, 0    5.569628
+1    2.697319
+2    2.095538
+3    2.018055
+Name: classical_uppers, dtype: float64
+ppi_coverages, 0    1.0
+1    1.0
+2    1.0
+3    1.0
+Name: ppi_coverages, dtype: float64
+naive_coverages, 0    1.0
+1    1.0
+2    1.0
+3    1.0
+Name: naive_coverages, dtype: float64
+classical_coverages, 0    1.0
+1    1.0
+2    1.0
+3    1.0
+Name: classical_coverages, dtype: float64
+rho, 0    0.10
+1    0.25
+2    0.50
+3    0.90
+Name: rho, dtype: float64
+iteration, 0    0
+1    0
+2    0
+3    0
+Name: iteration, dtype: int64

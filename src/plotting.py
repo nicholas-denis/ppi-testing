@@ -34,8 +34,8 @@ def line_plot(data, plot_config, config, x=None):
                 y_means.append(np.mean(y_series))
                 y_lower_percentiles.append(np.percentile(y_series, 10))
                 y_upper_percentiles.append(np.percentile(y_series, 90))
-            plt.plot(tech_data[x], y_means, label=tech['label'], alpha=0.7)
-            plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.2)
+            plt.plot(x_values, y_means, label=tech['label'], alpha=0.7)
+            plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
 
 
     # Add labels and title
@@ -49,10 +49,10 @@ def line_plot(data, plot_config, config, x=None):
 
     plt.savefig(os.path.join(config['paths']['plotting_path'], plot_config['file_name']), bbox_inches='tight')
 
-    plt.plot(data)
-
     if plot_config.get('show', None):
         plt.show()
+    
+    plt.close()
 
 def violin_plot(data, plot_config, config):
     """
@@ -78,7 +78,7 @@ def violin_plot(data, plot_config, config):
             # turn y_series into a list
             y_series = y_series.tolist()
             list_of_y_series.append(y_series)
-        axs[id].violinplot(list_of_y_series, x_values, showmeans=True, showmedians=True, widths=0.1)
+        axs[id].violinplot(list_of_y_series, x_values, showmeans=True, showmedians=True, widths=0.15)
         axs[id].set_title(tech['label'])
 
     # Save figure
@@ -86,6 +86,9 @@ def violin_plot(data, plot_config, config):
 
     if plot_config.get('show', None):
         plt.show()
+
+    # close the figure
+    plt.close()
 
 def plot_results(data, config):
     """
@@ -106,7 +109,7 @@ def plot_results(data, config):
 
 if __name__ == "__main__":
     # Load the data
-    data = pd.read_csv('./experiments/Sample_experiment_keep_3/results/results.csv')
+    data = pd.read_csv('./experiments/Keep_5/results/results.csv')
     config = yaml.load(open('./configs/basic_experiment.yaml'), Loader=yaml.FullLoader)
 
     # Plot the data
