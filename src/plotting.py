@@ -65,17 +65,26 @@ def violin_plot(data, plot_config, config):
     data: pd dataframe
     plot_config: dict, plot configuration
     """
-    for y in plot_config['y']:
-        plt.violinplot(data[y], showmeans=True, showmedians=True)
+    # Create a figure 
+    num_techs = len(plot_config['y_techniques'])
+    figs, axs = plt.subplots(nrows = num_techs, ncols=1, figsize=(10, 10))
+    for id, tech in enumerate(plot_config['y_techniques']):
+        tech_data = data[data['technique'] == tech['technique']] # isolate the data for the technique
+        x_values = config['experiment']['ind_var']['vals']
+        ind_var = config['experiment']['ind_var']['name']
+        list_of_y_series = []
+        for x_val in x_values:
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['y_metric']] # isolate the x values
+            # turn y_series into a list
+            y_series = y_series.tolist()
+            list_of_y_series.append(y_series)
+        axs[id].violinplot(list_of_y_series, x_values, showmeans=True, showmedians=True, widths=0.1)
+        axs[id].set_title(tech['label'])
 
-    # Add labels and title
-    plt.xlabel(plot_config['x_label'])
-    plt.ylabel(plot_config['y_label'])
-    plt.title(plot_config['title'])
-
+    # Save figure
     plt.savefig(os.path.join(config['paths']['plotting_path'], plot_config['file_name']), bbox_inches='tight')
 
-    if plot_config.get('show'):
+    if plot_config.get('show', None):
         plt.show()
 
 def plot_results(data, config):

@@ -43,7 +43,7 @@ experiment:
         rho: None
         b: 0
     true_value: 2  # Compute this yourself, if not available, set to None
-    n_its: 2
+    n_its: 1
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
@@ -90,21 +90,6 @@ plotting:
         x_label: Method
         y_label: Widths
         file_name: widthsviolin.png
-        show: False
-      - type: line
-        x: noise
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: classical
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Rho values
-        y_label: Widths
-        file_name: widthsplot.png
         show: False
       
 

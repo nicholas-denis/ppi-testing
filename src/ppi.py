@@ -234,6 +234,8 @@ def experiment(config):
 
     # Create a dataframe of the metrics
 
+    print(metrics)
+
     metrics_df = pd.DataFrame(metrics)
 
     return metrics_df
