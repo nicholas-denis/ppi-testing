@@ -16,6 +16,8 @@ def line_plot(data, plot_config, config, x=None):
     plot_config: dict, plot configuration
     config: dict, general experiment config file
     """
+    style_ordering = ['-', '--', '-.', ':']
+    style_num = 0
     if x:
         for y in plot_config['y']:
             plt.plot(x, data[y], label=plot_config['y'][y]['label'])
@@ -34,8 +36,9 @@ def line_plot(data, plot_config, config, x=None):
                 y_means.append(np.mean(y_series))
                 y_lower_percentiles.append(np.percentile(y_series, 10))
                 y_upper_percentiles.append(np.percentile(y_series, 90))
-            plt.plot(x_values, y_means, label=tech['label'], alpha=0.7)
+            plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
             plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
+            style_num += 1
 
 
     # Add labels and title
@@ -53,6 +56,56 @@ def line_plot(data, plot_config, config, x=None):
         plt.show()
     
     plt.close()
+
+def coverage_plot(data, plot_config, config):
+    """
+    Plot the coverage of the confidence intervals
+    """
+    style_ordering = ['-', '--', '-.', ':']
+    style_num = 0
+    x = plot_config['x']
+    for tech in plot_config['y_techniques']:
+        # create a df with only the data for the technique
+        tech_data = data[data['technique'] == tech['technique']]
+        x_values = config['experiment']['ind_var']['vals']
+        ind_var = config['experiment']['ind_var']['name']
+        y_means = []
+        for x_val in x_values:
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['empirical_coverage']]
+            y_means.append(np.mean(y_series))
+        plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, linestyle=style_ordering[style_num % 4])
+        style_num += 1
+    plt.plot(x_values, [config['experiment']['parameters']['confidence_level']] * len(x_values), color='black')
+
+    # Add labels and title
+    plt.xlabel(plot_config['x_label'])
+    plt.ylabel(plot_config['y_label'])
+    plt.title(plot_config['title'])
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()  # Adjusts the spacing to prevent legend cutoff
+
+    # create a plot file and save it a the plotting path
+
+    plt.savefig(os.path.join(config['paths']['plotting_path'], plot_config['file_name']), bbox_inches='tight')
+
+    if plot_config.get('show', None):
+        plt.show()
+    
+    plt.close()
+
+
+def line_plot_generic(data, x_col, y_cols):
+    """
+    Line plotting function that does not require a configuration file
+    """
+    for y in y_cols:
+        plt.plot(data[x_col], np.mean(data[y]), label=y)
+        plt.fill_between(data[x_col], np.percentile(data[y], 10), np.percentile(data[y], 90), alpha=0.5)
+    plt.xlabel(x_col)
+    plt.ylabel('Value')
+    plt.title('Line Plot')
+    plt.legend()
+    plt.show()
 
 def violin_plot(data, plot_config, config):
     """
@@ -95,14 +148,15 @@ def plot_results(data, config):
     summary:
     plot the results
     """
-    for plot in config['plotting']['plots']:
-        if plot['type'] == 'line':
-            line_plot(data, plot, config)
-        elif plot['type'] == 'violin':
-            violin_plot(data, plot, config)
+    for plot_config in config['plotting']['plots']:
+        if plot_config['type'] == 'line':
+            line_plot(data, plot_config, config)
+        elif plot_config['type'] == 'violin':
+            violin_plot(data, plot_config, config)
+        elif plot_config['type'] == 'coverage':
+            coverage_plot(data, plot_config, config)
         else:
-            raise ValueError(f"Plot type {plot['type']} not supported")
-        
+            raise ValueError(f"Plot type {plot_config['type']} not supported")
     return
 
 # Testing
