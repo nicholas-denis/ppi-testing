@@ -93,6 +93,45 @@ def coverage_plot(data, plot_config, config):
     
     plt.close()
 
+def sample_plot(data, plot_config, config):
+    """
+    Take 5 samples from each method, graph their confidence intervals
+    """
+    colour_ordering = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    colour_num = 0
+    method_count = 0
+
+    for tech in plot_config['y_techniques']:
+        # create a df with only the data for the technique
+        tech_data = data[data['technique'] == tech['technique']]
+        x_values = config['experiment']['ind_var']['vals']
+        ind_var = config['experiment']['ind_var']['name']
+        for x_val in x_values:
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, [plot_config['ci_lower'], plot_config['ci_upper']]]
+            y_series = y_series.sample(n=5)
+            ci_list = [(y_series.iloc[i][0], y_series.iloc[i][1]) for i in range(5)]
+            for i in range(5):
+                plt.plot(ci_list[i], ((method_count + i)/5, (method_count + i)/5), 
+                         'ro-', color=colour_ordering[colour_num % 7])
+        method_count += 5
+        colour_num += 1
+
+    plt.axvline(x=config['experiment']['parameters']['true_value'], color='blue', linestyle='--')
+    ax = plt.gca()
+    ax.get_yaxis().set_visible(False)
+
+    plt.xlabel(plot_config.get('x_label', ''))
+    plt.title(plot_config.get('title', ''))
+    plt.tight_layout()  # Adjusts the spacing to prevent legend cutoff
+    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+
+    plt.savefig(os.path.join(config['paths']['plotting_path'], plot_config['file_name']), bbox_inches='tight')
+    
+    if plot_config.get('show', None):
+        plt.show()
+
+    plt.close()
+
 
 def line_plot_generic(data, x_col, y_cols):
     """
@@ -155,6 +194,8 @@ def plot_results(data, config):
             violin_plot(data, plot_config, config)
         elif plot_config['type'] == 'coverage':
             coverage_plot(data, plot_config, config)
+        elif plot_config['type'] == 'sample':
+            sample_plot(data, plot_config, config)
         else:
             raise ValueError(f"Plot type {plot_config['type']} not supported")
     return
