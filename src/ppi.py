@@ -168,6 +168,8 @@ def create_metrics_dict(config):
     metrics['technique'] = []
     metrics['model'] = []
     metrics['iteration'] = []
+    metrics['test_error'] = []
+    metrics['true_bias'] = []
 
     return metrics
 
@@ -235,3 +237,13 @@ def experiment(config):
     metrics_df = pd.DataFrame(metrics)
 
     return metrics_df
+
+
+# To discuss tomorrow:
+# - Gamma dist transformed can be negative, we're not trying to estimate a negative dist
+#      - The point is we run into truncating roblems. 
+#      - Multiplicative error, just keeps the distribution.
+# - Best practice to estimate mean if true mean isn't available
+#      - About 1000 samples.
+# - Ratio estimator, constructing CI, I have some but not sure if they're the best
+# - IND var testing points

@@ -63,6 +63,7 @@ experiment:
   model:
     name: linear_regression
     # parameters: Will add later
+  true_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
     - type: ppi
