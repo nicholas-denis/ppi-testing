@@ -104,6 +104,8 @@ def single_iteration(config):
     x_gold, y_gold = dist.sample_population(config['experiment']['parameters']['gold_population'])
     x_ppi, y_ppi = dist.sample_population(config['experiment']['parameters']['unlabelled_population'])
 
+    true_value = np.mean(y_ppi)
+
     x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
 
     model = ml.train_model(x_train, y_train, config['experiment']['model'])  # Placeholder
@@ -170,6 +172,8 @@ def create_metrics_dict(config):
     metrics['iteration'] = []
     metrics['test_error'] = []
     metrics['true_bias'] = []
+
+    # Relative bias: take (theta_hat - theta)/theta, then take the mean. 
 
     return metrics
 
