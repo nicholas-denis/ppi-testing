@@ -35,6 +35,10 @@ def compute_metrics(config, conf_int):
     metrics['ci_high'] = [conf_int[1][1]]
     metrics['desired_coverage'] = [config['experiment']['parameters'].get('confidence_level', None)]
     metrics['noise'] = [config['experiment']['parameters'].get('rho', None)]  # Temporary, needs to be changed later
+    if config['experiment']['parameters'].get('true_value', None) is not 0:
+        metrics['relative_bias'] = [(conf_int[0] - config['experiment']['parameters']['true_value'])/config['experiment']['parameters']['true_value']]
+    else:
+        metrics['relative_bias'] = [np.nan]
     for metric in config['experiment']['metrics']:
         if metric == 'widths':
             metrics['ci_width'] = [conf_int[1][1] - conf_int[1][0]]
@@ -66,15 +70,58 @@ def do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
     return classical_theta, (classical_theta - h, classical_theta + h)
 
+def ratio_estimator_variance(x_ppi, x_gold, y_gold):
+    # sample sizes
+    x_ppi = x_ppi.reshape(1, -1)
+    x_gold = x_gold.reshape(1, -1)
+    y_gold = y_gold.reshape(1, -1)
+    n_ppi = x_ppi.shape[1]
+    n_gold = x_gold.shape[1]
 
-def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method):
+    # means
+    x_ppi_bar = np.mean(x_ppi)
+    x_gold_bar = np.mean(x_gold)
+    y_gold_bar = np.mean(y_gold)
+    r_hat = y_gold_bar / x_gold_bar
+
+    # variances
+    x_sample_var = np.var(x_gold, axis=1, ddof=1)
+    y_sample_var = np.var(y_gold, axis=1, ddof=1)
+    xy_cov = np.sum((x_gold - x_gold_bar) * (y_gold - y_gold_bar)) / (n_gold - 1)
+
+    var = (1 - n_gold / n_ppi) * (1 / n_gold) * (y_sample_var**2 + r_hat**2 * x_sample_var**2 - 2 * r_hat * xy_cov)
+    return var
+
+def do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, dof=1, t_dist=True):
+    x_bar_gold = np.mean(x_gold)
+    y_bar_gold = np.mean(y_gold)
+    x_bar_ppi = np.mean(x_ppi)
+    mean_estimate = x_bar_ppi * y_bar_gold / x_bar_gold
+    var = ratio_estimator_variance(x_ppi, x_gold, y_gold)
+
+    # Shouldn't use t-distribution for this, as the estimate is generally skewed.
+    # See: https://en.wikipedia.org/wiki/Ratio_estimator
+    # We use Vysochanskij-Petunin inequality to get a conservative estimate
+    # Aka, statistical assumptions are violated. 
+
+    if t_dist:
+        lower = mean_estimate - stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
+        upper = mean_estimate + stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
+    else:
+        lamb = np.sqrt(4 / (9 * conf))
+        lower = lamb * np.sqrt(var) - mean_estimate
+        upper = lamb * np.sqrt(var) + mean_estimate
+    
+    return mean_estimate, (lower, upper)
+
+def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=None, x_gold=None):
     """
     Computes confidence interval and estimate for a single method
     """
     conf = config['experiment']['parameters'].get('confidence', 0.9)
     if config['experiment']['estimate'] == 'mean':
         if method == 'ppi':
-            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
+            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0)
         elif method == 'naive':
             return do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
         elif method == 'classical':
@@ -83,6 +130,8 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method):
             return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=config['experiment']['parameters']['lam'])
         elif method == 'stratified_ppi':
             print("Yet to be implemented")
+        elif method == 'ratio':
+            return do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, t_dist=method['t_dist'])
         else:
             print("Method not recognized")
     else:
@@ -100,11 +149,16 @@ def single_iteration(config):
     - Training
     - Residual testing
     """
+    num_methods = len(config['experiment']['methods'])
+
     x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
     x_gold, y_gold = dist.sample_population(config['experiment']['parameters']['gold_population'])
     x_ppi, y_ppi = dist.sample_population(config['experiment']['parameters']['unlabelled_population'])
 
-    true_value = np.mean(y_ppi)
+    if config['experiment']['parameters'].get('true_value', None) is None:
+        # Do not change this to an if not statement in case 'true_value' is 0
+        true_value = np.mean(y_ppi)
+        config['experiment']['parameters']['true_value'] = true_value
 
     x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
 
@@ -121,16 +175,24 @@ def single_iteration(config):
     # Manual rectifier computation
     rectifier = np.mean(y_gold_fitted - y_ppi)
 
-    # True bias computation if called for
+    # Model bias computation if called for
     if config['experiment']['parameters']['unlabelled_population'].get('include', False):
-        true_bias = np.mean(y_fitted - y_ppi)
+        model_bias = np.mean(y_fitted - y_ppi)
 
     # Confidence interval computation
 
     metrics = create_metrics_dict(config)
 
+    if 'model_bias' in metrics:
+        metrics['model_bias'] = [model_bias] * num_methods
+    metrics['test_error'] = [residual] * num_methods
+    metrics['rectifier'] = [rectifier] * num_methods
+
+
     for method in config['experiment']['methods']:
-        ci_results = compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method['type'])
+        ci_results = compute_ci_singular(config, y_gold, y_gold_fitted,
+                                          y_fitted, method['type'],
+                                            x_ppi=x_ppi, x_bar_gold=x_gold)
         method_metrics = compute_metrics(config, ci_results)
         method_metrics['technique'] = [method['type']]
         method_metrics['model'] = [config['experiment']['model'].get('name', None)] 
@@ -171,9 +233,11 @@ def create_metrics_dict(config):
     metrics['model'] = []
     metrics['iteration'] = []
     metrics['test_error'] = []
-    metrics['true_bias'] = []
+    metrics['rectifier'] = []
+    metrics['relative_bias'] = []
 
-    # Relative bias: take (theta_hat - theta)/theta, then take the mean. 
+    if config['experiment']['parameters'].get('model_bias', False):
+        metrics['model_bias'] = []
 
     return metrics
 

@@ -63,7 +63,7 @@ experiment:
   model:
     name: linear_regression
     # parameters: Will add later
-  true_bias: True  # If false, will not calculate.
+  model_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
     - type: ppi
@@ -71,6 +71,8 @@ experiment:
     - type: classical
     - type: ppi_pp
       lambda: None  # Set None here for estimated optimal lambda
+    - type: ratio
+      t_dist: True
     #- type: stratified_ppi
   metrics:  # Make sure these are plural
     - widths
