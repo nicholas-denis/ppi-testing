@@ -7,6 +7,8 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 import scipy.stats as stats
 import pandas as pd
+import optuna
+import xgboost as xgb
 
 import yaml
 import os
@@ -43,6 +45,52 @@ def build_fit_rf(x, y, model_config):
     """
     model = RandomForestRegressor()
     model.fit(x ,y)
+    return model
+
+def build_rf_optuna(x, y, model_config):
+    """
+    Build a random forest model with optuna hyperparameter optimization
+    """
+    def objective(trial):
+        n_estimators = trial.suggest_int('n_estimators', 2, 150)
+        max_depth = trial.suggest_int('max_depth', 1, 32)
+        model = RandomForestRegressor(n_estimators=n_estimators, max_depth=max_depth)
+        x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2)
+        model.fit(x_train, y_train)
+        return np.mean((model.predict(x_val) - y_val) ** 2)
+
+    study = optuna.create_study(direction='minimize')
+    study.optimize(objective, n_trials=100)
+    best_params = study.best_params
+    model = RandomForestRegressor(n_estimators=best_params['n_estimators'], max_depth=best_params['max_depth'])
+    model.fit(x, y)
+    return model
+
+def build_xgb(x, y, model_config):
+    """
+    Build an xgboost model
+    """
+    model = xgb.XGBRegressor()
+    model.fit(x, y)
+    return model
+
+def build_xgb_optuna(x, y, model_config):
+    """
+    Build an xgboost model with optuna hyperparameter optimization
+    """
+    def objective(trial):
+        n_estimators = trial.suggest_int('n_estimators', 2, 150)
+        max_depth = trial.suggest_int('max_depth', 1, 32)
+        model = xgb.XGBRegressor(n_estimators=n_estimators, max_depth=max_depth)
+        x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2)
+        model.fit(x_train, y_train)
+        return np.mean((model.predict(x_val) - y_val) ** 2)
+
+    study = optuna.create_study(direction='minimize')
+    study.optimize(objective, n_trials=100)
+    best_params = study.best_params
+    model = xgb.XGBRegressor(n_estimators=best_params['n_estimators'], max_depth=best_params['max_depth'])
+    model.fit(x, y)
     return model
 
 def train_model(x_train, y_train, model_config):
