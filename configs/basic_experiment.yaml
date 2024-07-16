@@ -3,7 +3,6 @@ paths:
   configs_path: ../configs/
   experiments_path: ../experiments/
   data_path: ../data/
-  plotting_path: ./experiments/Keep_5\plots
 
 experiment:
   name: Basic Experiment
@@ -17,18 +16,18 @@ experiment:
       y_population:
         transformation: linear_univariate  # linear_univariate, random, or custom
         m: 4
-        rho: None
+        rho: null
         b: 0
     gold_population:
       x_population: 
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 10000
+        size: 100
       y_population:
         transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
-        rho: None
+        rho: null
         b: 0
     unlabelled_population:
       x_population: 
@@ -40,7 +39,7 @@ experiment:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: linear_univariate  # linear_univariate, random, or custom
         m: 4
-        rho: None
+        rho: null
         b: 0
     true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 10000
@@ -71,7 +70,7 @@ experiment:
     - type: naive
     - type: classical
     - type: ppi_pp
-      lambda: None  # Set None here for estimated optimal lambda
+      lhat: null  # Set None here for estimated optimal lambda
     - type: ratio
       t_dist: True
     #- type: stratified_ppi

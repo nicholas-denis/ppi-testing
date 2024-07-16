@@ -51,11 +51,11 @@ def compute_metrics(config, conf_int):
     return metrics
 
 
-def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0):
+def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=1.0):
     alpha = 1 - conf
-    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha, lam=lam)
+    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha)
     ci = (ci[0][0], ci[1][0])  # Remove the array
-    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted, lam=lam)[0], ci
+    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted, lhat=lhat)[0], ci
 
 def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
@@ -118,20 +118,21 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
     """
     Computes confidence interval and estimate for a single method
     """
-    conf = config['experiment']['parameters'].get('confidence', 0.9)
+    method_type = method['type']
+    conf = config['experiment']['parameters'].get('confidence_level', 0.9)
     if config['experiment']['estimate'] == 'mean':
-        if method == 'ppi':
-            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=1.0)
-        elif method == 'naive':
+        if method_type == 'ppi':
+            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=1.0)
+        elif method_type == 'naive':
             return do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
-        elif method == 'classical':
+        elif method_type == 'classical':
             return do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
-        elif method == 'ppi_pp':
-            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lam=config['experiment']['parameters']['lam'])
-        elif method == 'stratified_ppi':
+        elif method_type == 'ppi_pp':
+            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=method['lhat'])
+        elif method_type == 'stratified_ppi':
             print("Yet to be implemented")
-        elif method == 'ratio':
-            return do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, t_dist=method['t_dist'])
+        elif method_type == 'ratio':
+            return do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, t_dist=method.get('t_dist', False))
         else:
             print("Method not recognized")
     else:
@@ -191,8 +192,8 @@ def single_iteration(config):
 
     for method in config['experiment']['methods']:
         ci_results = compute_ci_singular(config, y_gold, y_gold_fitted,
-                                          y_fitted, method['type'],
-                                            x_ppi=x_ppi, x_bar_gold=x_gold)
+                                          y_fitted, method,
+                                            x_ppi=x_ppi, x_gold=x_gold)
         method_metrics = compute_metrics(config, ci_results)
         method_metrics['technique'] = [method['type']]
         method_metrics['model'] = [config['experiment']['model'].get('name', None)] 
