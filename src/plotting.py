@@ -4,7 +4,7 @@ import yaml
 import os
 import numpy as np
 
-def line_plot(data, plot_config, config, x=None):
+def line_plot(data, plot_config, config, x_lab=None):
     """
     summary:
     plot a line plot
@@ -18,33 +18,31 @@ def line_plot(data, plot_config, config, x=None):
     """
     style_ordering = ['-', '--', '-.', ':']
     style_num = 0
-    if x:
-        for y in plot_config['y']:
-            plt.plot(x, data[y], label=plot_config['y'][y]['label'])
-    else:
-        x = plot_config['x']
-        for tech in plot_config['y_techniques']:
-            # create a df with only the data for the technique
-            tech_data = data[data['technique'] == tech['technique']]
-            x_values = config['experiment']['ind_var']['vals']
-            ind_var = config['experiment']['ind_var']['name']
-            y_means = []
-            y_lower_percentiles = []
-            y_upper_percentiles = []
-            for x_val in x_values:
-                y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['y_metric']]
-                y_means.append(np.mean(y_series))
-                y_lower_percentiles.append(np.percentile(y_series, 10))
-                y_upper_percentiles.append(np.percentile(y_series, 90))
-            plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
-            plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
-            style_num += 1
+    x = plot_config.get('x', None)
+    if x_lab:
+        x = x_lab
+    for tech in plot_config['y_techniques']:
+        # create a df with only the data for the technique
+        tech_data = data[data['technique'] == tech['technique']]
+        x_values = config['experiment']['ind_var']['vals']
+        ind_var = config['experiment']['ind_var']['name']
+        y_means = []
+        y_lower_percentiles = []
+        y_upper_percentiles = []
+        for x_val in x_values:
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['y_metric']]
+            y_means.append(np.mean(y_series))
+            y_lower_percentiles.append(np.percentile(y_series, 10))
+            y_upper_percentiles.append(np.percentile(y_series, 90))
+        plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
+        plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
+        style_num += 1
 
 
     # Add labels and title
-    plt.xlabel(plot_config['x_label'])
-    plt.ylabel(plot_config['y_label'])
-    plt.title(plot_config['title'])
+    plt.xlabel(plot_config.get('x_label', ''))
+    plt.title(plot_config.get('title', ''))
+    plt.title(plot_config.get('title', ''))
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()  # Adjusts the spacing to prevent legend cutoff
 
@@ -71,16 +69,16 @@ def coverage_plot(data, plot_config, config):
         ind_var = config['experiment']['ind_var']['name']
         y_means = []
         for x_val in x_values:
-            y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['empirical_coverage']]
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, 'empirical_coverage']
             y_means.append(np.mean(y_series))
         plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, linestyle=style_ordering[style_num % 4])
         style_num += 1
     plt.plot(x_values, [config['experiment']['parameters']['confidence_level']] * len(x_values), color='black')
 
     # Add labels and title
-    plt.xlabel(plot_config['x_label'])
-    plt.ylabel(plot_config['y_label'])
-    plt.title(plot_config['title'])
+    plt.xlabel(plot_config.get('x_label', ''))
+    plt.ylabel('Empirical Coverage')
+    plt.title(plot_config.get('title', ''))
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
     plt.tight_layout()  # Adjusts the spacing to prevent legend cutoff
 
@@ -97,33 +95,38 @@ def sample_plot(data, plot_config, config):
     """
     Take 5 samples from each method, graph their confidence intervals
     """
-    colour_ordering = ['b', 'g', 'r', 'c', 'm', 'y', 'k']
+    # ignorematplotlib warnings
+    plt.rcParams.update({'figure.max_open_warning': 0})
+
+
+    colour_ordering = ['b', 'g', 'r', 'c', 'm', 'k']
     colour_num = 0
     method_count = 0
+
+    num_x_vals = len(config['experiment']['ind_var']['vals'])
+    # create a figure with num_x_vals subplots
+    fig, axs = plt.subplots(num_x_vals, 1, figsize=(10, 10))
 
     for tech in plot_config['y_techniques']:
         # create a df with only the data for the technique
         tech_data = data[data['technique'] == tech['technique']]
         x_values = config['experiment']['ind_var']['vals']
         ind_var = config['experiment']['ind_var']['name']
-        for x_val in x_values:
-            y_series = tech_data.loc[tech_data[ind_var] == x_val, [plot_config['ci_lower'], plot_config['ci_upper']]]
+        for id, x_val in enumerate(x_values):
+            y_series = tech_data.loc[tech_data[ind_var] == x_val, ['ci_low', 'ci_high']]
             y_series = y_series.sample(n=5)
             ci_list = [(y_series.iloc[i][0], y_series.iloc[i][1]) for i in range(5)]
             for i in range(5):
-                plt.plot(ci_list[i], ((method_count + i)/5, (method_count + i)/5), 
-                         'ro-', color=colour_ordering[colour_num % 7])
+                axs[id].plot(ci_list[i], ((method_count + i)/5, (method_count + i)/5),
+                             color=colour_ordering[colour_num % len(colour_ordering)])
+                axs[id].axvline(x=config['experiment']['parameters']['true_value'], color='y', linestyle='--')
+                # remove the y axis 
+                axs[id].get_yaxis().set_visible(False)
         method_count += 5
         colour_num += 1
 
-    plt.axvline(x=config['experiment']['parameters']['true_value'], color='blue', linestyle='--')
-    ax = plt.gca()
-    ax.get_yaxis().set_visible(False)
-
-    plt.xlabel(plot_config.get('x_label', ''))
-    plt.title(plot_config.get('title', ''))
-    plt.tight_layout()  # Adjusts the spacing to prevent legend cutoff
-    plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+    
+    fig.suptitle(plot_config.get('title', ''))
 
     plt.savefig(os.path.join(config['paths']['plotting_path'], plot_config['file_name']), bbox_inches='tight')
     
@@ -181,6 +184,7 @@ def violin_plot(data, plot_config, config):
 
     # close the figure
     plt.close()
+    
 
 def plot_results(data, config):
     """

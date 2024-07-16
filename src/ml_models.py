@@ -93,7 +93,7 @@ def build_xgb_optuna(x, y, model_config):
     model.fit(x, y)
     return model
 
-def train_model(x_train, y_train, model_config):
+def train_model_old(x_train, y_train, model_config):
     """
     Train a model based on the configuration
 
@@ -110,7 +110,45 @@ def train_model(x_train, y_train, model_config):
     elif model_config['name'] == 'decision_tree':
         model = build_fit_dt(x_train, y_train, model_config)
     elif model_config['name'] == 'random_forest':
-        model = build_fit_rf(x_train, y_train, model_config)
+        if model_config.get('optuna', False):
+            model = build_rf_optuna(x_train, y_train, model_config)
+        else:
+            model = build_fit_rf(x_train, y_train, model_config)
+    elif model_config['name'] == 'xgboost':
+        if model_config.get('optuna', False):
+            model = build_xgb_optuna(x_train, y_train, model_config)
+        else:
+            model = build_xgb(x_train, y_train, model_config)
     else:
         raise ValueError("Model not supported")
+    return model
+
+def train_model(x_train, y_train, model_config):
+    """
+    Train a model based on the configuration
+
+    Args:
+    x_train (np.array): training x
+    y_train (np.array): training y
+    model_config (dict): configuration for the model
+
+    Returns:
+    model: trained model
+    """
+    # Mapping of model names to their build functions
+    model_builders = {
+        'linear_regression': build_fit_slr,
+        'decision_tree': build_fit_dt,
+        'random_forest': build_rf_optuna if model_config.get('optuna', False) else build_fit_rf,
+        'xgboost': build_xgb_optuna if model_config.get('optuna', False) else build_xgb,
+    }
+
+    # Get the build function based on the model name
+    build_function = model_builders.get(model_config['name'])
+
+    if build_function:
+        model = build_function(x_train, y_train, model_config)
+    else:
+        raise ValueError("Model not supported")
+
     return model
