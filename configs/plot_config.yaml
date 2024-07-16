@@ -1,30 +1,29 @@
 plots:
-      - type: line
-        x: noise
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: classical
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Rho values
-        y_label: Widths
-        file_name: widthsplot.png
-        show: False
-
-- type: violin
-        y:
-          - data: ppi_widths
-            label: PPI Widths
-          - data: naive_widths
-            label: Naive Widths
-          - data: classic_widths
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Method
-        y_label: Widths
-        file_name: widthsviolin.png
-        show: True
+  - type: line
+    x: noise
+    y_metric: ci_width
+    y_techniques:
+      - technique: ppi
+        label: PPI Widths
+      - technique: naive
+        label: Naive Widths
+      - technique: classical
+        label: Classic Widths
+    title: Widths vs rho (noise)
+    x_label: Rho values
+    y_label: Widths
+    file_name: widthsplot.png
+    show: False
+  - type: violin
+    y:
+      - data: ppi_widths
+        label: PPI Widths
+      - data: naive_widths
+        label: Naive Widths
+      - data: classic_widths
+        label: Classic Widths
+    title: Widths vs rho (noise)
+    x_label: Method
+    y_label: Widths
+    file_name: widthsviolin.png
+    show: True
