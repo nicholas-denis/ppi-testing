@@ -160,6 +160,8 @@ def violin_plot(data, plot_config, config):
     data: pd dataframe
     plot_config: dict, plot configuration
     """
+    ## TODO: Change the x axis to be uniform (might be hard)
+
     # Create a figure 
     num_techs = len(plot_config['y_techniques'])
     figs, axs = plt.subplots(nrows = num_techs, ncols=1, figsize=(10, 10))

@@ -279,6 +279,12 @@ def experiment(config):
 
     # approximate true mean if necessary
 
+    if config['experiment']['parameters'].get('true_value', None) is None:
+        pop_dict = config['experiment']['parameters']['gold_population']
+        pop_dict['size'] = 100000
+        x_sample, y_sample = dist.sample_population(pop_dict)
+        config['experiment']['parameters']['true_value'] = np.mean(y_sample)
+
     for x in config['experiment']['ind_var']['vals']:
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
         # begin timing
