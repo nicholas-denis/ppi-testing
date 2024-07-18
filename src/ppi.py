@@ -53,11 +53,13 @@ def compute_metrics(config, conf_int):
 
 def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=1.0):
     alpha = 1 - conf
-    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha)
+    ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha, lhat=lhat)
     ci = (ci[0][0], ci[1][0])  # Remove the array
     return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted, lhat=lhat)[0], ci
 
 def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
+    y_gold_fitted = y_gold_fitted.reshape(-1, 1)
+    y_fitted = y_fitted.reshape(-1, 1)
     concat = np.vstack((y_gold, y_fitted)).flatten()  # Concactenate samples
     naive_theta = np.mean(concat)  # Compute mean
     naive_sigma = np.std(concat)  # Compute std dev
@@ -112,7 +114,7 @@ def do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, dof=1, t_dist=True):
         lower = lamb * np.sqrt(var) - mean_estimate
         upper = lamb * np.sqrt(var) + mean_estimate
     
-    return mean_estimate, (lower, upper)
+    return mean_estimate, (lower[0], upper[0])
 
 def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=None, x_gold=None):
     """
@@ -174,7 +176,7 @@ def single_iteration(config):
     y_fitted = model.predict(x_ppi)  # Unlabelled fitted
 
     # Manual rectifier computation
-    rectifier = np.mean(y_gold_fitted - y_ppi)
+    rectifier = np.mean(y_gold_fitted - y_gold)
 
     # Model bias computation if called for
     if config['experiment']['parameters']['unlabelled_population'].get('include', False):
@@ -276,6 +278,8 @@ def experiment(config):
 
     print(f"{GREEN}Starting experiment{RESET}")
 
+    # approximate true mean if necessary
+
     for x in config['experiment']['ind_var']['vals']:
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
         # begin timing
@@ -304,6 +308,10 @@ def experiment(config):
     # Create a dataframe of the metrics
 
     metrics_df = pd.DataFrame(metrics)
+
+    if config['experiment']['parameters'].get('cut_interval', False):
+        metrics_df['ci_low'] = np.maximum(metrics_df['ci_low'], 0)
+        metrics_df['ci_high'] = np.maximum(metrics_df['ci_high'], 0)
 
     return metrics_df
 

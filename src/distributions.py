@@ -87,16 +87,26 @@ def sample_y_linear_mv(x, y_dict):
     except:
         raise KeyError("Incorrect parameters for linear transformation, required: m, rho, vec")
 
-distributions = {
-    'gamma_univariate': sample_gamma,
-    'gamma_multivariate': sample_gamma_mv,
-}
 
-transformations = {
-    'linear_univariate': sample_y_linear,
-    'linear_multivariate': sample_y_linear_mv,
-}
+def sample_y_linear_mult_noise(x, params_dict):
+    """
+    Same as sample_y_linear, but with multiplicative noise terms
+    """
+    sigma_squared = abs(params_dict['m'])*(1.-(params_dict['rho']**2))/(params_dict['rho']**2) 
 
+    # sample noise (e_i)
+    sampled_e = np.random.normal(loc=1,
+                                scale=sigma_squared*x,
+                                size=x.shape
+                                )
+    
+    # compute y as a linear function of x
+    y = params_dict['m']* x * sampled_e  # Can still get negative values.
+    
+    #except:
+    #    raise KeyError("Incorrect parameters for linear transformation, required: m, rho, x, b")
+
+    return y
 
 # Distribution distance functions
 
@@ -143,6 +153,17 @@ def sample_population(population_dict):
     x (np.array): sampled x
     y (np.array): sampled y
     """
+    distributions = {
+    'gamma_univariate': sample_gamma,
+    'gamma_multivariate': sample_gamma_mv,
+    }
+
+    transformations = {
+        'linear_univariate': sample_y_linear,
+        'linear_multivariate': sample_y_linear_mv,
+        'linear_mult_noise': sample_y_linear_mult_noise
+    }
+
     x_dict = population_dict['x_population']
     y_dict = population_dict['y_population']
     # Sample x
