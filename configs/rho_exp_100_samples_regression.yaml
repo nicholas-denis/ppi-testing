@@ -64,6 +64,7 @@ experiment:
   model:
     name: linear_regression
     optuna: False
+    optuna_trials: 100
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
   estimate: mean

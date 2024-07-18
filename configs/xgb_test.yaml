@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: Optuna Test
+  name: XGBoost Test
   parameters:
     training_population:
       x_population: 
@@ -50,9 +50,9 @@ experiment:
   ind_var:
     name: noise  # this is really confusing right now because of rho/noise, will think of solution later
     vals:
-      - 0.1
-      - 0.25
+      - 0.3
       - 0.5
+      - 0.75
       - 0.9
     paths:
       - experiment.parameters.training_population.y_population.rho
@@ -61,7 +61,7 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: random_forest
+    name: xgboost
     optuna: True
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
@@ -88,6 +88,10 @@ plotting:
             label: PPI Widths
           - technique: classical
             label: Classic Widths
+          - technique: naive
+            label: Naive Widths
+          - technique: ppi_pp
+            label: PPI PP Widths
         title: Widths vs rho (noise)
         x_label: Method
         y_label: Widths
@@ -101,6 +105,10 @@ plotting:
             label: PPI Widths
           - technique: classical
             label: Classic Widths
+          - technique: naive
+            label: Naive Widths
+          - technique: ppi_pp
+            label: PPI PP Widths
         title: Widths vs rho (noise)
         x_label: Rho values
         y_label: Widths
@@ -110,9 +118,13 @@ plotting:
         x: noise
         y_techniques:
           - technique: ppi
-            label: PPI Coverage
+            label: PPI Widths
           - technique: classical
-            label: Classic Coverage
+            label: Classic Widths
+          - technique: naive
+            label: Naive Widths
+          - technique: ppi_pp
+            label: PPI PP Widths
         title: Coverage vs rho (noise)
         x_label: Noise
         file_name: coverageplot.png
@@ -122,12 +134,17 @@ plotting:
         y_metric: coverage
         y_techniques:
           - technique: ppi
-            label: PPI Coverage
+            label: PPI Widths
           - technique: classical
-            label: Classic Coverage
+            label: Classic Widths
+          - technique: naive
+            label: Naive Widths
+          - technique: ppi_pp
+            label: PPI PP Widths
         title: Coverage vs rho (noise)
         file_name: sampleplot.png
         show: False
+
 
       
 
