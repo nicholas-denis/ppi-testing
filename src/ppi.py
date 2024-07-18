@@ -189,7 +189,7 @@ def single_iteration(config):
 
     x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
 
-    model = ml.train_model(x_train, y_train, config['experiment']['model'])  # Placeholder
+    model = ml.train_model(x_train, y_train, config['experiment']['model']) 
 
     # Residual testing
     y_test_pred = model.predict(x_test)
