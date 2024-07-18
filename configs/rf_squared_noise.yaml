@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: XGBoost Test
+  name: RF SqNoise Rho
   parameters:
     training_population:
       x_population: 
@@ -42,7 +42,7 @@ experiment:
         rho: null
         b: 0
     true_value: 16  # Compute this yourself, if not available, set to None
-    n_its: 100
+    n_its: 2000
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
@@ -61,7 +61,7 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: xgboost
+    name: random_forest
     optuna: True
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
