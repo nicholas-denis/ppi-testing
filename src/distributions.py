@@ -70,6 +70,9 @@ def sample_y_linear(x, params_dict):
 
     return y
 
+def sample_y_squared(x, params_dict):
+    return sample_y_linear(x, params_dict)**2
+
 def sample_y_linear_mv(x, y_dict):
     try:
         sigma_squared = abs(y_dict['m'])*(1.-(y_dict['rho']**2))/(y_dict['rho']**2)
@@ -161,7 +164,8 @@ def sample_population(population_dict):
     transformations = {
         'linear_univariate': sample_y_linear,
         'linear_multivariate': sample_y_linear_mv,
-        'linear_mult_noise': sample_y_linear_mult_noise
+        'linear_mult_noise': sample_y_linear_mult_noise,
+        'linear_squared': sample_y_squared,
     }
 
     x_dict = population_dict['x_population']
