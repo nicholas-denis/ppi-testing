@@ -60,7 +60,7 @@ def compute_metrics(config, conf_int):
     metrics['ci_high'] = [conf_int[1][1]]
     metrics['desired_coverage'] = [config['experiment']['parameters'].get('confidence_level', None)]
     metrics['noise'] = [config['experiment']['parameters'].get('rho', None)]  # Temporary, needs to be changed later
-    if config['experiment']['parameters'].get('true_value', None) is not 0:
+    if config['experiment']['parameters'].get('true_value', None) != 0:
         metrics['relative_bias'] = [(conf_int[0] - config['experiment']['parameters']['true_value'])/config['experiment']['parameters']['true_value']]
     else:
         metrics['relative_bias'] = [np.nan]
@@ -96,7 +96,44 @@ def do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
     return classical_theta, (classical_theta - h, classical_theta + h)
 
-def ratio_estimator_variance(x_ppi, x_gold, y_gold):
+def ratio_estimator_variance(x_u, x_l, y_l, dof=1):
+    """
+    code from PPI_Ratio_estimator.ipynb
+
+    as defined from Sampling Theory and Practice (quite complete),
+    p97 linearization
+
+    Note, we use 1 degree of freedom for sample variance computation
+    """
+    # (xbar_tilde**2 / x_bar**2)(1- n/N)(var_y**2, + R^2var_x**2 - 2R*covar(x,y))
+
+    # sample sizes
+    x_u = x_u.reshape(1, -1)
+    x_l = x_l.reshape(1, -1)
+    y_l = y_l.reshape(1, -1)
+    n = x_l.shape[1]
+    N = x_u.shape[1]
+
+    # means
+    mu_x_u = x_u.mean(axis=1)
+    x_l_mean = x_l.mean(axis=1)
+    y_l_mean = y_l.mean(axis=1)
+    r_hat = y_l_mean/x_l_mean
+
+    # variances
+    x_sample_var = np.var(x_l, axis=1, ddof=dof)
+    y_sample_var = np.var(y_l, axis=1, ddof=dof)
+    xy_covar = np.array([np.cov(x_l[i], y_l[i], ddof=dof)[0,1] for i in range(x_l.shape[0])])
+
+    # implement term by term, treat the (1-n/N)*)(1/n) as one term
+    term_one = (mu_x_u**2)/(x_l_mean**2)
+    term_two = (1.0 - float(n/N))/n
+    term_three = y_sample_var**2 + (r_hat**2)*(x_sample_var**2) - 2*r_hat*xy_covar
+
+    variance = term_one*term_two*term_three
+    return variance
+
+def ratio_estimator_variance_test(x_ppi, x_gold, y_gold):
     # sample sizes
     x_ppi = x_ppi.reshape(1, -1)
     x_gold = x_gold.reshape(1, -1)
@@ -130,13 +167,13 @@ def do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, dof=1, t_dist=True):
     # We use Vysochanskij-Petunin inequality to get a conservative estimate
     # Aka, statistical assumptions are violated. 
 
-    if t_dist:
-        lower = mean_estimate - stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
-        upper = mean_estimate + stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
+    if t_dist:  # It's actually normal dist right now. For testing.
+        lower = mean_estimate - stats.t.ppf((1 + conf)/2, x_gold.shape[0]) * np.sqrt(var)
+        upper = mean_estimate + stats.t.ppf((1 + conf)/2, x_gold.shape[0]) * np.sqrt(var)
     else:
         lamb = np.sqrt(4 / (9 * conf))
-        lower = lamb * np.sqrt(var) - mean_estimate
-        upper = lamb * np.sqrt(var) + mean_estimate
+        lower = mean_estimate - lamb * np.sqrt(var)
+        upper = mean_estimate + lamb * np.sqrt(var) 
     
     return mean_estimate, (lower[0], upper[0])
 
@@ -279,11 +316,11 @@ def experiment(config):
 
     # approximate true mean if necessary
 
-    if config['experiment']['parameters'].get('true_value', None) is None:
-        pop_dict = config['experiment']['parameters']['gold_population']
+    if params.get('true_value', None) is None:
+        pop_dict = params['gold_population']
         pop_dict['size'] = 100000
         x_sample, y_sample = dist.sample_population(pop_dict)
-        config['experiment']['parameters']['true_value'] = np.mean(y_sample)
+        params['true_value'] = np.mean(y_sample)
 
     for x in config['experiment']['ind_var']['vals']:
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
@@ -314,11 +351,16 @@ def experiment(config):
 
     metrics_df = pd.DataFrame(metrics)
 
-    if config['experiment']['parameters'].get('cut_interval', False):
+    if params.get('cut_interval', False):
         metrics_df['ci_low'] = np.maximum(metrics_df['ci_low'], 0)
         metrics_df['ci_high'] = np.maximum(metrics_df['ci_high'], 0)
 
     return metrics_df
 
+if __name__ == '__main__':
+    x_u = np.array([1, 2, 3, 4, 5]).reshape(1, -1)
+    x_l = np.array([1, 2, 3, 4]).reshape(1, -1)
+    y_l = np.array([1, 2, 3, 4]).reshape(1, -1)
 
-# - Ratio estimator, constructing CI, I have some but not sure if they're the best
+    print(ratio_estimator_variance(x_u, x_l, y_l))
+    print(ratio_estimator_variance_test(x_u, x_l, y_l))
