@@ -27,7 +27,7 @@ def summarize(df, config):
     unlabelled_dist_x = config['experiment']['parameters']['unlabelled_population']['x_population'].get('distribution', '')
     unlabelled_size = config['experiment']['parameters']['unlabelled_population']['x_population'].get('size', '')
 
-    unlabelled_dist_y = config['data']['parameters']['unlabelled_population']['y_population'].get('distribution', '')
+    unlabelled_dist_y = config['experiment']['parameters']['unlabelled_population']['y_population'].get('distribution', '')
 
     true_value = config['experiment']['parameters'].get('true_value', '')
     experiment_iterations = config['experiment']['parameters'].get('n_its', '')
@@ -41,15 +41,59 @@ def summarize(df, config):
     estimate = config['experiment'].get('estimate', '')
 
     methods = ''
-    for method in config['experiment'].get('methods', []):
-        methods += method + ', '
+    for method in config['experiment']['methods']:
+        methods += method.get('type', ' ') + ', '
 
     # get results:
 
     data_summaries = []
 
+    ind_var = config['experiment']['ind_var']['name']
+
     for x in config['experiment']['ind_var'].get('vals', []):
+        ind_var_df = df[df[ind_var] == x]
+        avg_test_error = ind_var_df['test_error'].mean()
+        error_statement = "The average test error for x = {} is {}".format(x, avg_test_error)
+        data_summaries.append(error_statement)
         for method in config['experiment'].get('methods', []):
             # isolate the data for this method and x
-            data = df[(df['method'] == method) & (df['ind_var'] == x)]
+            method_ind_var_df = df[(df['technique'] == method) & (df[ind_var] == x)]
+            avg_ci_width = method_ind_var_df['ci_width'].mean()
+            avg_coverage = method_ind_var_df['empirical_coverage'].mean()
+
+            ci_statement = "The average CI width for x = {} and method {} is {}".format(x, method, avg_ci_width)
+            coverage_statement = "The average empirical coverage for x = {} and method {} is {}".format(x, method, avg_coverage)
+            data_summaries.append(ci_statement)
+            data_summaries.append(coverage_statement)
+
+    # write to experiment folder
+    experiment_folder = config['paths']['experiment_path']
+
+    with open(os.path.join(experiment_folder, 'summary.txt'), 'w') as f:
+        f.write("Experiment Summary\n")
+        f.write("Experiment Name: {}\n".format(experiment_name))
+        f.write("Training Population X Distribution: {}\n".format(training_dist_x))
+        f.write("Training Population X Size: {}\n".format(training_size))
+        f.write("Training Population Y Distribution: {}\n".format(training_dist_y))
+        f.write("Gold Population X Distribution: {}\n".format(gold_dist_x))
+        f.write("Gold Population X Size: {}\n".format(gold_size))
+        f.write("Gold Population Y Distribution: {}\n".format(gold_dist_y))
+        f.write("Unlabelled Population X Distribution: {}\n".format(unlabelled_dist_x))
+        f.write("Unlabelled Population X Size: {}\n".format(unlabelled_size))
+        f.write("Unlabelled Population Y Distribution: {}\n".format(unlabelled_dist_y))
+        f.write("True Value: {}\n".format(true_value))
+        f.write("Experiment Iterations: {}\n".format(experiment_iterations))
+        f.write("Confidence Level: {}\n".format(confidence_level))
+        f.write("Independent Variable: {}\n".format(ind_var))
+        f.write("Model: {}\n".format(model))
+        f.write("Estimate: {}\n".format(estimate))
+        f.write("Methods: {}\n".format(methods))
+        f.write("\n")
+        f.write("Data Summaries\n")
+        for summary in data_summaries:
+            f.write(summary + '\n')
+        f.close()
+
+
+
 
