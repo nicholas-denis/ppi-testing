@@ -64,6 +64,7 @@ def build_rf_optuna(x, y, model_config):
     n_trials = model_config.get('trials', 100)
     study = optuna.create_study(direction='minimize')
     study.optimize(objective, n_trials=n_trials)
+    study.optimize(objective, n_trials=10)
     best_params = study.best_params
     model = RandomForestRegressor(n_estimators=best_params['n_estimators'], max_depth=best_params['max_depth'])
     y = y.ravel()
@@ -85,7 +86,7 @@ def build_xgb_optuna(x, y, model_config):
     # turn off logs
     optuna.logging.set_verbosity(optuna.logging.WARNING)
     def objective(trial):
-        n_estimators = trial.suggest_int('n_estimators', 2, 150)
+        n_estimators = trial.suggest_int('n_estimators', 50, 150)
         max_depth = trial.suggest_int('max_depth', 1, 32)
         model = xgb.XGBRegressor(n_estimators=n_estimators, max_depth=max_depth)
         x_train, x_val, y_train, y_val = train_test_split(x, y, test_size=0.2)
@@ -94,6 +95,7 @@ def build_xgb_optuna(x, y, model_config):
         return np.mean((model.predict(x_val) - y_val) ** 2)
 
     n_trials = model_config.get('trials', 100)
+    n_trials = model_config.get('optuna_trials', 10)
     study = optuna.create_study(direction='minimize')
     study.optimize(objective, n_trials=n_trials)
     best_params = study.best_params
