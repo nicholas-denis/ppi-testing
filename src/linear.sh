@@ -21,3 +21,6 @@ python main.py --config ../configs/Experiment_1/xgboost_128.yaml
 
 echo "Running experiment 1, xgboost, gold 1024";
 python main.py --config ../configs/Experiment_1/xgboost_1024.yaml
+
+# chmod +x linear.sh
+# ./linear.sh
