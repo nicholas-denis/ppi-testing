@@ -63,6 +63,7 @@ experiment:
   model:
     name: xgboost
     optuna: True
+    trials: 10
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
   estimate: mean

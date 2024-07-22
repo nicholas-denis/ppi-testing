@@ -60,8 +60,7 @@ def build_rf_optuna(x, y, model_config):
         y_train, y_val = y_train.ravel(), y_val.ravel()
         model.fit(x_train, y_train)
         return np.mean((model.predict(x_val) - y_val) ** 2)
-    
-    n_trials = model_config.get('trials', 100)
+    n_trials = model_config.get('trials', 10)
     study = optuna.create_study(direction='minimize')
     study.optimize(objective, n_trials=n_trials)
     best_params = study.best_params
@@ -93,7 +92,7 @@ def build_xgb_optuna(x, y, model_config):
         model.fit(x_train, y_train)
         return np.mean((model.predict(x_val) - y_val) ** 2)
 
-    n_trials = model_config.get('trials', 100)
+    n_trials = model_config.get('optuna_trials', 10)
     study = optuna.create_study(direction='minimize')
     study.optimize(objective, n_trials=n_trials)
     best_params = study.best_params
