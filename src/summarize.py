@@ -19,17 +19,17 @@ def summarize(df, config):
     training_dist_x = config['experiment']['parameters']['training_population']['x_population'].get('distribution', '')
     training_size = config['experiment']['parameters']['training_population']['x_population'].get('size', '')
     
-    training_dist_y = config['experiment']['parameters']['training_population']['y_population'].get('distribution', '')
+    training_dist_y = config['experiment']['parameters']['training_population']['y_population'].get('transformation', '')
 
     gold_dist_x = config['experiment']['parameters']['gold_population']['x_population'].get('distribution', '')
     gold_size = config['experiment']['parameters']['gold_population']['x_population'].get('size', '')
 
-    gold_dist_y = config['experiment']['parameters']['gold_population']['y_population'].get('distribution', '')
+    gold_dist_y = config['experiment']['parameters']['gold_population']['y_population'].get('transformation', '')
 
     unlabelled_dist_x = config['experiment']['parameters']['unlabelled_population']['x_population'].get('distribution', '')
     unlabelled_size = config['experiment']['parameters']['unlabelled_population']['x_population'].get('size', '')
 
-    unlabelled_dist_y = config['experiment']['parameters']['unlabelled_population']['y_population'].get('distribution', '')
+    unlabelled_dist_y = config['experiment']['parameters']['unlabelled_population']['y_population'].get('transformation', '')
 
     true_value = config['experiment']['parameters'].get('true_value', '')
     experiment_iterations = config['experiment']['parameters'].get('n_its', '')
@@ -57,6 +57,7 @@ def summarize(df, config):
         avg_test_error = ind_var_df['test_error'].mean()
         error_statement = "The average test error for x = {} is {}".format(x, avg_test_error)
         data_summaries.append(error_statement)
+        data_summaries.append("\n")
         for method in config['experiment'].get('methods', []):
             # isolate the data for this method and x
             method_ind_var_df = df[(df['technique'] == method['type']) & (df[ind_var] == x)]
@@ -67,6 +68,7 @@ def summarize(df, config):
             coverage_statement = "The average empirical coverage for x = {} and method {} is {}".format(x, method['type'], avg_coverage)
             data_summaries.append(ci_statement)
             data_summaries.append(coverage_statement)
+            data_summaries.append("\n")
 
     # write to experiment folder
     experiment_folder = config['paths']['experiment_path']
@@ -93,12 +95,8 @@ def summarize(df, config):
         f.write("Methods: {}\n".format(methods))
         f.write("\n")
         f.write("Data Summaries\n")
-        i = 0
         for summary in data_summaries:
-            if i % 2 == 0:
-                f.write("\n")
             f.write(summary + '\n')
-            i += 1
         f.close()
 
 

@@ -6,6 +6,7 @@ paths:
 
 experiment:
   name: xgb_lin_16
+  description: Experiment with xgboost regression and 16 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
       x_population: 
@@ -81,74 +82,74 @@ experiment:
   
 plotting:
   plots:
-      - type: violin
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-        title: Widths vs rho (noise)
-        x_label: Method
-        y_label: Widths
-        file_name: widthsviolin.png
-        show: False
-      - type: line
-        x: noise
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-        title: Widths vs rho (noise)
-        x_label: Rho values
-        y_label: Widths
-        file_name: widthsplot.png
-        show: False
-      - type: coverage
-        x: noise
-        y_techniques:
-          - technique: ppi
-            label: PPI Coverage
-          - technique: classical
-            label: Classic Coverage
-          - technique: naive
-            label: Naive Coverage
-          - technique: ppi_pp
-            label: PPI PP Coverage
-          - technique: ratio
-            label: Ratio Coverage
-        title: Coverage vs rho (noise)
-        x_label: Noise
-        file_name: coverageplotwithratio.png
-        show: False
-      - type: sample
-        x: noise
-        y_metric: coverage
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-          - technique: ratio
-            label: Ratio Widths
-        title: Coverage vs rho (noise)
-        file_name: sampleplotwithratio.png
-        show: False
-      - type: violin
+    - type: violin
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs rho (noise)
+      x_label: Method
+      y_label: Widths
+      file_name: widthsviolin.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs rho (noise)
+      x_label: Rho values
+      y_label: Widths
+      file_name: widthsplot.png
+      show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+        - technique: ratio
+          label: Ratio Coverage
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplotwithratio.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: ratio
+          label: Ratio Widths
+      title: Coverage vs rho (noise)
+      file_name: sampleplotwithratio.png
+      show: False
+    - type: violin
       y_metric: ci_width
       y_techniques:
         - technique: ppi
@@ -202,6 +203,36 @@ plotting:
       x_label: Noise
       file_name: coverageplotwithratio.png
       show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplot.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Coverage vs rho (noise)
+      file_name: sampleplot.png
+      show: False
     - type: sample
       x: noise
       y_metric: coverage
@@ -219,7 +250,7 @@ plotting:
       title: Coverage vs rho (noise)
       file_name: sampleplotwithratio.png
       show: False
-      
+        
 
 reproducibility:
   seed: 42
