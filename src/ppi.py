@@ -60,7 +60,7 @@ def compute_metrics(config, conf_int):
     metrics['ci_high'] = [conf_int[1][1]]
     metrics['desired_coverage'] = [config['experiment']['parameters'].get('confidence_level', None)]
     metrics['noise'] = [config['experiment']['parameters'].get('rho', None)]  # Temporary, needs to be changed later
-    if config['experiment']['parameters'].get('true_value', None) is not 0:
+    if config['experiment']['parameters'].get('true_value', None) != 0:
         metrics['relative_bias'] = [(conf_int[0] - config['experiment']['parameters']['true_value'])/config['experiment']['parameters']['true_value']]
     else:
         metrics['relative_bias'] = [np.nan]
