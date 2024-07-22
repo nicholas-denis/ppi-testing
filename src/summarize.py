@@ -61,7 +61,7 @@ def summarize(df, config):
             avg_ci_width = method_ind_var_df['ci_width'].mean()
             avg_coverage = method_ind_var_df['empirical_coverage'].mean()
 
-            ci_statement = "The average CI width for x = {} and method {} is {}".format(x, method, avg_ci_width)
+            ci_statement = "The average CI width for x = {} and method {} is {}".format(x, method['type'], avg_ci_width)
             coverage_statement = "The average empirical coverage for x = {} and method {} is {}".format(x, method, avg_coverage)
             data_summaries.append(ci_statement)
             data_summaries.append(coverage_statement)
