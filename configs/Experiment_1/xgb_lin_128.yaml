@@ -6,7 +6,6 @@ paths:
 
 experiment:
   name: xgb_lin_128
-  description: XGBoost with 128 gold points, noise variable
   parameters:
     training_population:
       x_population: 

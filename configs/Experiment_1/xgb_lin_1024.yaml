@@ -6,7 +6,6 @@ paths:
 
 experiment:
   name: xgb_lin_1024
-  description: XGBoost with 1024 gold points, noise variable
   parameters:
     training_population:
       x_population: 

@@ -6,7 +6,6 @@ paths:
 
 experiment:
   name: reg_lin_1024
-  description: Linear regression with 1024 gold points, noise variable
   parameters:
     training_population:
       x_population: 
