@@ -148,77 +148,77 @@ plotting:
         title: Coverage vs rho (noise)
         file_name: sampleplotwithratio.png
         show: False
-        - type: violin
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-          - technique: ratio
-            label: Ratio Widths
-        title: Widths vs rho (noise)
-        x_label: Method
-        y_label: Widths
-        file_name: widthsviolinwithratio.png
-        show: False
-      - type: line
-        x: noise
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-          - technique: ratio
-            label: Ratio Widths
-        title: Widths vs rho (noise)
-        x_label: Rho values
-        y_label: Widths
-        file_name: widthsplotwithratio.png
-        show: False
-      - type: coverage
-        x: noise
-        y_techniques:
-          - technique: ppi
-            label: PPI Coverage
-          - technique: classical
-            label: Classic Coverage
-          - technique: naive
-            label: Naive Coverage
-          - technique: ppi_pp
-            label: PPI PP Coverage
-          - technique: ratio
-            label: Ratio Coverage
-        title: Coverage vs rho (noise)
-        x_label: Noise
-        file_name: coverageplotwithratio.png
-        show: False
-      - type: sample
-        x: noise
-        y_metric: coverage
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-          - technique: naive
-            label: Naive Widths
-          - technique: ppi_pp
-            label: PPI PP Widths
-          - technique: ratio
-            label: Ratio Widths
-        title: Coverage vs rho (noise)
-        file_name: sampleplotwithratio.png
-        show: False
+      - type: violin
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: ratio
+          label: Ratio Widths
+      title: Widths vs rho (noise)
+      x_label: Method
+      y_label: Widths
+      file_name: widthsviolinwithratio.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: ratio
+          label: Ratio Widths
+      title: Widths vs rho (noise)
+      x_label: Rho values
+      y_label: Widths
+      file_name: widthsplotwithratio.png
+      show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+        - technique: ratio
+          label: Ratio Coverage
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplotwithratio.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: ratio
+          label: Ratio Widths
+      title: Coverage vs rho (noise)
+      file_name: sampleplotwithratio.png
+      show: False
       
 
 reproducibility:
