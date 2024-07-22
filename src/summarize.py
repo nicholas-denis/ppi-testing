@@ -12,7 +12,9 @@ def summarize(df, config):
 
     # get the important parameters
 
-    experiment_name = config['experiment']['name']
+    experiment_name = config['experiment'].get('name', '')
+
+    description = config['experiment'].get('description', '')
 
     training_dist_x = config['experiment']['parameters']['training_population']['x_population'].get('distribution', '')
     training_size = config['experiment']['parameters']['training_population']['x_population'].get('size', '')
@@ -57,12 +59,12 @@ def summarize(df, config):
         data_summaries.append(error_statement)
         for method in config['experiment'].get('methods', []):
             # isolate the data for this method and x
-            method_ind_var_df = df[(df['technique'] == method) & (df[ind_var] == x)]
+            method_ind_var_df = df[(df['technique'] == method['type']) & (df[ind_var] == x)]
             avg_ci_width = method_ind_var_df['ci_width'].mean()
             avg_coverage = method_ind_var_df['empirical_coverage'].mean()
 
             ci_statement = "The average CI width for x = {} and method {} is {}".format(x, method['type'], avg_ci_width)
-            coverage_statement = "The average empirical coverage for x = {} and method {} is {}".format(x, method, avg_coverage)
+            coverage_statement = "The average empirical coverage for x = {} and method {} is {}".format(x, method['type'], avg_coverage)
             data_summaries.append(ci_statement)
             data_summaries.append(coverage_statement)
 
@@ -71,6 +73,7 @@ def summarize(df, config):
 
     with open(os.path.join(experiment_folder, 'summary.txt'), 'w') as f:
         f.write("Experiment Summary\n")
+        f.write("Description: {}\n".format(description))
         f.write("Experiment Name: {}\n".format(experiment_name))
         f.write("Training Population X Distribution: {}\n".format(training_dist_x))
         f.write("Training Population X Size: {}\n".format(training_size))
@@ -90,8 +93,12 @@ def summarize(df, config):
         f.write("Methods: {}\n".format(methods))
         f.write("\n")
         f.write("Data Summaries\n")
+        i = 0
         for summary in data_summaries:
+            if i % 2 == 0:
+                f.write("\n")
             f.write(summary + '\n')
+            i += 1
         f.close()
 
 

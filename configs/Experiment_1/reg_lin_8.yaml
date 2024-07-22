@@ -5,7 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: RF SqNoise Rho
+  name: reg_lin_8
+  description: Linear regression with 8 gold points, noise variable
   parameters:
     training_population:
       x_population: 
@@ -23,7 +24,7 @@ experiment:
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 100
+        size: 8
       y_population:
         transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
@@ -61,7 +62,7 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: random_forest
+    name: linear_regression
     optuna: True
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
