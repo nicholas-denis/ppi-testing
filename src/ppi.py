@@ -79,7 +79,7 @@ def do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=1.0):
     alpha = 1 - conf
     ci = ppi_py.ppi_mean_ci(y_gold, y_gold_fitted, y_fitted, alpha=alpha, lhat=lhat)
     ci = (ci[0][0], ci[1][0])  # Remove the array
-    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted, lhat=lhat)[0], ci
+    return ppi_py.ppi_mean_pointestimate(y_gold, y_gold_fitted, y_fitted , lhat=lhat)[0], ci
 
 def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     y_gold_fitted = y_gold_fitted.reshape(-1, 1)
@@ -159,6 +159,8 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
             print("Yet to be implemented")
         elif method_type == 'ratio':
             return do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, t_dist=method.get('t_dist', False))
+        elif method_type == 'classical_test':
+            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=0)
         else:
             print("Method not recognized")
     else:
@@ -189,7 +191,7 @@ def single_iteration(config):
 
     x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
 
-    model = ml.train_model(x_train, y_train, config['experiment']['model'])  # Placeholder
+    model = ml.train_model(x_train, y_train, config['experiment']['model'])
 
     # Residual testing
     y_test_pred = model.predict(x_test)
