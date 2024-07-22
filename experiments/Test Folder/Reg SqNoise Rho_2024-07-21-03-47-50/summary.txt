@@ -1,0 +1,64 @@
+Experiment Summary
+Experiment Name: Reg SqNoise Rho
+Training Population X Distribution: gamma_univariate
+Training Population X Size: 10000
+Training Population Y Distribution: 
+Gold Population X Distribution: gamma_univariate
+Gold Population X Size: 100
+Gold Population Y Distribution: 
+Unlabelled Population X Distribution: gamma_univariate
+Unlabelled Population X Size: 10000
+Unlabelled Population Y Distribution: 
+True Value: 16
+Experiment Iterations: 10
+Confidence Level: 0.95
+Independent Variable: noise
+Model: linear_regression
+Estimate: mean
+Methods: ppi, naive, classical, ppi_pp, ratio, 
+
+Data Summaries
+The average test error for x = 0.3 is 129.25242006283628
+The average CI width for x = 0.3 and method {'type': 'ppi'} is nan
+The average empirical coverage for x = 0.3 and method {'type': 'ppi'} is nan
+The average CI width for x = 0.3 and method {'type': 'naive'} is nan
+The average empirical coverage for x = 0.3 and method {'type': 'naive'} is nan
+The average CI width for x = 0.3 and method {'type': 'classical'} is nan
+The average empirical coverage for x = 0.3 and method {'type': 'classical'} is nan
+The average CI width for x = 0.3 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average empirical coverage for x = 0.3 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average CI width for x = 0.3 and method {'type': 'ratio', 't_dist': True} is nan
+The average empirical coverage for x = 0.3 and method {'type': 'ratio', 't_dist': True} is nan
+The average test error for x = 0.5 is 37.96067532872514
+The average CI width for x = 0.5 and method {'type': 'ppi'} is nan
+The average empirical coverage for x = 0.5 and method {'type': 'ppi'} is nan
+The average CI width for x = 0.5 and method {'type': 'naive'} is nan
+The average empirical coverage for x = 0.5 and method {'type': 'naive'} is nan
+The average CI width for x = 0.5 and method {'type': 'classical'} is nan
+The average empirical coverage for x = 0.5 and method {'type': 'classical'} is nan
+The average CI width for x = 0.5 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average empirical coverage for x = 0.5 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average CI width for x = 0.5 and method {'type': 'ratio', 't_dist': True} is nan
+The average empirical coverage for x = 0.5 and method {'type': 'ratio', 't_dist': True} is nan
+The average test error for x = 0.75 is 9.952579846213107
+The average CI width for x = 0.75 and method {'type': 'ppi'} is nan
+The average empirical coverage for x = 0.75 and method {'type': 'ppi'} is nan
+The average CI width for x = 0.75 and method {'type': 'naive'} is nan
+The average empirical coverage for x = 0.75 and method {'type': 'naive'} is nan
+The average CI width for x = 0.75 and method {'type': 'classical'} is nan
+The average empirical coverage for x = 0.75 and method {'type': 'classical'} is nan
+The average CI width for x = 0.75 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average empirical coverage for x = 0.75 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average CI width for x = 0.75 and method {'type': 'ratio', 't_dist': True} is nan
+The average empirical coverage for x = 0.75 and method {'type': 'ratio', 't_dist': True} is nan
+The average test error for x = 0.9 is 3.0061201108929874
+The average CI width for x = 0.9 and method {'type': 'ppi'} is nan
+The average empirical coverage for x = 0.9 and method {'type': 'ppi'} is nan
+The average CI width for x = 0.9 and method {'type': 'naive'} is nan
+The average empirical coverage for x = 0.9 and method {'type': 'naive'} is nan
+The average CI width for x = 0.9 and method {'type': 'classical'} is nan
+The average empirical coverage for x = 0.9 and method {'type': 'classical'} is nan
+The average CI width for x = 0.9 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average empirical coverage for x = 0.9 and method {'type': 'ppi_pp', 'lhat': None} is nan
+The average CI width for x = 0.9 and method {'type': 'ratio', 't_dist': True} is nan
+The average empirical coverage for x = 0.9 and method {'type': 'ratio', 't_dist': True} is nan

@@ -19,6 +19,7 @@ import shutil
 
 import ppi
 from plotting import plot_results
+from summarize import summarize
 
 
 # colored text
@@ -152,6 +153,8 @@ def main(config: dict):
     results.to_csv(os.path.join(config['paths']['results_path'], 'results.csv'))
 
     plot_results(results, config)
+
+    summarize(results, config)
     
     return
 
@@ -186,4 +189,5 @@ if __name__ == '__main__':
     main(config)
 
     print(f"{MAGENTA}All done! {RESET}")
+
 
