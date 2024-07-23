@@ -20,7 +20,6 @@ import logging
 import warnings
 import time
 
-
 # Fitting functions
 
 def build_fit_slr(x, y, model_config):
@@ -83,6 +82,7 @@ def build_xgb_optuna(x, y, model_config):
     """
     # turn off logs
     optuna.logging.set_verbosity(optuna.logging.WARNING)
+    
     def objective(trial):
         n_estimators = trial.suggest_int('n_estimators', 50, 150)
         max_depth = trial.suggest_int('max_depth', 1, 32)

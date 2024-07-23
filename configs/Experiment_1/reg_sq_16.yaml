@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: reg_lin_16
+  name: reg_sq_16
   description: Experiment with linear regression and 16 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
@@ -17,7 +17,7 @@ experiment:
       y_population:
         transformation: linear_squared  # linear_univariate, random, or custom
         m: 4
-        rho: null
+        rho: 0.95
         b: 0
     gold_population:
       x_population: 
@@ -28,7 +28,7 @@ experiment:
       y_population:
         transformation: linear_squared  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
-        rho: null
+        rho: 0.95
         b: 0
     unlabelled_population:
       x_population: 
@@ -40,9 +40,9 @@ experiment:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: linear_squared  # linear_univariate, random, or custom
         m: 4
-        rho: null
+        rho: 0.95
         b: 0
-    true_value: 16  # Compute this yourself, if not available, set to None
+    true_value: null  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
     use_active_inference: False

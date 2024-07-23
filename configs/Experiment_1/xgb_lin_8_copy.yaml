@@ -5,8 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: reg_sq_1024
-  description: Experiment with linear regression and 1024 gold datapoints, linear data transformation with different levels of noise (correlation)
+  name: xgb_lin_8_time_test
+  description: Experiment with xgboost and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
       x_population: 
@@ -15,20 +15,20 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_squared  # linear_univariate, random, or custom
+        transformation: linear_univariate  # linear_univariate, random, or custom
         m: 4
-        rho: 0.95
+        rho: null
         b: 0
     gold_population:
       x_population: 
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 1024
+        size: 8
       y_population:
-        transformation: linear_squared  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
-        rho: 0.95
+        rho: null
         b: 0
     unlabelled_population:
       x_population: 
@@ -38,11 +38,11 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_squared  # linear_univariate, random, or custom
+        transformation: linear_univariate  # linear_univariate, random, or custom
         m: 4
-        rho: 0.95
+        rho: null
         b: 0
-    true_value: null  # Compute this yourself, if not available, set to None
+    true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
     use_active_inference: False
@@ -62,9 +62,9 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: linear_regression
+    name: xgboost
     optuna: True
-    # parameters: Will add later
+    trials: 10
   model_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
