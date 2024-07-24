@@ -111,9 +111,6 @@ def sample_y_linear_mult_noise(x, params_dict):
 
     return y
 
-def sample_y_linear_mult_noise_mv_squared(x, y_dict):
-    return sample_y_linear_mult_noise(x, y_dict)**2
-
 # Distribution distance functions
 
 def total_variation_distance(x, y, bins=100):
@@ -169,7 +166,6 @@ def sample_population(population_dict):
         'linear_multivariate': sample_y_linear_mv,
         'linear_mult_noise': sample_y_linear_mult_noise,
         'linear_squared': sample_y_squared,
-        'linear_mult_noise_squared': sample_y_linear_mult_noise_mv_squared,
     }
 
     x_dict = population_dict['x_population']

@@ -1,0 +1,113 @@
+Experiment Summary
+Description: Experiment with xgboost and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
+Experiment Name: xgb_sq_8
+Training Population X Distribution: gamma_univariate
+Training Population X Size: 10000
+Training Population Y Distribution: linear_squared
+Gold Population X Distribution: gamma_univariate
+Gold Population X Size: 8
+Gold Population Y Distribution: linear_squared
+Unlabelled Population X Distribution: gamma_univariate
+Unlabelled Population X Size: 10000
+Unlabelled Population Y Distribution: linear_squared
+True Value: 333.94757535464237
+Experiment Iterations: 25
+Confidence Level: 0.95
+Independent Variable: noise
+Model: xgboost
+Estimate: mean
+Methods: ppi, naive, classical, ppi_pp, ratio, 
+
+Data Summaries
+The average test error for x = 0.3 is 57518.55813561114
+
+
+The average CI width for x = 0.3 and method ppi is 95480.37399702372
+The average empirical coverage for x = 0.3 and method ppi is 0.4
+
+
+The average CI width for x = 0.3 and method naive is 2388.932945786162
+The average empirical coverage for x = 0.3 and method naive is 0.0
+
+
+The average CI width for x = 0.3 and method classical is 149494.25294707547
+The average empirical coverage for x = 0.3 and method classical is 0.72
+
+
+The average CI width for x = 0.3 and method ppi_pp is 91388.7974603045
+The average empirical coverage for x = 0.3 and method ppi_pp is 0.4
+
+
+The average CI width for x = 0.3 and method ratio is 184694714861.5068
+The average empirical coverage for x = 0.3 and method ratio is 1.0
+
+
+The average test error for x = 0.5 is 5683.415426208953
+
+
+The average CI width for x = 0.5 and method ppi is 7700.377778702528
+The average empirical coverage for x = 0.5 and method ppi is 0.44
+
+
+The average CI width for x = 0.5 and method naive is 237.16791013629077
+The average empirical coverage for x = 0.5 and method naive is 0.0
+
+
+The average CI width for x = 0.5 and method classical is 10867.473290364533
+The average empirical coverage for x = 0.5 and method classical is 0.96
+
+
+The average CI width for x = 0.5 and method ppi_pp is 6975.149382232431
+The average empirical coverage for x = 0.5 and method ppi_pp is 0.56
+
+
+The average CI width for x = 0.5 and method ratio is 562529992.7683221
+The average empirical coverage for x = 0.5 and method ratio is 1.0
+
+
+The average test error for x = 0.75 is 873.9813424246804
+
+
+The average CI width for x = 0.75 and method ppi is 875.6912765520284
+The average empirical coverage for x = 0.75 and method ppi is 0.68
+
+
+The average CI width for x = 0.75 and method naive is 38.17065012753996
+The average empirical coverage for x = 0.75 and method naive is 0.0
+
+
+The average CI width for x = 0.75 and method classical is 1363.4218420141488
+The average empirical coverage for x = 0.75 and method classical is 0.92
+
+
+The average CI width for x = 0.75 and method ppi_pp is 809.4528176291092
+The average empirical coverage for x = 0.75 and method ppi_pp is 0.8
+
+
+The average CI width for x = 0.75 and method ratio is 8730293.59640016
+The average empirical coverage for x = 0.75 and method ratio is 1.0
+
+
+The average test error for x = 0.9 is 528.4413648380076
+
+
+The average CI width for x = 0.9 and method ppi is 329.2430650334977
+The average empirical coverage for x = 0.9 and method ppi is 0.6
+
+
+The average CI width for x = 0.9 and method naive is 23.926200053306644
+The average empirical coverage for x = 0.9 and method naive is 0.0
+
+
+The average CI width for x = 0.9 and method classical is 963.5408348020287
+The average empirical coverage for x = 0.9 and method classical is 0.96
+
+
+The average CI width for x = 0.9 and method ppi_pp is 411.26016403608156
+The average empirical coverage for x = 0.9 and method ppi_pp is 0.88
+
+
+The average CI width for x = 0.9 and method ratio is 4610727.30815181
+The average empirical coverage for x = 0.9 and method ratio is 1.0
+
+

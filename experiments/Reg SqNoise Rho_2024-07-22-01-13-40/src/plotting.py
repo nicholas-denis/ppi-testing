@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 import yaml
 import os
 import numpy as np
-import matplotlib.patches as mpatches
 
 def line_plot(data, plot_config, config, x_lab=None):
     """
@@ -36,7 +35,7 @@ def line_plot(data, plot_config, config, x_lab=None):
             y_lower_percentiles.append(np.percentile(y_series, 10))
             y_upper_percentiles.append(np.percentile(y_series, 90))
         plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
-        plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.3)
+        plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
         style_num += 1
 
 
@@ -108,33 +107,24 @@ def sample_plot(data, plot_config, config):
     # create a figure with num_x_vals subplots
     fig, axs = plt.subplots(num_x_vals, 1, figsize=(10, 10))
 
-    patches = []
-
     for tech in plot_config['y_techniques']:
         # create a df with only the data for the technique
         tech_data = data[data['technique'] == tech['technique']]
         x_values = config['experiment']['ind_var']['vals']
         ind_var = config['experiment']['ind_var']['name']
-        color = colour_ordering[colour_num % len(colour_ordering)]
         for id, x_val in enumerate(x_values):
             y_series = tech_data.loc[tech_data[ind_var] == x_val, ['ci_low', 'ci_high']]
             y_series = y_series.sample(n=5)
             ci_list = [(y_series.iloc[i][0], y_series.iloc[i][1]) for i in range(5)]
-            
             for i in range(5):
                 axs[id].plot(ci_list[i], ((method_count + i)/5, (method_count + i)/5),
-                             color=color)
+                             color=colour_ordering[colour_num % len(colour_ordering)])
                 axs[id].axvline(x=config['experiment']['parameters']['true_value'], color='y', linestyle='--')
                 # remove the y axis 
                 axs[id].get_yaxis().set_visible(False)
-        patch = mpatches.Patch(color=color, label=tech['label'])
-        patches.append(patch)
         method_count += 5
         colour_num += 1
 
-    # create a legend that captures the different methods with the respective colours
-
-    fig.legend(handles=patches, loc='upper right')
     
     fig.suptitle(plot_config.get('title', ''))
 
@@ -174,7 +164,7 @@ def violin_plot(data, plot_config, config):
 
     # Create a figure 
     num_techs = len(plot_config['y_techniques'])
-    figs, axs = plt.subplots(nrows = num_techs, ncols=1, figsize=(15, 15))
+    figs, axs = plt.subplots(nrows = num_techs, ncols=1, figsize=(10, 10))
     for id, tech in enumerate(plot_config['y_techniques']):
         tech_data = data[data['technique'] == tech['technique']] # isolate the data for the technique
         x_values = config['experiment']['ind_var']['vals']

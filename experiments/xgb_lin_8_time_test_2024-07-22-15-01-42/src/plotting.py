@@ -36,7 +36,7 @@ def line_plot(data, plot_config, config, x_lab=None):
             y_lower_percentiles.append(np.percentile(y_series, 10))
             y_upper_percentiles.append(np.percentile(y_series, 90))
         plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
-        plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.3)
+        plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.5)
         style_num += 1
 
 
