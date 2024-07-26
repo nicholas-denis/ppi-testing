@@ -221,7 +221,7 @@ def sample_population(population_dict):
         x = distributions[x_dict['distribution']](x_dict).reshape(-1, 1)
     else:
         raise ValueError("Distribution not supported")
-
+ 
     # Sample y
     if y_dict['transformation'] in transformations:
         y = transformations[y_dict['transformation']](x, y_dict).reshape(-1, 1)
