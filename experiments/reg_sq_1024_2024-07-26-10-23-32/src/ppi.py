@@ -93,7 +93,7 @@ def do_naive_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
 def do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     small_sample = y_gold.shape[0]
     classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
-    h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)
+    h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
     return classical_theta, (classical_theta - h, classical_theta + h)
 
 def do_classical_ci_mean_norm(y_gold, y_gold_fitted, y_fitted, conf):

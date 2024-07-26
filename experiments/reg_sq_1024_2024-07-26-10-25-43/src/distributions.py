@@ -129,8 +129,6 @@ def sample_y_squared_gamma(x, params_dict):
     
     y = m * x**2 + sample_e
 
-    print(params_dict['rho'])
-
     return y
 
 def sample_y_squared(x, params_dict):
