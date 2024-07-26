@@ -15,7 +15,7 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
@@ -26,7 +26,7 @@ experiment:
         beta: 2
         size: 8
       y_population:
-        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
         rho: null
         b: 0
@@ -38,7 +38,7 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0

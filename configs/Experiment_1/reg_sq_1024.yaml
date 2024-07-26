@@ -19,6 +19,8 @@ experiment:
         m: 4
         rho: 0.95
         b: 0
+        alpha: 2
+        beta: 2
     gold_population:
       x_population: 
         distribution: gamma_univariate
@@ -30,6 +32,8 @@ experiment:
         m: 4
         rho: 0.95
         b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -41,7 +45,9 @@ experiment:
         transformation: linear_gamma_squared  # linear_univariate, random, or custom
         m: 4
         rho: 0.95
-        b: 0
+        b: 0.
+        alpha: 2
+        beta: 2
     true_value: null  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
