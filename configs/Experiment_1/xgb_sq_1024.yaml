@@ -15,8 +15,8 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_squared  # linear_univariate, random, or custom
-        m: 2
+        transformation: linear_gamma_squared  # linear_univariate, random, or custom
+        m: 4
         rho: 0.95
         b: 0
     gold_population:
@@ -26,8 +26,8 @@ experiment:
         beta: 2
         size: 1024
       y_population:
-        transformation: linear_squared  # linear_univariate, linear_mulivariate, random, or custom
-        m: 2
+        transformation: linear_gamma_squared  # linear_univariate, linear_mulivariate, random, or custom
+        m: 4
         rho: 0.95
         b: 0
     unlabelled_population:
@@ -38,8 +38,8 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_squared  # linear_univariate, random, or custom
-        m: 2
+        transformation: linear_gamma_squared  # linear_univariate, random, or custom
+        m: 4
         rho: 0.95
         b: 0
     true_value: null  # Compute this yourself, if not available, set to None

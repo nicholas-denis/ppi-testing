@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: coverage_test
+  name: linear_new_noise_test
   description: Experiment with linear regression and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
@@ -15,7 +15,9 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
+        alpha: 2
+        beta: 2
         m: 4
         rho: null
         b: 0
@@ -24,12 +26,14 @@ experiment:
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 8
+        size: 120
       y_population:
-        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -38,12 +42,14 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     true_value: 16  # Compute this yourself, if not available, set to None
-    n_its: 2000
+    n_its: 5000
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
