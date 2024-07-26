@@ -300,6 +300,8 @@ def experiment(config):
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
         # begin timing
         start = time.time()
+        # print current time
+        print(datetime.datetime.now())
         for path in config['experiment']['ind_var']['paths']:
             keys = path.split('.')  # Split the path
             # update the independent variable, I'm about to update the original config in place.
