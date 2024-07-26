@@ -96,6 +96,15 @@ def do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf):
     h = classical_se * stats.t.ppf((1 + conf) / 2., small_sample-1)  # Highly stolen code, uses t-dist here
     return classical_theta, (classical_theta - h, classical_theta + h)
 
+def do_classical_ci_mean_norm(y_gold, y_gold_fitted, y_fitted, conf):
+    """
+    Classical CI using normal distribution
+    """
+    small_sample = y_gold.shape[0]
+    classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
+    h = classical_se * stats.norm.ppf((1 + conf) / 2.)  # Normal dist
+    return classical_theta, (classical_theta - h, classical_theta + h)
+
 def ratio_estimator_variance(x_ppi, x_gold, y_gold):
     # sample sizes
     x_ppi = x_ppi.reshape(1, -1)
@@ -160,7 +169,7 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
         elif method_type == 'ratio':
             return do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, t_dist=method.get('t_dist', False))
         elif method_type == 'classical_test':
-            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=0)
+            return do_classical_ci_mean_norm(y_gold, y_gold_fitted, y_fitted, conf)
         else:
             print("Method not recognized")
     else:
@@ -283,7 +292,7 @@ def experiment(config):
 
     if config['experiment']['parameters'].get('true_value', None) is None:
         pop_dict = config['experiment']['parameters']['gold_population']
-        pop_dict['size'] = 100000
+        pop_dict['x_population']['size'] = 10000
         x_sample, y_sample = dist.sample_population(pop_dict)
         config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 
@@ -291,6 +300,8 @@ def experiment(config):
         print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
         # begin timing
         start = time.time()
+        # print current time
+        print(datetime.datetime.now())
         for path in config['experiment']['ind_var']['paths']:
             keys = path.split('.')  # Split the path
             # update the independent variable, I'm about to update the original config in place.

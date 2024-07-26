@@ -70,6 +70,46 @@ def sample_y_linear(x, params_dict):
 
     return y
 
+def sample_y_linear_gamma(x, params_dict):
+    """
+    Sample y as a linear function of x, with noise depending on gamma
+    """
+    alpha = params_dict['alpha']
+    beta = params_dict['beta']
+    m = params_dict['m']
+    rho = params_dict['rho']
+
+    sigma_squared = m**2 * alpha * beta**2 * ((1 - rho)/rho)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=np.sqrt(sigma_squared),
+                                size=x.shape
+                                )
+    
+    y = m * x + sample_e
+
+    return y
+
+def sample_y_squared_gamma(x, params_dict):
+    """
+    Sample y as a linear function of x, with noise depending on gamma
+    """
+    alpha = params_dict['alpha']
+    beta = params_dict['beta']
+    m = params_dict['m']
+    rho = params_dict['rho']
+
+    sigma_squared = m**2 * alpha * beta**2 * ((1 - rho)/rho)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=np.sqrt(sigma_squared),
+                                size=x.shape
+                                )
+    
+    y = (m * x)**2 + sample_e
+
+    return y
+
 def sample_y_squared(x, params_dict):
     return sample_y_linear(x, params_dict)**2
 
@@ -170,18 +210,19 @@ def sample_population(population_dict):
         'linear_mult_noise': sample_y_linear_mult_noise,
         'linear_squared': sample_y_squared,
         'linear_mult_noise_squared': sample_y_linear_mult_noise_mv_squared,
+        'linear_gamma': sample_y_linear_gamma,
+        'linear_gamma_squared': sample_y_squared_gamma,
     }
 
     x_dict = population_dict['x_population']
     y_dict = population_dict['y_population']
-    # Sample x
     # Sample x
     if x_dict['distribution'] in distributions:
         x = distributions[x_dict['distribution']](x_dict).reshape(-1, 1)
     else:
         raise ValueError("Distribution not supported")
 
-    # Sample y based on x
+    # Sample y
     if y_dict['transformation'] in transformations:
         y = transformations[y_dict['transformation']](x, y_dict).reshape(-1, 1)
     else:
