@@ -1,16 +1,4 @@
-echo "Running experiment 1, linear regression, gold 8";
-python main.py --config ../configs/Experiment_1/reg_lin_8.yaml
-
-echo "Running experiment 1, linear regression, gold 16";
-python main.py --config ../configs/Experiment_1/reg_lin_16.yaml
-
-echo "Running experiment 1, linear regression, gold 128";
-python main.py --config ../configs/Experiment_1/reg_lin_128.yaml
-
-echo "Running experiment 1, linear regression, gold 1024";
-python main.py --config ../configs/Experiment_1/reg_lin_1024.yaml
-
-echo "Running experiment 1, xgboost, gold 8";
+ echo "Running experiment 1, xgboost, gold 8";
 python main.py --config ../configs/Experiment_1/xgb_lin_8.yaml
 
 echo "Running experiment 1, xgboost, gold 16";

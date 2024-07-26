@@ -1,0 +1,113 @@
+Experiment Summary
+Description: Experiment with linear regression and 1024 gold datapoints, linear data transformation with different levels of noise (correlation)
+Experiment Name: reg_sq_1024
+Training Population X Distribution: gamma_univariate
+Training Population X Size: 10000
+Training Population Y Distribution: linear_gamma_squared
+Gold Population X Distribution: gamma_univariate
+Gold Population X Size: 10000
+Gold Population Y Distribution: linear_gamma_squared
+Unlabelled Population X Distribution: gamma_univariate
+Unlabelled Population X Size: 10000
+Unlabelled Population Y Distribution: linear_gamma_squared
+True Value: 96.68913192222546
+Experiment Iterations: 6
+Confidence Level: 0.95
+Independent Variable: noise
+Model: linear_regression
+Estimate: mean
+Methods: ppi, naive, classical, ppi_pp, ratio, 
+
+Data Summaries
+The average test error for x = 10 is 35.753578219962485
+
+
+The average CI width for x = 10 and method ppi is 5.760011229282507
+The average empirical coverage for x = 10 and method ppi is 0.8333333333333334
+
+
+The average CI width for x = 10 and method naive is 3.918245744252578
+The average empirical coverage for x = 10 and method naive is 1.0
+
+
+The average CI width for x = 10 and method classical is 5.743906539241867
+The average empirical coverage for x = 10 and method classical is 0.8333333333333334
+
+
+The average CI width for x = 10 and method ppi_pp is 4.345618217121768
+The average empirical coverage for x = 10 and method ppi_pp is 0.8333333333333334
+
+
+The average CI width for x = 10 and method ratio is 0.0
+The average empirical coverage for x = 10 and method ratio is 0.0
+
+
+The average test error for x = 100 is 37.53078764028192
+
+
+The average CI width for x = 100 and method ppi is 5.848953869217884
+The average empirical coverage for x = 100 and method ppi is 1.0
+
+
+The average CI width for x = 100 and method naive is 3.974089625699804
+The average empirical coverage for x = 100 and method naive is 0.5
+
+
+The average CI width for x = 100 and method classical is 5.82707201800667
+The average empirical coverage for x = 100 and method classical is 0.8333333333333334
+
+
+The average CI width for x = 100 and method ppi_pp is 4.4145155773356395
+The average empirical coverage for x = 100 and method ppi_pp is 0.8333333333333334
+
+
+The average CI width for x = 100 and method ratio is 0.0
+The average empirical coverage for x = 100 and method ratio is 0.0
+
+
+The average test error for x = 1000 is 43.184844839896236
+
+
+The average CI width for x = 1000 and method ppi is 5.83680072376193
+The average empirical coverage for x = 1000 and method ppi is 1.0
+
+
+The average CI width for x = 1000 and method naive is 3.906688979828369
+The average empirical coverage for x = 1000 and method naive is 0.6666666666666666
+
+
+The average CI width for x = 1000 and method classical is 5.725592541294556
+The average empirical coverage for x = 1000 and method classical is 0.8333333333333334
+
+
+The average CI width for x = 1000 and method ppi_pp is 4.403056550781263
+The average empirical coverage for x = 1000 and method ppi_pp is 0.8333333333333334
+
+
+The average CI width for x = 1000 and method ratio is 0.0
+The average empirical coverage for x = 1000 and method ratio is 0.0
+
+
+The average test error for x = 10000 is 88.24970811915259
+
+
+The average CI width for x = 10000 and method ppi is 6.955446698940548
+The average empirical coverage for x = 10000 and method ppi is 1.0
+
+
+The average CI width for x = 10000 and method naive is 4.3835467047276735
+The average empirical coverage for x = 10000 and method naive is 0.6666666666666666
+
+
+The average CI width for x = 10000 and method classical is 6.965629353874864
+The average empirical coverage for x = 10000 and method classical is 1.0
+
+
+The average CI width for x = 10000 and method ppi_pp is 5.848436954327359
+The average empirical coverage for x = 10000 and method ppi_pp is 1.0
+
+
+The average CI width for x = 10000 and method ratio is 0.0
+The average empirical coverage for x = 10000 and method ratio is 0.0
+
+
