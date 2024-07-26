@@ -1,0 +1,59 @@
+Experiment Summary
+Description: Experiment with linear regression and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
+Experiment Name: sq_new_noise_test_xgb
+Training Population X Distribution: gamma_univariate
+Training Population X Size: 10000
+Training Population Y Distribution: linear_gamma_squared
+Gold Population X Distribution: gamma_univariate
+Gold Population X Size: 120
+Gold Population Y Distribution: linear_gamma_squared
+Unlabelled Population X Distribution: gamma_univariate
+Unlabelled Population X Size: 10000
+Unlabelled Population Y Distribution: linear_gamma_squared
+True Value: 80.12700548225602
+Experiment Iterations: 200
+Confidence Level: 0.95
+Independent Variable: noise
+Model: xgboost
+Estimate: mean
+Methods: ppi, classical, ppi_pp, classical_test, 
+
+Data Summaries
+The average test error for x = 0.5 is 119.87739639892654
+
+
+The average CI width for x = 0.5 and method ppi is 8.69400626757114
+The average empirical coverage for x = 0.5 and method ppi is 0.01
+
+
+The average CI width for x = 0.5 and method classical is 51.25148875970436
+The average empirical coverage for x = 0.5 and method classical is 0.875
+
+
+The average CI width for x = 0.5 and method ppi_pp is 12.881958310758854
+The average empirical coverage for x = 0.5 and method ppi_pp is 0.15
+
+
+The average CI width for x = 0.5 and method classical_test is 50.73030573810738
+The average empirical coverage for x = 0.5 and method classical_test is 0.865
+
+
+The average test error for x = 0.9 is 119.96212903919383
+
+
+The average CI width for x = 0.9 and method ppi is 8.235364820413352
+The average empirical coverage for x = 0.9 and method ppi is 0.005
+
+
+The average CI width for x = 0.9 and method classical is 52.61442265024006
+The average empirical coverage for x = 0.9 and method classical is 0.795
+
+
+The average CI width for x = 0.9 and method ppi_pp is 12.181671158032236
+The average empirical coverage for x = 0.9 and method ppi_pp is 0.075
+
+
+The average CI width for x = 0.9 and method classical_test is 52.079379777534434
+The average empirical coverage for x = 0.9 and method classical_test is 0.785
+
+
