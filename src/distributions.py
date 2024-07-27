@@ -26,44 +26,30 @@ def sample_gamma_mv(params_dict):
         raise KeyError("Incorrect parameters for gamma distribution, required: alpha, beta, size, n_features")
     return x
 
+def sample_normal(params_dict):
+    try:
+        x = np.random.normal(params_dict['mean'], params_dict['std'], params_dict['size']).reshape(-1, 1)
+    except:
+        raise KeyError("Incorrect parameters for normal distribution, required: loc, scale, size")
+    return x
+
 # y sampling functions
-
-def sample_y_linear_old(x, m, beta, rho):
-    """
-    Given a sample of X, we generate Y as a linear function (SLR).
-    """
-
-    # compute sigma squared
-    #sigma_squared = (beta**2)*gamma*(1.-rho)/rho
-    sigma_squared = abs(m)*beta*(1.-(rho**2))/(rho**2)
-
-    # sample noise (e_i)
-    sampled_e = np.random.normal(loc=0,
-                                 scale=sigma_squared*x,
-                                 size=x.shape
-                                 )
-
-    # compute y as a linear function of x
-    y = m*x + sampled_e
-
-    return y
 
 def sample_y_linear(x, params_dict):
     """
-    Same as sample_y_linear_old, but with no beta parameter, and b is the intercept
-
-    If you want the hold one, just set m = m_old * beta
+    Simple linear transformation of x, with gaussian noise
     """
-    sigma_squared = abs(params_dict['m'])*(1.-(params_dict['rho']**2))/(params_dict['rho']**2) 
-
+    std = params_dict.get('std', 1)
+    rho = params_dict.get('rho', 1)
+    m = params_dict.get('m', 1)
     # sample noise (e_i)
     sampled_e = np.random.normal(loc=0,
-                                scale=sigma_squared*x,
+                                scale=rho*m*100,
                                 size=x.shape
                                 )
     
     # compute y as a linear function of x
-    y = params_dict['m']*x + sampled_e + params_dict['b']
+    y = m*x + sampled_e + params_dict['b']
     
     #except:
     #    raise KeyError("Incorrect parameters for linear transformation, required: m, rho, x, b")
@@ -134,7 +120,20 @@ def sample_y_squared_gamma(x, params_dict):
     return y
 
 def sample_y_squared(x, params_dict):
-    return sample_y_linear(x, params_dict)**2
+    """
+    Sample y as a linear function of x, with noise depending on gamma
+    """
+    m = params_dict['m']
+    rho = params_dict['rho']
+
+    sample_e = np.random.normal(loc=0,
+                                scale=np.sqrt(rho * m),
+                                size=x.shape
+                                )
+    
+    y = m * x**2 + sample_e
+
+    return y
 
 def sample_y_linear_mv(x, y_dict):
     try:
@@ -225,6 +224,7 @@ def sample_population(population_dict):
     distributions = {
     'gamma_univariate': sample_gamma,
     'gamma_multivariate': sample_gamma_mv,
+    'normal_univariate': sample_normal,
     }
 
     transformations = {

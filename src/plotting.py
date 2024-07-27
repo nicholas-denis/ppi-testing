@@ -170,7 +170,6 @@ def violin_plot(data, plot_config, config):
     data: pd dataframe
     plot_config: dict, plot configuration
     """
-    ## TODO: Change the x axis to be uniform (might be hard)
 
     # Create a figure 
     num_techs = len(plot_config['y_techniques'])
@@ -185,7 +184,7 @@ def violin_plot(data, plot_config, config):
             # turn y_series into a list
             y_series = y_series.tolist()
             list_of_y_series.append(y_series)
-        axs[id].violinplot(list_of_y_series, x_values, showmeans=True, showmedians=True, widths=0.15)
+        axs[id].violinplot(list_of_y_series, positions = x_values, showmeans=True, showmedians=True, widths=0.15)
         axs[id].set_title(tech['label'])
 
     # Save figure

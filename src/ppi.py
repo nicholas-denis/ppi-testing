@@ -105,7 +105,7 @@ def do_classical_ci_mean_norm(y_gold, y_gold_fitted, y_fitted, conf):
     h = classical_se * stats.norm.ppf((1 + conf) / 2.)  # Normal dist
     return classical_theta, (classical_theta - h, classical_theta + h)
 
-def ratio_estimator_variance(x_ppi, x_gold, y_gold):
+def ratio_estimator_variance_old(x_ppi, x_gold, y_gold):
     # sample sizes
     x_ppi = x_ppi.reshape(1, -1)
     x_gold = x_gold.reshape(1, -1)
@@ -127,6 +127,38 @@ def ratio_estimator_variance(x_ppi, x_gold, y_gold):
     var = (1 - n_gold / n_ppi) * (1 / n_gold) * (y_sample_var**2 + r_hat**2 * x_sample_var**2 - 2 * r_hat * xy_cov)
     return var
 
+def ratio_estimator_variance(x_ppi, x_gold, y_gold):
+    """
+    An estimate of the variance of the ratio estimator
+
+    Given by: sigma = 1/(n - 1) * sum(y - r_hat * x)^2
+    var = (N - n)/N * sigma^2 / n 
+    
+    Here: N = n_ppi, n = n_gold * (x_ppi_bar/x_gold_bar)^2
+
+    This is a conservative estimate, and requires n to be somewhat large.
+
+    If it is known that x_ppi_bar = x_gold_bar, one can remove the x_ppi_bar/x_gold_bar term, however in practice, this is not the case.
+    """
+    # sample sizes
+    x_ppi = x_ppi.reshape(1, -1)
+    x_gold = x_gold.reshape(1, -1)
+    y_gold = y_gold.reshape(1, -1)
+    n_ppi = x_ppi.shape[1]
+    n_gold = x_gold.shape[1]
+
+    # means
+    x_ppi_bar = np.mean(x_ppi)
+    x_gold_bar = np.mean(x_gold)
+    y_gold_bar = np.mean(y_gold)
+    r_hat = y_gold_bar / x_gold_bar
+
+    # variances
+    sigma_sq = np.sum((y_gold - r_hat * x_gold) ** 2) / (n_gold - 1)
+    var = (1 - n_gold / n_ppi) * sigma_sq / n_gold * (x_ppi_bar / x_gold_bar) ** 2
+
+    return var
+
 def do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, dof=1, t_dist=True):
     x_bar_gold = np.mean(x_gold)
     y_bar_gold = np.mean(y_gold)
@@ -134,20 +166,22 @@ def do_ratio_ci_mean(x_ppi, x_gold, y_gold, conf, dof=1, t_dist=True):
     mean_estimate = x_bar_ppi * y_bar_gold / x_bar_gold
     var = ratio_estimator_variance(x_ppi, x_gold, y_gold)
 
+    n_gold = x_gold.shape[0]
+
     # Shouldn't use t-distribution for this, as the estimate is generally skewed.
     # See: https://en.wikipedia.org/wiki/Ratio_estimator
     # We use Vysochanskij-Petunin inequality to get a conservative estimate
     # Aka, statistical assumptions are violated. 
 
     if t_dist:
-        lower = mean_estimate - stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
-        upper = mean_estimate + stats.t.ppf(1 - (1 - conf) / 2, dof) * np.sqrt(var)
+        lower = mean_estimate - stats.t.ppf((1 + conf) / 2, n_gold) * np.sqrt(var)
+        upper = mean_estimate + stats.t.ppf((1 + conf) / 2, n_gold) * np.sqrt(var)
     else:
         lamb = np.sqrt(4 / (9 * conf))
         lower = lamb * np.sqrt(var) - mean_estimate
         upper = lamb * np.sqrt(var) + mean_estimate
     
-    return mean_estimate, (lower[0], upper[0])
+    return mean_estimate, (lower, upper)
 
 def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=None, x_gold=None):
     """
