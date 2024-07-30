@@ -1,0 +1,67 @@
+Experiment Summary
+Description: Testing linear_mult_noise_squared transformation with xgboost
+Experiment Name: lin_sq_test
+Training Population X Distribution: gamma_univariate
+Training Population X Size: 30000
+Training Population Y Distribution: linear_mult_noise_squared
+Gold Population X Distribution: gamma_univariate
+Gold Population X Size: 10000
+Gold Population Y Distribution: linear_mult_noise_squared
+Unlabelled Population X Distribution: gamma_univariate
+Unlabelled Population X Size: 10000
+Unlabelled Population Y Distribution: linear_mult_noise_squared
+True Value: 2.168879145684152
+Experiment Iterations: 20
+Confidence Level: 0.95
+Independent Variable: noise
+Model: linear_regression
+Estimate: mean
+Methods: ppi, naive, classical, ppi_pp, ratio, 
+
+Data Summaries
+The average test error for x = 0.95 is 2.432391697461211
+
+
+The average CI width for x = 0.95 and method ppi is 0.36861521120313095
+The average empirical coverage for x = 0.95 and method ppi is 0.85
+
+
+The average CI width for x = 0.95 and method naive is 0.21110705591160056
+The average empirical coverage for x = 0.95 and method naive is 0.35
+
+
+The average CI width for x = 0.95 and method classical is 0.36725227439866653
+The average empirical coverage for x = 0.95 and method classical is 0.7
+
+
+The average CI width for x = 0.95 and method ppi_pp is 0.3361715537885572
+The average empirical coverage for x = 0.95 and method ppi_pp is 0.75
+
+
+The average CI width for x = 0.95 and method ratio is 0.0
+The average empirical coverage for x = 0.95 and method ratio is 0.0
+
+
+The average test error for x = 0.97 is 1.7129113063173151
+
+
+The average CI width for x = 0.97 and method ppi is 0.23672652879214887
+The average empirical coverage for x = 0.97 and method ppi is 0.8
+
+
+The average CI width for x = 0.97 and method naive is 0.14577685837121687
+The average empirical coverage for x = 0.97 and method naive is 0.5
+
+
+The average CI width for x = 0.97 and method classical is 0.23440066598451179
+The average empirical coverage for x = 0.97 and method classical is 0.8
+
+
+The average CI width for x = 0.97 and method ppi_pp is 0.20083947545099523
+The average empirical coverage for x = 0.97 and method ppi_pp is 0.7
+
+
+The average CI width for x = 0.97 and method ratio is 0.0
+The average empirical coverage for x = 0.97 and method ratio is 0.0
+
+

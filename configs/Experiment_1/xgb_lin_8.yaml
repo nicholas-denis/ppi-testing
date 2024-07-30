@@ -6,7 +6,7 @@ paths:
 
 experiment:
   name: xgb_lin_8
-  description: Experiment with xgboost and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
+  description: Experiment with xgboost regression and 16 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
       x_population: 
@@ -15,10 +15,12 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     gold_population:
       x_population: 
         distribution: gamma_univariate
@@ -26,10 +28,12 @@ experiment:
         beta: 2
         size: 8
       y_population:
-        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -38,10 +42,12 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
@@ -64,7 +70,7 @@ experiment:
   model:
     name: xgboost
     optuna: True
-    trials: 10
+    trials: 5
   model_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
@@ -250,7 +256,7 @@ plotting:
       title: Coverage vs rho (noise)
       file_name: sampleplotwithratio.png
       show: False
-      
+        
 
 reproducibility:
   seed: 42
