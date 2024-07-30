@@ -81,7 +81,7 @@ def build_xgb_optuna(x, y, model_config):
     Build an xgboost model with optuna hyperparameter optimization
     """
     # turn off logs
-    #optuna.logging.set_verbosity(optuna.logging.WARNING)
+    optuna.logging.set_verbosity(optuna.logging.WARNING)
     
     def objective(trial):
         n_estimators = trial.suggest_int('n_estimators', 50, 150)

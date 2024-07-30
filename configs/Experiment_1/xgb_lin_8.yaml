@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: xgb_lin_16
+  name: xgb_lin_8
   description: Experiment with xgboost regression and 16 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:

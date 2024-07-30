@@ -25,10 +25,10 @@ experiment:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 10
+        std: 2
         size: 128
       y_population:
-        transformation: linear_univariate
+        transformation: linear_squared
         m: 4
         rho: 0.3
         b: 0
@@ -47,7 +47,7 @@ experiment:
         alpha: 2
         beta: 2
     true_value: null  # Compute this yourself, if not available, set to None
-    n_its: 2000
+    n_its: 200
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
