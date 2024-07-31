@@ -376,17 +376,18 @@ def experiment(config):
             if 'wasserstein' in config['experiment']['distances']:
                 iter_metrics['wasserstein_distance'] = [wasserstein_distance] * num_methods
             for x in collection.keys():
-                iter_metrics[ind_var] = [collection[x]] * num_methods
+                iter_metrics[x] = [collection[x]] * num_methods
             metrics = extend_metrics(metrics, iter_metrics)
         # end timing
         end = time.time()
-        print(f"{GREEN}Finished experiment with {config['experiment']['ind_var']['name']} = {x} took {end - start} seconds{RESET}")
-
+        print(f"{GREEN}Finished experiment with {ind_vars_str}{RESET}")
     # Plot figures from metrics, and save them in the plotting folder
 
     #plot_metrics(primary_means, config)
 
     # Create a dataframe of the metrics
+
+    # print length of metric lists
 
     metrics_df = pd.DataFrame(metrics)
 
