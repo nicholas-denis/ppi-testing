@@ -5,7 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: Optuna Test
+  name: optuna_test
+  description: Experiment with linear regression and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
       x_population: 
@@ -14,21 +15,25 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma_squared  # linear_univariate, random, or custom
+        alpha: 2
+        beta: 2
         m: 4
-        rho: null
+        rho: .95
         b: 0
     gold_population:
       x_population: 
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 100
+        size: 16
       y_population:
-        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_gamma_squared  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
-        rho: null
+        rho: .95
         b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -37,11 +42,13 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma_squared  # linear_univariate, random, or custom
         m: 4
-        rho: null
+        rho: .95
         b: 0
-    true_value: 16  # Compute this yourself, if not available, set to None
+        alpha: 2
+        beta: 2
+    true_value: null  # Compute this yourself, if not available, set to None
     n_its: 100
     test_size: 0.2
     use_active_inference: False
@@ -50,9 +57,9 @@ experiment:
   ind_var:
     name: noise  # this is really confusing right now because of rho/noise, will think of solution later
     vals:
-      - 0.1
-      - 0.25
+      - 0.3
       - 0.5
+      - 0.7
       - 0.9
     paths:
       - experiment.parameters.training_population.y_population.rho
@@ -61,19 +68,18 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: random_forest
+    name: xgboost
     optuna: True
+    trials: 5
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
     - type: ppi
-    - type: naive
     - type: classical
     - type: ppi_pp
-      lhat: null  # Set None here for estimated optimal lambda
-    - type: ratio
-      t_dist: True
+      lhat: null  # Set null here for estimated optimal lambda
+    - type: classical_test
     #- type: stratified_ppi
   metrics:  # Make sure these are plural
     - widths
@@ -81,55 +87,162 @@ experiment:
   
 plotting:
   plots:
-      - type: violin
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Method
-        y_label: Widths
-        file_name: widthsviolin.png
-        show: False
-      - type: line
-        x: noise
-        y_metric: ci_width
-        y_techniques:
-          - technique: ppi
-            label: PPI Widths
-          - technique: classical
-            label: Classic Widths
-        title: Widths vs rho (noise)
-        x_label: Rho values
-        y_label: Widths
-        file_name: widthsplot.png
-        show: False
-      - type: coverage
-        x: noise
-        y_techniques:
-          - technique: ppi
-            label: PPI Coverage
-          - technique: classical
-            label: Classic Coverage
-        title: Coverage vs rho (noise)
-        x_label: Noise
-        file_name: coverageplot.png
-        show: False
-      - type: sample
-        x: noise
-        y_metric: coverage
-        y_techniques:
-          - technique: ppi
-            label: PPI Coverage
-          - technique: classical
-            label: Classic Coverage
-        title: Coverage vs rho (noise)
-        file_name: sampleplot.png
-        show: False
-
-      
+    - type: violin
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Widths vs rho (noise)
+      x_label: Method
+      y_label: Widths
+      file_name: widthsviolin.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Widths vs rho (noise)
+      x_label: Rho values
+      y_label: Widths
+      file_name: widthsplot.png
+      show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplotwithratio.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      file_name: sampleplotwithratio.png
+      show: False
+    - type: violin
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Widths vs rho (noise)
+      x_label: Method
+      y_label: Widths
+      file_name: widthsviolinwithratio.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Widths vs rho (noise)
+      x_label: Rho values
+      y_label: Widths
+      file_name: widthsplotwithratio.png
+      show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplotwithratio.png
+      show: False
+    - type: coverage
+      x: noise
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      x_label: Noise
+      file_name: coverageplot.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      file_name: sampleplot.png
+      show: False
+    - type: sample
+      x: noise
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+        - technique: classical_test
+          label: Classical test
+      title: Coverage vs rho (noise)
+      file_name: sampleplotwithratio.png
+      show: False
 
 reproducibility:
   seed: 42

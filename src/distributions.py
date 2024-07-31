@@ -179,9 +179,18 @@ def optimal_transport_distance(x, y, cost):
     Compute the optimal transport distance between two distributions using
     monte carlo methods
     
-    Big todo I guess, will read paper first
+    Will implement cost later.
     """
-    pass
+    if x.ndim == 2:
+        if x.shape[1] == 1:
+            x = x.flatten()
+            y = y.flatten()
+            return stats.wasserstein_distance(x, y)
+        else:
+            return stats.wasserstein_distance_nd(x, y)
+    else:
+        return stats.wasserstein_distance(x, y)
+
 
 
 def sample_population(population_dict):

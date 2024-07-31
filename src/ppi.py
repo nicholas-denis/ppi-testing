@@ -314,8 +314,9 @@ def experiment(config):
     # prepare metric results storage
 
     metrics = create_metrics_dict(config) 
-    ind_var = config['experiment']['ind_var']['name']
-    metrics[ind_var] = []
+    
+    for ind_var in config['experiment']['ind_var']['name']:
+        metrics[ind_var] = []
 
     num_methods = len(config['experiment']['methods'])
 
@@ -331,24 +332,51 @@ def experiment(config):
         x_sample, y_sample = dist.sample_population(pop_dict)
         config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 
-    for x in config['experiment']['ind_var']['vals']:
-        print(f"{YELLOW}Running experiment with {config['experiment']['ind_var']['name']} = {x}{RESET}")
+    for collection in config['experiment']['ind_var']['vals']:
+        ind_vars_str = ""
+        print(collection.keys())
+        for x in collection.keys():  # Looks at alpha or beta
+            ind_vars_str += f"{x} = {collection[x]} "
+            for path in config['experiment']['ind_var']['paths'][x]:
+                keys = path.split('.')  # Split the path
+                # update the independent variable, I'm about to update the original config in place.
+                temp = config
+                for key in keys[:-1]:
+                    temp = temp[key]
+                temp[keys[-1]] = collection[x]
+        # Compute distribution distances
+        train_pop_copy = copy.deepcopy(config['experiment']['parameters']['training_population'])
+        train_pop_copy['x_population']['size'] = 100000
+        gold_pop_copy = copy.deepcopy(config['experiment']['parameters']['gold_population'])
+        gold_pop_copy['x_population']['size'] = 100000
+        train_x_sample, train_y_sample = dist.sample_population(train_pop_copy)
+        gold_x_sample, gold_y_sample = dist.sample_population(gold_pop_copy)
+        print(train_x_sample.shape, gold_x_sample.shape)
+        for distance in config['experiment']['distances']:
+            if distance == 'tv':
+                tv_distance = dist.total_variation_distance(train_x_sample, gold_x_sample)
+            elif distance == 'wasserstein':
+                wasserstein_distance = stats.wasserstein_distance(train_x_sample.flatten(), gold_x_sample.flatten())
+        print(config['experiment']['parameters']['gold_population']['x_population']['alpha'])
+        print(f"{YELLOW}Running experiment with {ind_vars_str}{RESET}")
+        # print tv, wasserstein distance
+        print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
+        print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
         # begin timing
         start = time.time()
         # print current time
         print(datetime.datetime.now())
-        for path in config['experiment']['ind_var']['paths']:
-            keys = path.split('.')  # Split the path
-            # update the independent variable, I'm about to update the original config in place.
-            temp = config
-            for key in keys[:-1]:
-                temp = temp[key]
-            temp[keys[-1]] = x
         for i in range(params['n_its']):
             # single iteration of the experiment
             iter_metrics = single_iteration(config) 
             iter_metrics['iteration'] = [i] * num_methods
-            iter_metrics[ind_var] = [x] * num_methods
+            # this is not a very smart way of doing it, but it works, also not very modular
+            if 'tv' in config['experiment']['distances']:
+                iter_metrics['tv_distance'] = [tv_distance] * num_methods
+            if 'wasserstein' in config['experiment']['distances']:
+                iter_metrics['wasserstein_distance'] = [wasserstein_distance] * num_methods
+            for x in collection.keys():
+                iter_metrics[ind_var] = [collection[x]] * num_methods
             metrics = extend_metrics(metrics, iter_metrics)
         # end timing
         end = time.time()
