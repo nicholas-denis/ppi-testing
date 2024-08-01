@@ -67,6 +67,8 @@ experiment:
         beta: 4
       - alpha: 4
         beta: 2
+      - alpha: 2
+        beta: 2
     paths:
       alpha:
         - experiment.parameters.gold_population.x_population.alpha
