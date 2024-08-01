@@ -174,7 +174,7 @@ def total_variation_distance(x, y, bins=100):
 
     return tvd
 
-def optimal_transport_distance(x, y, cost):
+def wasserstein_distance(x, y, cost=None):
     """
     Compute the optimal transport distance between two distributions using
     monte carlo methods

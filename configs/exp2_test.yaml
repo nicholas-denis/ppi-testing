@@ -63,6 +63,10 @@ experiment:
         beta: 4
       - alpha: 5
         beta: 6
+      - alpha: 2
+        beta: 4
+      - alpha: 4
+        beta: 2
     paths:
       alpha:
         - experiment.parameters.gold_population.x_population.alpha
@@ -96,7 +100,42 @@ experiment:
     - wasserstein
     - tv
 
-      
+plotting:
+  plots:
+    - type: line
+      x: wasserstein
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      y_label: Widths
+      file_name: widthsplotwasserstein.png
+      show: False 
+    - type: line
+      x: tv
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      y_label: Widths
+      file_name: widthsplottv.png
+      show: False 
 
 reproducibility:
   seed: 42

@@ -154,7 +154,7 @@ def main(config: dict):
 
     plot_results(results, config)
 
-    summarize(results, config)
+    #summarize(results, config)
     
     return
 

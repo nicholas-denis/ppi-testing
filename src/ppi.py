@@ -48,6 +48,10 @@ def create_metrics_dict(config):
     if config['experiment']['parameters'].get('model_bias', False):
         metrics['model_bias'] = []
 
+    if config['experiment'].get('distances', False):
+        for distance in config['experiment']['distances']:
+            metrics[distance] = []
+
     return metrics
 
 def compute_metrics(config, conf_int):
@@ -105,28 +109,6 @@ def do_classical_ci_mean_norm(y_gold, y_gold_fitted, y_fitted, conf):
     classical_theta, classical_se = np.mean(y_gold.flatten()), stats.sem(y_gold.flatten())
     h = classical_se * stats.norm.ppf((1 + conf) / 2.)  # Normal dist
     return classical_theta, (classical_theta - h, classical_theta + h)
-
-def ratio_estimator_variance_old(x_ppi, x_gold, y_gold):
-    # sample sizes
-    x_ppi = x_ppi.reshape(1, -1)
-    x_gold = x_gold.reshape(1, -1)
-    y_gold = y_gold.reshape(1, -1)
-    n_ppi = x_ppi.shape[1]
-    n_gold = x_gold.shape[1]
-
-    # means
-    x_ppi_bar = np.mean(x_ppi)
-    x_gold_bar = np.mean(x_gold)
-    y_gold_bar = np.mean(y_gold)
-    r_hat = y_gold_bar / x_gold_bar
-
-    # variances
-    x_sample_var = np.var(x_gold, axis=1, ddof=1)
-    y_sample_var = np.var(y_gold, axis=1, ddof=1)
-    xy_cov = np.sum((x_gold - x_gold_bar) * (y_gold - y_gold_bar)) / (n_gold - 1)
-
-    var = (1 - n_gold / n_ppi) * (1 / n_gold) * (y_sample_var**2 + r_hat**2 * x_sample_var**2 - 2 * r_hat * xy_cov)
-    return var
 
 def ratio_estimator_variance(x_ppi, x_gold, y_gold):
     """
@@ -198,7 +180,7 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
         elif method_type == 'classical':
             return do_classical_ci_mean(y_gold, y_gold_fitted, y_fitted, conf)
         elif method_type == 'ppi_pp':
-            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=method['lhat'])
+            return do_ppi_ci_mean(y_gold, y_gold_fitted, y_fitted, conf, lhat=None)
         elif method_type == 'stratified_ppi':
             print("Yet to be implemented")
         elif method_type == 'ratio':
@@ -334,7 +316,6 @@ def experiment(config):
 
     for collection in config['experiment']['ind_var']['vals']:
         ind_vars_str = ""
-        print(collection.keys())
         for x in collection.keys():  # Looks at alpha or beta
             ind_vars_str += f"{x} = {collection[x]} "
             for path in config['experiment']['ind_var']['paths'][x]:
@@ -351,13 +332,11 @@ def experiment(config):
         gold_pop_copy['x_population']['size'] = 100000
         train_x_sample, train_y_sample = dist.sample_population(train_pop_copy)
         gold_x_sample, gold_y_sample = dist.sample_population(gold_pop_copy)
-        print(train_x_sample.shape, gold_x_sample.shape)
-        for distance in config['experiment']['distances']:
+        for distance in config['experiment'].get('distances', []):
             if distance == 'tv':
                 tv_distance = dist.total_variation_distance(train_x_sample, gold_x_sample)
             elif distance == 'wasserstein':
-                wasserstein_distance = stats.wasserstein_distance(train_x_sample.flatten(), gold_x_sample.flatten())
-        print(config['experiment']['parameters']['gold_population']['x_population']['alpha'])
+                wasserstein_distance = dist.wasserstein_distance(train_x_sample, gold_x_sample)
         print(f"{YELLOW}Running experiment with {ind_vars_str}{RESET}")
         # print tv, wasserstein distance
         print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
@@ -371,16 +350,16 @@ def experiment(config):
             iter_metrics = single_iteration(config) 
             iter_metrics['iteration'] = [i] * num_methods
             # this is not a very smart way of doing it, but it works, also not very modular
-            if 'tv' in config['experiment']['distances']:
-                iter_metrics['tv_distance'] = [tv_distance] * num_methods
-            if 'wasserstein' in config['experiment']['distances']:
-                iter_metrics['wasserstein_distance'] = [wasserstein_distance] * num_methods
+            if 'tv' in config['experiment'].get('distances', []):
+                iter_metrics['tv'] = [tv_distance] * num_methods
+            if 'wasserstein' in config['experiment'].get('distances', []):
+                iter_metrics['wasserstein'] = [wasserstein_distance] * num_methods
             for x in collection.keys():
                 iter_metrics[x] = [collection[x]] * num_methods
             metrics = extend_metrics(metrics, iter_metrics)
         # end timing
         end = time.time()
-        print(f"{GREEN}Finished experiment with {ind_vars_str}{RESET}")
+        print(f"{GREEN}Finished experiment with {ind_vars_str}{RESET} in {end - start} seconds")
     # Plot figures from metrics, and save them in the plotting folder
 
     #plot_metrics(primary_means, config)
