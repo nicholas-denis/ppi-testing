@@ -103,6 +103,8 @@ experiment:
   distances:
     - wasserstein
     - tv
+  plot_distributions: True
+  clipping: True
 
 plotting:
   plots:

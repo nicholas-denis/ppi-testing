@@ -192,7 +192,7 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
     else:
         print("Estimation method not recognized")
 
-def single_iteration(config):
+def single_iteration(config, iter_num=0):
     """
     A single iteration of the experiment
 
@@ -204,11 +204,35 @@ def single_iteration(config):
     - Training
     - Residual testing
     """
+    
+
     num_methods = len(config['experiment']['methods'])
 
     x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
     x_gold, y_gold = dist.sample_population(config['experiment']['parameters']['gold_population'])
     x_ppi, y_ppi = dist.sample_population(config['experiment']['parameters']['unlabelled_population'])
+
+    if config['experiment'].get('clipping', False):
+        min_train_x = x_train.min()
+        max_train_x = x_train.max()
+
+        # remove all x values in x_ppi that are outside the range and their corresponding y values
+        x_ppi_clip = x_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
+        y_ppi_clip = y_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
+
+        # do the same for x_gold
+        x_gold_clip = x_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
+        y_gold_clip = y_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
+
+        # check if either is empty
+        if not(x_ppi_clip.shape[0] >= 5 or x_gold_clip.shape[0] >= 5):
+            x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
+            x_gold, y_gold = np.array(x_gold_clip).reshape(-1, 1), np.array(y_gold_clip).reshape(-1, 1)
+        else:
+            # log clipping removed too many points:
+            #logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
+            pass
+
 
     if config['experiment']['parameters'].get('true_value', None) is None:
         # Do not change this to an if not statement in case 'true_value' is 0
@@ -314,6 +338,24 @@ def experiment(config):
         x_sample, y_sample = dist.sample_population(pop_dict)
         config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 
+    # plot the distributions if necessary
+    # honestly, just change the part of the code for a new experiment
+    if config['experiment'].get('plot_distributions', False):
+        lin_space = np.linspace(0, 40, 4000)
+        for vals in config['experiment']['ind_var']['vals']:
+            for key in vals.keys():
+                if key == 'alpha':
+                    alpha = vals[key]
+                elif key == 'beta':
+                    beta = vals[key]
+            y = stats.gamma.pdf(lin_space, a=alpha, scale=beta)
+            plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}")
+            plt.legend()
+
+        # save plot
+        plt.savefig(os.path.join(config['paths']['plotting_path'], "distplots.png"), bbox_inches='tight')
+            
+
     for collection in config['experiment']['ind_var']['vals']:
         ind_vars_str = ""
         for x in collection.keys():  # Looks at alpha or beta
@@ -325,29 +367,33 @@ def experiment(config):
                 for key in keys[:-1]:
                     temp = temp[key]
                 temp[keys[-1]] = collection[x]
+
         # Compute distribution distances
+
         train_pop_copy = copy.deepcopy(config['experiment']['parameters']['training_population'])
         train_pop_copy['x_population']['size'] = 100000
         gold_pop_copy = copy.deepcopy(config['experiment']['parameters']['gold_population'])
         gold_pop_copy['x_population']['size'] = 100000
         train_x_sample, train_y_sample = dist.sample_population(train_pop_copy)
         gold_x_sample, gold_y_sample = dist.sample_population(gold_pop_copy)
+
         for distance in config['experiment'].get('distances', []):
             if distance == 'tv':
                 tv_distance = dist.total_variation_distance(train_x_sample, gold_x_sample)
+                print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
             elif distance == 'wasserstein':
                 wasserstein_distance = dist.wasserstein_distance(train_x_sample, gold_x_sample)
+                print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
         print(f"{YELLOW}Running experiment with {ind_vars_str}{RESET}")
-        # print tv, wasserstein distance
-        # print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
-        # print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
+
+
         # begin timing
         start = time.time()
         # print current time
         print(datetime.datetime.now())
         for i in range(params['n_its']):
             # single iteration of the experiment
-            iter_metrics = single_iteration(config) 
+            iter_metrics = single_iteration(config, iter_num=i) 
             iter_metrics['iteration'] = [i] * num_methods
             # this is not a very smart way of doing it, but it works, also not very modular
             if 'tv' in config['experiment'].get('distances', []):
