@@ -70,7 +70,7 @@ def line_plot(data, plot_config, config):
     """
     style_ordering = ['-', '--', '-.', ':']
     style_num = 0
-    x = plot_config.get('x', config['experiment']['ind_var']['name'])
+    x = plot_config.get('x', config['experiment']['ind_var']['name'][0])
     x_values = data[x].unique().tolist()
     for tech in plot_config['y_techniques']:
         # create a df with only the data for the technique
@@ -118,7 +118,7 @@ def coverage_plot(data, plot_config, config):
     """
     style_ordering = ['-', '--', '-.', ':']
     style_num = 0
-    x = plot_config.get('x', config['experiment']['ind_var']['name'])
+    x = plot_config.get('x', config['experiment']['ind_var']['name'][0])
     x_values = data[x].unique().tolist()
     for tech in plot_config['y_techniques']:
         # create a df with only the data for the technique
@@ -164,7 +164,7 @@ def sample_plot(data, plot_config, config):
     colour_num = 0
     method_count = 0
     
-    x = plot_config.get('x', config['experiment']['ind_var']['name'])
+    x = plot_config.get('x', config['experiment']['ind_var']['name'][0])
     x_values = data[x].unique().tolist()
     
     num_x_vals = len(config['experiment']['ind_var']['vals'])
@@ -235,7 +235,7 @@ def violin_plot(data, plot_config, config):
     # Create a figure 
     num_techs = len(plot_config['y_techniques'])
     figs, axs = plt.subplots(nrows = num_techs, ncols=1, figsize=(15, 15))
-    x = plot_config.get('x', config['experiment']['ind_var']['name'])
+    x = plot_config.get('x', config['experiment']['ind_var']['name'][0])
     x_values = data[x].unique().tolist()
     for id, tech in enumerate(plot_config['y_techniques']):
         tech_data = data[data['technique'] == tech['technique']] # isolate the data for the technique

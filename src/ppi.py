@@ -339,8 +339,8 @@ def experiment(config):
                 wasserstein_distance = dist.wasserstein_distance(train_x_sample, gold_x_sample)
         print(f"{YELLOW}Running experiment with {ind_vars_str}{RESET}")
         # print tv, wasserstein distance
-        print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
-        print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
+        # print(f"{YELLOW}Total Variation Distance: {tv_distance}{RESET}")
+        # print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
         # begin timing
         start = time.time()
         # print current time

@@ -67,6 +67,8 @@ experiment:
         beta: 4
       - alpha: 4
         beta: 2
+      - alpha: 3
+        beta: 3
       - alpha: 2
         beta: 2
     paths:

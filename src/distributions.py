@@ -45,7 +45,7 @@ def sample_y_linear(x, params_dict):
     b = params_dict.get('b', 0)
     # sample noise (e_i)
     sampled_e = np.random.normal(loc=0,
-                                scale=rho*m*10*std,
+                                scale=rho*m*std,
                                 size=x.shape
                                 )
     
