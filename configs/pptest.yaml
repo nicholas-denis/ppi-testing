@@ -12,36 +12,37 @@ experiment:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 1
+        std: 3
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
-        m: 1
+        transformation: experimental_two  # linear_univariate, random, or custom
+        m: 2
         rho: 0.1
         b: 0
     gold_population:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 1
-        size: 10000
+        std: 3
+        size: 15
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
-        m: 1
+        transformation: experimental_two  # linear_univariate, random, or custom
+        m: 2
         rho: 0.00001
         b: 0
     unlabelled_population:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 1
-        size: 10000
+        std: 3
+        size: 50
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
-        m: 1
+        transformation: experimental_two  # linear_univariate, random, or custom
+        m: 2
         rho: 12
         b: 0
+        std: 0.5
     true_value: null  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2

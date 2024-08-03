@@ -63,8 +63,6 @@ experiment:
         beta: 4
       - alpha: 5
         beta: 6
-      - alpha: 2
-        beta: 4
       - alpha: 4
         beta: 2
       - alpha: 3

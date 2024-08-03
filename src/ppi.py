@@ -44,6 +44,7 @@ def create_metrics_dict(config):
     metrics['test_error'] = []
     metrics['rectifier'] = []
     metrics['relative_bias'] = []
+    metrics['prediction_variance'] = []
 
     if config['experiment']['parameters'].get('model_bias', False):
         metrics['model_bias'] = []
@@ -230,7 +231,7 @@ def single_iteration(config, iter_num=0):
             x_gold, y_gold = np.array(x_gold_clip).reshape(-1, 1), np.array(y_gold_clip).reshape(-1, 1)
         else:
             # log clipping removed too many points:
-            #logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
+            # logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
             pass
 
 
@@ -251,8 +252,9 @@ def single_iteration(config, iter_num=0):
     y_gold_fitted = model.predict(x_gold)  # Gold standard fitted
     y_fitted = model.predict(x_ppi)  # Unlabelled fitted
 
-    # Manual rectifier computation
-    rectifier = np.mean(y_gold_fitted - y_gold)
+    # Manual rectifier, variance computation
+    rectifier = np.var(y_gold_fitted - y_gold)
+    predictions_var = np.var(y_fitted)
 
     # Model bias computation if called for
     if config['experiment']['parameters']['unlabelled_population'].get('include', False):
@@ -266,7 +268,7 @@ def single_iteration(config, iter_num=0):
         metrics['model_bias'] = [model_bias] * num_methods
     metrics['test_error'] = [residual] * num_methods
     metrics['rectifier'] = [rectifier] * num_methods
-
+    metrics['prediction_variance'] = [predictions_var] * num_methods
 
     for method in config['experiment']['methods']:
         ci_results = compute_ci_singular(config, y_gold, y_gold_fitted,
@@ -297,9 +299,6 @@ def extend_metrics(metrics_dict, metrics_d):
 
 def experiment(config):
     """
-    WIP - This is the main experiment function
-    Intended use: modular framework for running ppi experiments
-
     Each experiment has the following components:
     - Variable unpacking
     - Checking reproducibility
@@ -354,6 +353,8 @@ def experiment(config):
 
         # save plot
         plt.savefig(os.path.join(config['paths']['plotting_path'], "distplots.png"), bbox_inches='tight')
+
+        plt.close()
             
 
     for collection in config['experiment']['ind_var']['vals']:

@@ -154,6 +154,38 @@ def sample_y_linear_mult_noise(x, params_dict):
 def sample_y_linear_mult_noise_mv_squared(x, y_dict):
     return sample_y_linear_mult_noise(x, y_dict)**2
 
+def experimental_y_one(x, params_dict):
+    """
+    Experimental transformation of y
+    """
+    y = np.sin(x)
+
+    std = params_dict.get('std', 1)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=.5,
+                                size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
+def experimental_y_two(x, params_dict):
+    """
+    Experimental transformation of y
+    """
+    y = np.sin(x) + x**3
+
+    sample_e = np.random.normal(loc=0,
+                                scale=2,
+                                size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
 # Distribution distance functions
 
 def total_variation_distance(x, y, bins=100):
@@ -222,6 +254,8 @@ def sample_population(population_dict):
         'linear_mult_noise_squared': sample_y_linear_mult_noise_mv_squared,
         'linear_gamma': sample_y_linear_gamma,
         'linear_gamma_squared': sample_y_squared_gamma,
+        'experimental_one': experimental_y_one,
+        'experimental_two': experimental_y_two,
     }
 
     x_dict = population_dict['x_population']
