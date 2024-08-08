@@ -127,6 +127,10 @@ def coverage_plot(data, plot_config, config):
         for x_val in x_values:
             y_series = tech_data.loc[tech_data[x] == x_val, 'empirical_coverage']
             y_means.append(np.mean(y_series))
+        # sort the x values
+        sorted_indices = np.argsort(x_values)
+        x_values = np.array(x_values)[sorted_indices]
+        y_means = np.array(y_means)[sorted_indices]
         plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, linestyle=style_ordering[style_num % 4])
         style_num += 1
     # sort the x values
@@ -178,14 +182,14 @@ def sample_plot(data, plot_config, config):
         tech_data = data[data['technique'] == tech['technique']]
         color = colour_ordering[colour_num % len(colour_ordering)]
         for id, x_val in enumerate(x_values):
-            y_series = tech_data.loc[tech_data[x] == x_val, ['ci_low', 'ci_high']]
+            y_series = tech_data.loc[tech_data[x] == x_val, ['ci_low', 'ci_high', 'true_value']]
             y_series = y_series.sample(n=5)
+            true_val = y_series['true_value'].iloc[0]
             ci_list = [(y_series.iloc[i][0], y_series.iloc[i][1]) for i in range(5)]
-            
             for i in range(5):
                 axs[id].plot(ci_list[i], ((method_count + i)/5, (method_count + i)/5),
                              color=color)
-                axs[id].axvline(x=config['experiment']['parameters']['true_value'], color='y', linestyle='--')
+                axs[id].axvline(x=true_val, color='y', linestyle='--')
                 # remove the y axis 
                 axs[id].get_yaxis().set_visible(False)
         patch = mpatches.Patch(color=color, label=tech['label'])

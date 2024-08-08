@@ -45,6 +45,7 @@ def create_metrics_dict(config):
     metrics['rectifier'] = []
     metrics['relative_bias'] = []
     metrics['prediction_variance'] = []
+    metrics['true_value'] = []
 
     if config['experiment']['parameters'].get('model_bias', False):
         metrics['model_bias'] = []
@@ -369,6 +370,13 @@ def experiment(config):
                     temp = temp[key]
                 temp[keys[-1]] = collection[x]
 
+        # compute new true value if necessary
+        if config['experiment'].get('varying_true_value', None):
+            pop_dict = copy.deepcopy(config['experiment']['parameters']['gold_population'])
+            pop_dict['x_population']['size'] = 10000
+            x_sample, y_sample = dist.sample_population(pop_dict)
+            config['experiment']['parameters']['true_value'] = np.mean(y_sample)
+
         # Compute distribution distances
 
         train_pop_copy = copy.deepcopy(config['experiment']['parameters']['training_population'])
@@ -396,6 +404,7 @@ def experiment(config):
             # single iteration of the experiment
             iter_metrics = single_iteration(config, iter_num=i) 
             iter_metrics['iteration'] = [i] * num_methods
+            iter_metrics['true_value'] = [config['experiment']['parameters']['true_value']] * num_methods
             # this is not a very smart way of doing it, but it works, also not very modular
             if 'tv' in config['experiment'].get('distances', []):
                 iter_metrics['tv'] = [tv_distance] * num_methods
