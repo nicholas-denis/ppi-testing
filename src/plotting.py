@@ -4,6 +4,7 @@ import yaml
 import os
 import numpy as np
 import matplotlib.patches as mpatches
+import processing
 
 def line_plot_old(data, plot_config, config, x_lab=None):
     """
@@ -267,7 +268,10 @@ def plot_results(data, config):
     summary:
     plot the results
     """
+    processing_types = {'isolate_values': processing.isolate_data}
     for plot_config in config['plotting']['plots']:
+        for process in plot_config.get('processing', []):
+            data = processing_types[process['type']](data, process['col'], process['vals'])
         if plot_config['type'] == 'line':
             line_plot(data, plot_config, config)
         elif plot_config['type'] == 'violin':
