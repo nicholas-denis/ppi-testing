@@ -5,6 +5,7 @@ import os
 import numpy as np
 import matplotlib.patches as mpatches
 import processing
+import copy
 
 def line_plot_old(data, plot_config, config, x_lab=None):
     """
@@ -268,6 +269,7 @@ def plot_results(data, config):
     summary:
     plot the results
     """
+    data_old = copy.deepcopy(data)
     processing_types = {'isolate_values': processing.isolate_data}
     for plot_config in config['plotting']['plots']:
         for process in plot_config.get('processing', []):
@@ -282,6 +284,7 @@ def plot_results(data, config):
             sample_plot(data, plot_config, config)
         else:
             raise ValueError(f"Plot type {plot_config['type']} not supported")
+        data = copy.deepcopy(data_old)
     return
 
 # Testing

@@ -1,4 +1,4 @@
-- Create separate plotting file, with functions to isolate for certain alpha, beta values, to graph
+DONE - Create separate plotting file, with functions to isolate for certain alpha, beta values, to graph
     - Should be easy, just remove the columns that don't have the correct alpha beta values, then use the same config to graph. 
 
 - Just do: close medium (we'll leave far for next experiment)

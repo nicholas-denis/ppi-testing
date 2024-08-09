@@ -175,6 +175,50 @@ plotting:
       title: Coverage vs rho (noise)
       file_name: sampleplot.png
       show: False
+    - file_name: widths_beta_shifts.png
+      processing:
+      - col: alpha
+        type: isolate_values
+        vals:
+        - 2
+      show: false
+      title: Widths vs Beta Value Shifts
+      type: line
+      x: beta
+      x_label: Beta Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+      - label: PPI Widths
+        technique: ppi
+      - label: Classic Widths
+        technique: classical
+      - label: Naive Widths
+        technique: naive
+      - label: PPI PP Widths
+        technique: ppi_pp
+    - file_name: widths_alpha_shifts.png
+      processing:
+      - col: beta
+        type: isolate_values
+        vals:
+        - 2
+      show: false
+      title: Widths vs Alpha Value Shifts
+      type: line
+      x: alpha
+      x_label: Beta Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+      - label: PPI Widths
+        technique: ppi
+      - label: Classic Widths
+        technique: classical
+      - label: Naive Widths
+        technique: naive
+      - label: PPI PP Widths
+        technique: ppi_pp
 
 reproducibility:
   seed: 42
