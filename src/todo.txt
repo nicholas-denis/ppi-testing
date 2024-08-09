@@ -23,6 +23,6 @@ Configurations:
     - Gold also doesn't really matter
     - Training size does matter (do we see the unlablled or not) 3x
     - Clipping yes or noise 2x
-    - Model performance (good or bad) 2x  
-- 12x total configs
+    - Model performance (good or bad) 3x  
+- 18x total configs
 

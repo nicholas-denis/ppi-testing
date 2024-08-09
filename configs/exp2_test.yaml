@@ -5,7 +5,7 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: exp2_test
+  name: 1kt_c_lin_reg
   description: Label shift
   parameters:
     training_population:
@@ -13,7 +13,7 @@ experiment:
         distribution: gamma_univariate
         alpha: 2
         beta: 2
-        size: 10000
+        size: 1000
       y_population:
         transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
@@ -106,7 +106,7 @@ experiment:
     - wasserstein
     - tv
   plot_distributions: True
-  clipping: False
+  clipping: True
   varying_true_value: True  # Indicates if the true value varies between independent variables
 
 plotting:
