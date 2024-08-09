@@ -17,3 +17,12 @@ DONE - Create separate plotting file, with functions to isolate for certain alph
         - Can test that one in a notebook
     - To be fair, training size will also be a factor of how well perform
 
+- Remember, we are testing performance as a functin of distance from training
+Configurations:
+    - Unlabelled here is irrelevant (it has not much to do with performance)
+    - Gold also doesn't really matter
+    - Training size does matter (do we see the unlablled or not) 3x
+    - Clipping yes or noise 2x
+    - Model performance (good or bad) 2x  
+- 12x total configs
+
