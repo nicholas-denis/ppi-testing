@@ -33,6 +33,17 @@ def sample_normal(params_dict):
         raise KeyError("Incorrect parameters for normal distribution, required: loc, scale, size")
     return x
 
+def sample_normal_mv(params_dict):
+    try:
+        mean = params_dict['mean']
+        std = params_dict['std']
+        size = params_dict['size']
+        n_features = params_dict['n_features']
+        x = np.random.normal(mean, std, (size, n_features))
+    except:
+        raise KeyError("Incorrect parameters for normal distribution, required: loc, scale, size, n_features")
+    return x
+
 # y sampling functions
 
 def sample_y_linear(x, params_dict):
@@ -175,11 +186,64 @@ def experimental_y_two(x, params_dict):
     """
     Experimental transformation of y
     """
-    y = np.sin(x) + x**3
+    y = 5 * np.sin(x) + (x**2/5)
+
+    rho = params_dict.get('rho', 1)
 
     sample_e = np.random.normal(loc=0,
-                                scale=2,
+                                scale=.5 * rho,
                                 size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
+def experimental_y_three(x, params_dict):
+    """
+    Experimental transformation of y
+    """
+    y = np.log(np.abs(x) + 1)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=.5,
+                                size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
+def experimental_y_four(x, params_dict):
+    """
+    Experimental transformation of y
+    """
+    y = 3 * np.sin(x) + np.exp(x / 2)
+
+    rho = params_dict.get('rho', 1)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=.5 * rho,
+                                size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
+def experimental_y_five(x, params_dict):
+    """
+    x: np.array of dimension (n, m)
+    params_dict: dictionary of parameters
+    """
+    # y = x1 * x2 + x1 + x2 + e
+    y = np.prod(x, axis=1) + np.sum(x, axis=1) + x[:, 0] + x[:, 1]
+
+    rho = params_dict.get('rho', 1)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=.5 * rho,
+                                size=x.shape[0]
                                 )
     
     y = y + sample_e
@@ -244,6 +308,7 @@ def sample_population(population_dict):
     'gamma_univariate': sample_gamma,
     'gamma_multivariate': sample_gamma_mv,
     'normal_univariate': sample_normal,
+    'normal_multivariate': sample_normal_mv,
     }
 
     transformations = {
@@ -256,13 +321,16 @@ def sample_population(population_dict):
         'linear_gamma_squared': sample_y_squared_gamma,
         'experimental_one': experimental_y_one,
         'experimental_two': experimental_y_two,
+        'experimental_three': experimental_y_three,
+        'experimental_four': experimental_y_four,
+        'experimental_five': experimental_y_five,
     }
 
     x_dict = population_dict['x_population']
     y_dict = population_dict['y_population']
     # Sample x
     if x_dict['distribution'] in distributions:
-        x = distributions[x_dict['distribution']](x_dict).reshape(-1, 1)
+        x = distributions[x_dict['distribution']](x_dict)
     else:
         raise ValueError("Distribution not supported")
  

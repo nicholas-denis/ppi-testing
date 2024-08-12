@@ -5,34 +5,37 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: pptest
+  name: pptest_mv
   description: Experiment with xgboost and 8 gold datapoints, linear data transformation, with different levels of noise (correlation)
   parameters:
     training_population:
       x_population: 
-        distribution: normal_univariate
+        distribution: normal_multivariate
         mean: 0
-        std: 3
+        std: 2
+        n_features: 3
         size: 10000
       y_population:
-        transformation: experimental_four  # linear_univariate, random, or custom
+        transformation: experimental_five  # linear_univariate, random, or custom
     gold_population:
       x_population: 
-        distribution: normal_univariate
+        distribution: normal_multivariate
         mean: 0
-        std: 3
+        std: 2
+        n_features: 3
         size: 100
       y_population:
-        transformation: experimental_four  # linear_univariate, random, or custom
+        transformation: experimental_five  # linear_univariate, random, or custom
     unlabelled_population:
       x_population: 
-        distribution: normal_univariate
+        distribution: normal_multivariate
         mean: 0
-        std: 3
+        std: 2
+        n_features: 3
         size: 100
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: experimental_four  # linear_univariate, random, or custom
+        transformation: experimental_five  # linear_univariate, random, or custom
     true_value: null  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
@@ -66,8 +69,6 @@ experiment:
     - type: classical
     - type: ppi_pp
       lhat: null  # Set None here for estimated optimal lambda
-    - type: ratio
-      t_dist: True
     #- type: stratified_ppi
   metrics:  # Make sure these are plural
     - widths
@@ -119,94 +120,6 @@ plotting:
           label: Naive Coverage
         - technique: ppi_pp
           label: PPI PP Coverage
-        - technique: ratio
-          label: Ratio Coverage
-      title: Coverage vs rho (noise)
-      x_label: Noise
-      file_name: coverageplotwithratio.png
-      show: False
-    - type: sample
-      x: noise
-      y_metric: coverage
-      y_techniques:
-        - technique: ppi
-          label: PPI Widths
-        - technique: classical
-          label: Classic Widths
-        - technique: naive
-          label: Naive Widths
-        - technique: ppi_pp
-          label: PPI PP Widths
-        - technique: ratio
-          label: Ratio Widths
-      title: Coverage vs rho (noise)
-      file_name: sampleplotwithratio.png
-      show: False
-    - type: violin
-      y_metric: ci_width
-      y_techniques:
-        - technique: ppi
-          label: PPI Widths
-        - technique: classical
-          label: Classic Widths
-        - technique: naive
-          label: Naive Widths
-        - technique: ppi_pp
-          label: PPI PP Widths
-        - technique: ratio
-          label: Ratio Widths
-      title: Widths vs rho (noise)
-      x_label: Method
-      y_label: Widths
-      file_name: widthsviolinwithratio.png
-      show: False
-    - type: line
-      x: noise
-      y_metric: ci_width
-      y_techniques:
-        - technique: ppi
-          label: PPI Widths
-        - technique: classical
-          label: Classic Widths
-        - technique: naive
-          label: Naive Widths
-        - technique: ppi_pp
-          label: PPI PP Widths
-        - technique: ratio
-          label: Ratio Widths
-      title: Widths vs rho (noise)
-      x_label: Rho values
-      y_label: Widths
-      file_name: widthsplotwithratio.png
-      show: False
-    - type: coverage
-      x: noise
-      y_techniques:
-        - technique: ppi
-          label: PPI Coverage
-        - technique: classical
-          label: Classic Coverage
-        - technique: naive
-          label: Naive Coverage
-        - technique: ppi_pp
-          label: PPI PP Coverage
-        - technique: ratio
-          label: Ratio Coverage
-      title: Coverage vs rho (noise)
-      x_label: Noise
-      file_name: coverageplotwithratio.png
-      show: False
-    - type: coverage
-      x: noise
-      y_techniques:
-        - technique: ppi
-          label: PPI Coverage
-        - technique: classical
-          label: Classic Coverage
-        - technique: naive
-          label: Naive Coverage
-        - technique: ppi_pp
-          label: PPI PP Coverage
       title: Coverage vs rho (noise)
       x_label: Noise
       file_name: coverageplot.png
@@ -225,23 +138,6 @@ plotting:
           label: PPI PP Widths
       title: Coverage vs rho (noise)
       file_name: sampleplot.png
-      show: False
-    - type: sample
-      x: noise
-      y_metric: coverage
-      y_techniques:
-        - technique: ppi
-          label: PPI Widths
-        - technique: classical
-          label: Classic Widths
-        - technique: naive
-          label: Naive Widths
-        - technique: ppi_pp
-          label: PPI PP Widths
-        - technique: ratio
-          label: Ratio Widths
-      title: Coverage vs rho (noise)
-      file_name: sampleplotwithratio.png
       show: False
       
 
