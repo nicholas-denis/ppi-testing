@@ -26,3 +26,6 @@ Configurations:
     - Model performance (good or bad) 3x  
 - 18x total configs
 
+If it takes increasing the variance of the test function to make the model do worse, everything is going to be
+proportional, because if its noisy anyways, even classical will do poorly. So you have to literally force the model
+to perform worse. 
