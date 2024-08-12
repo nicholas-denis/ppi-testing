@@ -222,18 +222,26 @@ def single_iteration(config, iter_num=0):
         x_ppi_clip = x_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
         y_ppi_clip = y_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
 
-        # do the same for x_gold
-        x_gold_clip = x_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
-        y_gold_clip = y_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
-
-        # check if either is empty
-        if not(x_ppi_clip.shape[0] >= 5 or x_gold_clip.shape[0] >= 5):
-            x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
-            x_gold, y_gold = np.array(x_gold_clip).reshape(-1, 1), np.array(y_gold_clip).reshape(-1, 1)
+        # do the same for x_gold if config says so
+        if config['experiment'].get('remove_gold', False):
+            x_gold_clip = x_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
+            y_gold_clip = y_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
+            # check if either is empty
+            if not(x_ppi_clip.shape[0] >= 5 or x_gold_clip.shape[0] >= 5):
+                x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
+                x_gold, y_gold = np.array(x_gold_clip).reshape(-1, 1), np.array(y_gold_clip).reshape(-1, 1)
+            else:
+                # log clipping removed too many points:
+                # logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
+                pass
         else:
-            # log clipping removed too many points:
-            # logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
-            pass
+            # check if either is empty
+            if not(x_ppi_clip.shape[0] >= 5):
+                x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
+            else:
+                # log clipping removed too many points:
+                # logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
+                pass
 
 
     if config['experiment']['parameters'].get('true_value', None) is None:
@@ -340,16 +348,34 @@ def experiment(config):
 
     # plot the distributions if necessary
     # honestly, just change the part of the code for a new experiment
+    if False:
+        if config['experiment'].get('plot_distributions', False):
+            lin_space = np.linspace(0, 40, 4000)
+            for vals in config['experiment']['ind_var']['vals']:
+                for key in vals.keys():
+                    if key == 'alpha':
+                        alpha = vals[key]
+                    elif key == 'beta':
+                        beta = vals[key]
+                y = stats.gamma.pdf(lin_space, a=alpha, scale=beta)
+                plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}")
+                plt.legend()
+
+            # save plot
+            plt.savefig(os.path.join(config['paths']['plotting_path'], "distplots.png"), bbox_inches='tight')
+
+            plt.close()
+
     if config['experiment'].get('plot_distributions', False):
-        lin_space = np.linspace(0, 40, 4000)
+        lin_space = np.linspace(-20, 20, 000)
         for vals in config['experiment']['ind_var']['vals']:
             for key in vals.keys():
-                if key == 'alpha':
-                    alpha = vals[key]
-                elif key == 'beta':
-                    beta = vals[key]
-            y = stats.gamma.pdf(lin_space, a=alpha, scale=beta)
-            plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}")
+                if key == 'mean':
+                    mean = vals[key]
+                elif key == 'std':
+                    std = vals[key]
+            y = stats.norm.pdf(lin_space, loc=mean, scale=std)
+            plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}")
             plt.legend()
 
         # save plot

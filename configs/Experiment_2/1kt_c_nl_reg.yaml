@@ -13,79 +13,66 @@ experiment:
         distribution: normal_univariate
         mean: 0
         std: 3
+        size: 1000
       y_population:
-        transformation: linear_gamma  # linear_univariate, random, or custom
-        m: 4
-        rho: .85
-        b: 0
-        alpha: 2
-        beta: 2
+        transformation: experimental_four  # linear_univariate, random, or custom
     gold_population:
       x_population: 
-        distribution: gamma_univariate
-        alpha: 2
-        beta: 2
+        distribution: normal_univariate
+        mean: 0
+        std: 3
         size: 128
       y_population:
-        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
-        m: 4
-        rho: .85
-        b: 0
-        alpha: 2
-        beta: 2
+        transformation: experimental_four  # linear_univariate, linear_mulivariate, random, or custom
     unlabelled_population:
       x_population: 
-        distribution: gamma_univariate
-        alpha: 2
-        beta: 2
+        distribution: normal_univariate
+        alpha: 0
+        beta: 3
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_gamma  # linear_univariate, random, or custom
-        m: 4
-        rho: .85
-        b: 0
-        alpha: 2
-        beta: 2
+        transformation: experimental_four
     true_value: 16  # Compute this yourself, if not available, set to None
-    n_its: 2000
+    n_its: 200
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
     cut_interval: True  # If True, will cut negative, upper lower intervals to 0
   ind_var:
     name: 
-      - alpha
-      - beta
+      - mean
+      - std
     vals:
-      - alpha: 2
-        beta: 3
-      - alpha: 3
-        beta: 2
-      - alpha: 2
-        beta: 4
-      - alpha: 4
-        beta: 2
-      - alpha: 2
-        beta: 2
-      - alpha: 3
-        beta: 3
-      - alpha: 4
-        beta: 4
+      - mean: 0
+        std: 3
+      - mean: 2
+        std: 3
+      - mean: -2
+        std: 3
+      - mean: 4
+        std: 3
+      - mean: -4
+        std: 3
+      - mean: 0
+        std: 4
+      - mean: 0
+        std: 5
     paths:
-      alpha:
-        - experiment.parameters.gold_population.x_population.alpha
-        - experiment.parameters.unlabelled_population.x_population.alpha
-        - experiment.parameters.gold_population.y_population.alpha
-        - experiment.parameters.unlabelled_population.y_population.alpha
-      beta:
-        - experiment.parameters.gold_population.x_population.beta
-        - experiment.parameters.unlabelled_population.x_population.beta
-        - experiment.parameters.gold_population.y_population.beta
-        - experiment.parameters.unlabelled_population.y_population.beta
+      mean:
+        - experiment.parameters.gold_population.x_population.mean
+        - experiment.parameters.unlabelled_population.x_population.mean
+        - experiment.parameters.gold_population.y_population.mean
+        - experiment.parameters.unlabelled_population.y_population.mean
+      std:
+        - experiment.parameters.gold_population.x_population.std
+        - experiment.parameters.unlabelled_population.x_population.std
+        - experiment.parameters.gold_population.y_population.std
+        - experiment.parameters.unlabelled_population.y_population.std
   model:
     name: linear_regression
     optuna: True
+    trials: 5
     # parameters: Will add later
   model_bias: True  # If false, will not calculate.
   estimate: mean
@@ -174,17 +161,17 @@ plotting:
       title: Coverage vs rho (noise)
       file_name: sampleplot.png
       show: False
-    - file_name: widths_beta_shifts.png
+    - file_name: widths_std_shifts.png
       processing:
-      - col: alpha
+      - col: mean
         type: isolate_values
         vals:
-        - 2
+          - 0
       show: false
-      title: Widths vs Beta Value Shifts
+      title: Widths vs Mean Value Shifts
       type: line
-      x: beta
-      x_label: Beta Values
+      x: std
+      x_label: Std Values
       y_label: Widths
       y_metric: ci_width
       y_techniques:
@@ -196,17 +183,17 @@ plotting:
         technique: naive
       - label: PPI PP Widths
         technique: ppi_pp
-    - file_name: widths_alpha_shifts.png
+    - file_name: widths_mean_shifts.png
       processing:
-      - col: beta
+      - col: std
         type: isolate_values
         vals:
-        - 2
+          - 3
       show: false
-      title: Widths vs Alpha Value Shifts
+      title: Widths vs mean Value Shifts
       type: line
-      x: alpha
-      x_label: Beta Values
+      x: mean
+      x_label: Mean Values
       y_label: Widths
       y_metric: ci_width
       y_techniques:
@@ -218,6 +205,47 @@ plotting:
         technique: naive
       - label: PPI PP Widths
         technique: ppi_pp
+    - type: coverage
+      x: mean
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs Mean Shift
+      x_label: Noise
+      file_name: mean_shift_coverage.png
+      show: False
+      processing:
+      - col: std
+        type: isolate_values
+        vals:
+          - 3
+    - type: coverage
+      x: std
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs Mean Shift
+      x_label: Noise
+      file_name: std_shift_coverage.png
+      show: False
+      processing:
+      - col: mean
+        type: isolate_values
+        vals:
+          - 0
+      
 
 reproducibility:
   seed: 42
