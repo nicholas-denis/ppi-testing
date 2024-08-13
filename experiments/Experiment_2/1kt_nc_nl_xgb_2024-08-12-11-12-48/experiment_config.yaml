@@ -1,0 +1,254 @@
+Nick_Huang: Nick Huang
+experiment:
+  clipping: false
+  description: Label shift, 1k training, no clipping, non-linear data, xgboost
+  distances:
+  - wasserstein
+  - tv
+  estimate: mean
+  ind_var:
+    name:
+    - mean
+    - std
+    paths:
+      mean:
+      - experiment.parameters.gold_population.x_population.mean
+      - experiment.parameters.unlabelled_population.x_population.mean
+      - experiment.parameters.gold_population.y_population.mean
+      - experiment.parameters.unlabelled_population.y_population.mean
+      std:
+      - experiment.parameters.gold_population.x_population.std
+      - experiment.parameters.unlabelled_population.x_population.std
+      - experiment.parameters.gold_population.y_population.std
+      - experiment.parameters.unlabelled_population.y_population.std
+    vals:
+    - mean: 0
+      std: 3
+    - mean: 2
+      std: 3
+    - mean: -2
+      std: 3
+    - mean: 4
+      std: 3
+    - mean: -4
+      std: 3
+    - mean: 0
+      std: 4
+    - mean: 0
+      std: 5
+  methods:
+  - type: ppi
+  - type: naive
+  - type: classical
+  - lhat: null
+    type: ppi_pp
+  - t_dist: true
+    type: ratio
+  metrics:
+  - widths
+  - coverages
+  model:
+    name: xgboost
+    optuna: true
+    trials: 5
+  model_bias: true
+  name: 1kt_nc_nl_xgb
+  parameters:
+    confidence_level: 0.95
+    cut_interval: true
+    gold_population:
+      x_population:
+        distribution: normal_univariate
+        mean: 0
+        size: 128
+        std: 3
+      y_population:
+        transformation: experimental_four
+    n_its: 200
+    test_size: 0.2
+    training_population:
+      x_population:
+        distribution: normal_univariate
+        mean: 0
+        size: 1000
+        std: 3
+      y_population:
+        transformation: experimental_four
+    true_value: 16
+    unlabelled_population:
+      x_population:
+        alpha: 0
+        beta: 3
+        distribution: normal_univariate
+        size: 10000
+      y_population:
+        include: true
+        transformation: experimental_four
+    use_active_inference: false
+  plot_distributions: true
+  varying_true_value: true
+logging:
+  log_file: ../logs/log.log
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_level: INFO
+paths:
+  configs_path: ../configs/
+  data_path: ../data/
+  experiment_path: ../experiments/1kt_nc_nl_xgb_2024-08-12-11-12-48
+  experiments_path: ../experiments/
+  logging_path: ../experiments/1kt_nc_nl_xgb_2024-08-12-11-12-48\logs
+  plotting_path: ../experiments/1kt_nc_nl_xgb_2024-08-12-11-12-48\plots
+  results_path: ../experiments/1kt_nc_nl_xgb_2024-08-12-11-12-48\results
+  src_path: ../experiments/1kt_nc_nl_xgb_2024-08-12-11-12-48\src
+plotting:
+  plots:
+  - file_name: widthsplotwasserstein.png
+    show: false
+    title: Widths vs Wasserstein Distance
+    type: line
+    x: wasserstein
+    x_label: Wasserstein Distance
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: widthsplottv.png
+    show: false
+    title: Widths vs Total Variation Distance
+    type: line
+    x: tv
+    x_label: Wasserstein Distance
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: wassersteincoverage.png
+    show: false
+    title: Coverage vs Wasserstein Distance
+    type: coverage
+    x: wasserstein
+    x_label: Noise
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+  - file_name: sampleplot.png
+    show: false
+    title: Coverage vs rho (noise)
+    type: sample
+    x: wasserstein
+    y_metric: coverage
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: widths_std_shifts.png
+    processing:
+    - col: mean
+      type: isolate_values
+      vals:
+      - 0
+    show: false
+    title: Widths vs Std Value Shifts
+    type: line
+    x: std
+    x_label: Std Values
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: widths_mean_shifts.png
+    processing:
+    - col: std
+      type: isolate_values
+      vals:
+      - 3
+    show: false
+    title: Widths vs mean Value Shifts
+    type: line
+    x: mean
+    x_label: Mean Values
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: mean_shift_coverage.png
+    processing:
+    - col: std
+      type: isolate_values
+      vals:
+      - 3
+    show: false
+    title: Coverage vs Mean Shift
+    type: coverage
+    x: mean
+    x_label: Mean Value
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+  - file_name: std_shift_coverage.png
+    processing:
+    - col: mean
+      type: isolate_values
+      vals:
+      - 0
+    show: false
+    title: Coverage vs Mean Shift
+    type: coverage
+    x: std
+    x_label: Standard Deviation Value
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+reproducibility:
+  seed: 42

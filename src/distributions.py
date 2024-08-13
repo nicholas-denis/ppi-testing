@@ -250,6 +250,23 @@ def experimental_y_five(x, params_dict):
 
     return y
 
+def experimental_y_six(x, params_dict):
+    """
+    Experimental transformation of y
+    """
+    y = 3 * np.sin(x) + np.exp(x / 8)
+
+    rho = params_dict.get('rho', 1)
+
+    sample_e = np.random.normal(loc=0,
+                                scale=2 * rho,
+                                size=x.shape
+                                )
+    
+    y = y + sample_e
+
+    return y
+
 # Distribution distance functions
 
 def total_variation_distance(x, y, bins=100):
@@ -324,6 +341,7 @@ def sample_population(population_dict):
         'experimental_three': experimental_y_three,
         'experimental_four': experimental_y_four,
         'experimental_five': experimental_y_five,
+        'experimental_six': experimental_y_six
     }
 
     x_dict = population_dict['x_population']

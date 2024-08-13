@@ -1,0 +1,253 @@
+Nick_Huang: Nick Huang
+experiment:
+  description: 128 gold, non-linear data, regression
+  estimate: mean
+  ind_var:
+    label_description: Level of noise
+    name:
+    - noise
+    paths:
+      noise:
+      - experiment.parameters.training_population.y_population.rho
+      - experiment.parameters.gold_population.y_population.rho
+      - experiment.parameters.unlabelled_population.y_population.rho
+    plot_description: Noise between x and y
+    vals:
+    - noise: 0.3
+    - noise: 0.5
+    - noise: 0.75
+    - noise: 0.9
+  methods:
+  - type: ppi
+  - type: naive
+  - type: classical
+  - lhat: null
+    type: ppi_pp
+  - t_dist: true
+    type: ratio
+  metrics:
+  - widths
+  - coverages
+  model:
+    name: linear_regression
+    optuna: true
+    trials: 5
+  model_bias: true
+  name: 128g_nl_reg
+  parameters:
+    confidence_level: 0.95
+    cut_interval: true
+    gold_population:
+      x_population:
+        distribution: normal_univariate
+        mean: 0
+        size: 128
+        std: 4
+      y_population:
+        transformation: experimental_six
+    n_its: 2000
+    test_size: 0.2
+    training_population:
+      x_population:
+        distribution: normal_univariate
+        mean: 0
+        size: 10000
+        std: 4
+      y_population:
+        transformation: experimental_six
+    true_value: null
+    unlabelled_population:
+      x_population:
+        distribution: normal_univariate
+        mean: 0
+        size: 10000
+        std: 4
+      y_population:
+        include: true
+        transformation: experimental_six
+    use_active_inference: false
+logging:
+  log_file: ../logs/log.log
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_level: INFO
+paths:
+  configs_path: ../configs/
+  data_path: ../data/
+  experiment_path: ../experiments/128g_nl_reg_2024-08-13-02-42-48
+  experiments_path: ../experiments/
+  logging_path: ../experiments/128g_nl_reg_2024-08-13-02-42-48\logs
+  plotting_path: ../experiments/128g_nl_reg_2024-08-13-02-42-48\plots
+  results_path: ../experiments/128g_nl_reg_2024-08-13-02-42-48\results
+  src_path: ../experiments/128g_nl_reg_2024-08-13-02-42-48\src
+plotting:
+  plots:
+  - file_name: widthsviolin.png
+    show: false
+    title: Widths vs % noise
+    type: violin
+    x_label: Method
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: widthsplot.png
+    show: false
+    title: Widths vs % noise
+    type: line
+    x: noise
+    x_label: Percent noise
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: coverageplotwithratio.png
+    show: false
+    title: Coverage vs % noise
+    type: coverage
+    x: noise
+    x_label: Percent noise
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+    - label: Ratio Coverage
+      technique: ratio
+  - file_name: sampleplotwithratio.png
+    show: false
+    title: Coverage vs % noise
+    type: sample
+    x: noise
+    y_metric: coverage
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+    - label: Ratio Widths
+      technique: ratio
+  - file_name: widthsviolinwithratio.png
+    show: false
+    title: Widths vs % noise
+    type: violin
+    x_label: Method
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+    - label: Ratio Widths
+      technique: ratio
+  - file_name: widthsplotwithratio.png
+    show: false
+    title: Widths vs % noise
+    type: line
+    x: noise
+    x_label: Percent noise
+    y_label: Widths
+    y_metric: ci_width
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+    - label: Ratio Widths
+      technique: ratio
+  - file_name: coverageplotwithratio.png
+    show: false
+    title: Coverage vs rho (noise)
+    type: coverage
+    x: noise
+    x_label: Percent noise
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+    - label: Ratio Coverage
+      technique: ratio
+  - file_name: coverageplot.png
+    show: false
+    title: Coverage vs % noise
+    type: coverage
+    x: noise
+    x_label: Percent noise
+    y_techniques:
+    - label: PPI Coverage
+      technique: ppi
+    - label: Classic Coverage
+      technique: classical
+    - label: Naive Coverage
+      technique: naive
+    - label: PPI PP Coverage
+      technique: ppi_pp
+  - file_name: sampleplot.png
+    show: false
+    title: Coverage vs % noise
+    type: sample
+    x: noise
+    y_metric: coverage
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+  - file_name: sampleplotwithratio.png
+    show: false
+    title: Coverage vs % noise
+    type: sample
+    x: noise
+    y_metric: coverage
+    y_techniques:
+    - label: PPI Widths
+      technique: ppi
+    - label: Classic Widths
+      technique: classical
+    - label: Naive Widths
+      technique: naive
+    - label: PPI PP Widths
+      technique: ppi_pp
+    - label: Ratio Widths
+      technique: ratio
+reproducibility:
+  seed: 42

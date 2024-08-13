@@ -1,22 +1,11 @@
-echo "Running experiment 1 1kt_c_lin_reg";
-python main.py --config ../configs/Experiment_2/1kt_c_lin_reg.yaml
+echo "Running experiment 1 16g_nl_xgb";
+python main.py --config ../configs/Experiment_1_new/16g_nl_xgb.yaml
 
-echo "Running experiment 2 1kt_nc_lin_reg";
-python main.py --config ../configs/Experiment_2/1kt_nc_lin_reg.yaml
-
-echo "Running experiment 3 50kt_c_lin_reg";
-python main.py --config ../configs/Experiment_2/50kt_c_lin_reg.yaml
-
-echo "Running experiment 4 50kt_nc_lin_reg";
-python main.py --config ../configs/Experiment_2/50kt_nc_lin_reg.yaml
-
-echo "Running experiment 5 1mt_c_lin_reg";
-python main.py --config ../configs/Experiment_2/1mt_c_lin_reg.yaml
-
-echo "Running experiment 5 1mt_nc_lin_reg";
-python main.py --config ../configs/Experiment_2/1mt_nc_lin_reg.yaml
+echo "Running experiment 2 128g_nl_xgb";
+python main.py --config ../configs/Experiment_1_new/128g_nl_xgb.yaml
 
 # shut off windows machine after running the script
+shutdown -s
 
 # chmod +x overnight.sh
 # ./overnight.sh
