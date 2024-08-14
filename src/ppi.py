@@ -195,11 +195,9 @@ def compute_ci_singular(config, y_gold, y_gold_fitted, y_fitted, method, x_ppi=N
     else:
         print("Estimation method not recognized")
 
-def single_iteration(config, iter_num=0):
+def single_iteration(config, iter_num=0, model_dict=None):
     """
     A single iteration of the experiment
-
-    Note to self: Return all the variables for appending later
 
     Experiment components:
     - Sampling
@@ -208,10 +206,21 @@ def single_iteration(config, iter_num=0):
     - Residual testing
     """
     
-
     num_methods = len(config['experiment']['methods'])
 
-    x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
+    # print(model_dict)
+
+    if model_dict is None:
+        x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
+        x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
+        model = ml.train_model(x_train, y_train, config['experiment']['model'])
+    else:
+        model = model_dict['model']
+        x_train = model_dict['x_train']
+        y_train = model_dict['y_train']
+        x_test = model_dict['x_test']
+        y_test = model_dict['y_test']
+
     x_gold, y_gold = dist.sample_population(config['experiment']['parameters']['gold_population'])
     x_ppi, y_ppi = dist.sample_population(config['experiment']['parameters']['unlabelled_population'])
 
@@ -251,10 +260,6 @@ def single_iteration(config, iter_num=0):
         # Do not change this to an if not statement in case 'true_value' is 0
         true_value = np.mean(y_ppi)
         config['experiment']['parameters']['true_value'] = true_value
-
-    x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
-
-    model = ml.train_model(x_train, y_train, config['experiment']['model'])
 
     # Residual testing
     y_test_pred = model.predict(x_test)
@@ -443,11 +448,22 @@ def experiment(config):
         start = time.time()
         # print current time
         print(datetime.datetime.now())
+
+        model_dict = None
+
+        if config['experiment'].get('train_once', False):
+            x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
+            x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
+            model = ml.train_model(x_train, y_train, config['experiment']['model'])
+            model_dict = {'model': model, 'x_train': x_train, 'y_train': y_train, 'x_test': x_test, 'y_test': y_test}
+
         for i in range(params['n_its']):
+
             # single iteration of the experiment
-            iter_metrics = single_iteration(config, iter_num=i) 
+            iter_metrics = single_iteration(config, iter_num=i, model_dict=model_dict)
             iter_metrics['iteration'] = [i] * num_methods
             iter_metrics['true_value'] = [config['experiment']['parameters']['true_value']] * num_methods
+
             # this is not a very smart way of doing it, but it works, also not very modular
             if 'tv' in config['experiment'].get('distances', []):
                 iter_metrics['tv'] = [tv_distance] * num_methods
@@ -456,6 +472,7 @@ def experiment(config):
             for x in collection.keys():
                 iter_metrics[x] = [collection[x]] * num_methods
             metrics = extend_metrics(metrics, iter_metrics)
+            
         # end timing
         end = time.time()
         print(f"{GREEN}Finished experiment with {ind_vars_str}{RESET} in {end - start} seconds")
