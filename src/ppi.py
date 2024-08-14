@@ -241,7 +241,9 @@ def single_iteration(config, iter_num=0):
                 x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
             else:
                 # log clipping removed too many points:
-                # logging.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
+                # log in the file that is referred to by logging_path
+                logger = logging.getLogger('main')
+                logger.warning(f"Iteration {iter_num}: Clipping removed too many points, reverting to original data")
                 pass
 
 
@@ -350,9 +352,8 @@ def experiment(config):
         config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 
     # plot the distributions if necessary
-    # honestly, just change the part of the code for a new experiment
-    if False:
-        if config['experiment'].get('plot_distributions', False):
+    if config['experiment'].get('plot_distributions', False):
+        if config['experiment'].get('dist_family', None) == 'gamma':
             lin_space = np.linspace(0, 40, 4000)
             for vals in config['experiment']['ind_var']['vals']:
                 for key in vals.keys():
@@ -369,22 +370,25 @@ def experiment(config):
 
             plt.close()
 
-    if config['experiment'].get('plot_distributions', False):
-        lin_space = np.linspace(-20, 20, 000)
-        for vals in config['experiment']['ind_var']['vals']:
-            for key in vals.keys():
-                if key == 'mean':
-                    mean = vals[key]
-                elif key == 'std':
-                    std = vals[key]
-            y = stats.norm.pdf(lin_space, loc=mean, scale=std)
-            plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}")
-            plt.legend()
+        elif config['experiment'].get('dist_family', None) == 'normal':
+            lin_space = np.linspace(-20, 20, 4000)
+            for vals in config['experiment']['ind_var']['vals']:
+                for key in vals.keys():
+                    if key == 'mean':
+                        mean = vals[key]
+                    elif key == 'std':
+                        std = vals[key]
+                y = stats.norm.pdf(lin_space, loc=mean, scale=std)
+                plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}")
+                plt.legend()
 
-        # save plot
-        plt.savefig(os.path.join(config['paths']['plotting_path'], "distplots.png"), bbox_inches='tight')
+            # save plot
+            plt.savefig(os.path.join(config['paths']['plotting_path'], "distplots.png"), bbox_inches='tight')
 
-        plt.close()
+            plt.close()
+        
+        else:
+            print(f"{RED}Distribution family not recognized{RESET}")
             
 
     for collection in config['experiment']['ind_var']['vals']:
@@ -455,9 +459,6 @@ def experiment(config):
         # end timing
         end = time.time()
         print(f"{GREEN}Finished experiment with {ind_vars_str}{RESET} in {end - start} seconds")
-    # Plot figures from metrics, and save them in the plotting folder
-
-    #plot_metrics(primary_means, config)
 
     # Create a dataframe of the metrics
 
@@ -470,6 +471,3 @@ def experiment(config):
         metrics_df['ci_high'] = np.maximum(metrics_df['ci_high'], 0)
 
     return metrics_df
-
-
-# - Ratio estimator, constructing CI, I have some but not sure if they're the best
