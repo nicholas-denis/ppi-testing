@@ -12,7 +12,7 @@ experiment:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 4
+        std: 8
         size: 10000
       y_population:
         transformation: experimental_six
@@ -20,15 +20,15 @@ experiment:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 4
-        size: 16
+        std: 8
+        size: 1024
       y_population:
         transformation: experimental_six
     unlabelled_population:
       x_population: 
         distribution: normal_univariate
         mean: 0
-        std: 4
+        std: 8
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
@@ -85,7 +85,7 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
       title: Widths vs % noise
       x_label: Method
       y_label: Widths
@@ -102,7 +102,7 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
       title: Widths vs % noise
       x_label: Percent noise
       y_label: Widths
@@ -118,7 +118,7 @@ plotting:
         - technique: naive
           label: Naive Coverage
         - technique: ppi_pp
-          label: PPI PP Coverage
+          label: PPI++ Coverage
         - technique: ratio
           label: Ratio Coverage
       title: Coverage vs % noise
@@ -136,7 +136,7 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
         - technique: ratio
           label: Ratio Widths
       title: Coverage vs % noise
@@ -152,7 +152,7 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
         - technique: ratio
           label: Ratio Widths
       title: Widths vs % noise
@@ -171,7 +171,7 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
         - technique: ratio
           label: Ratio Widths
       title: Widths vs % noise
@@ -189,7 +189,7 @@ plotting:
         - technique: naive
           label: Naive Coverage
         - technique: ppi_pp
-          label: PPI PP Coverage
+          label: PPI++ Coverage
         - technique: ratio
           label: Ratio Coverage
       title: Coverage vs rho (noise)
@@ -206,7 +206,7 @@ plotting:
         - technique: naive
           label: Naive Coverage
         - technique: ppi_pp
-          label: PPI PP Coverage
+          label: PPI++ Coverage
       title: Coverage vs % noise
       x_label: Noise
       file_name: coverageplot.png
@@ -237,11 +237,24 @@ plotting:
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++ Widths
         - technique: ratio
           label: Ratio Widths
       title: Coverage vs % noise
       file_name: sampleplotwithratio.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: relative_improvement
+      y_techniques:
+        - technique: ppi
+          label: PPI
+        - technique: ppi_pp
+          label: PPI++
+      title: Relative Improvement vs % noise
+      x_label: Percent noise
+      y_label: Relative Improvement
+      file_name: relativeimprovement.png
       show: False
       
 

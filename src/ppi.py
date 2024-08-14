@@ -46,6 +46,7 @@ def create_metrics_dict(config):
     metrics['relative_bias'] = []
     metrics['prediction_variance'] = []
     metrics['true_value'] = []
+    metrics['relative_improvement'] = []
 
     if config['experiment']['parameters'].get('model_bias', False):
         metrics['model_bias'] = []
@@ -284,6 +285,10 @@ def single_iteration(config, iter_num=0):
                                           y_fitted, method,
                                             x_ppi=x_ppi, x_gold=x_gold)
         method_metrics = compute_metrics(config, ci_results)
+        if method['type'] == 'classical':
+            classical_width = ci_results[1][1] - ci_results[1][0]
+        tech_width = ci_results[1][1] - ci_results[1][0]
+        method_metrics['relative_improvement'] = [(classical_width - tech_width) / classical_width]
         method_metrics['technique'] = [method['type']]
         method_metrics['model'] = [config['experiment']['model'].get('name', None)] 
         metrics = extend_metrics(metrics, method_metrics)
@@ -293,8 +298,6 @@ def single_iteration(config, iter_num=0):
 def extend_metrics(metrics_dict, metrics_d):
     """
     Extend the metrics dictionary with the new metrics
-
-    Might not need this anymore
 
     Args:
     metrics_dict (dict): dictionary of dictionaries of metrics each key is the independent variable
@@ -421,6 +424,16 @@ def experiment(config):
                 print(f"{YELLOW}Wasserstein Distance: {wasserstein_distance}{RESET}")
         print(f"{YELLOW}Running experiment with {ind_vars_str}{RESET}")
 
+        # A very bandaid fix, because I don't want to keep rearranging my config files (also good for the future in case...
+        # ...someone else makes the same mistake)
+
+        methods_list = config['experiment']['methods']
+        # move classical to the front
+        # this is needed to be done because we need to compute relative improvement over classical
+        # so classical needs to be computed first
+        for i, method in enumerate(methods_list):
+            if method['type'] == 'classical':
+                methods_list.insert(0, methods_list.pop(i))
 
         # begin timing
         start = time.time()

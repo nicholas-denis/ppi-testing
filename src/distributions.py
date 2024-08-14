@@ -254,12 +254,12 @@ def experimental_y_six(x, params_dict):
     """
     Experimental transformation of y
     """
-    y = 3 * np.sin(x) + np.exp(x / 8)
+    y = 3 * np.sin(x) + np.exp(x / 6)
 
     rho = params_dict.get('rho', 1)
 
     sample_e = np.random.normal(loc=0,
-                                scale=2 * rho,
+                                scale=3 * rho,
                                 size=x.shape
                                 )
     

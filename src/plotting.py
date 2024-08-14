@@ -7,6 +7,8 @@ import matplotlib.patches as mpatches
 import processing
 import copy
 
+percentile = 80
+
 def line_plot_old(data, plot_config, config, x_lab=None):
     """
     summary:
@@ -35,8 +37,8 @@ def line_plot_old(data, plot_config, config, x_lab=None):
         for x_val in x_values:
             y_series = tech_data.loc[tech_data[ind_var] == x_val, plot_config['y_metric']]
             y_means.append(np.mean(y_series))
-            y_lower_percentiles.append(np.percentile(y_series, 10))
-            y_upper_percentiles.append(np.percentile(y_series, 90))
+            y_lower_percentiles.append(np.percentile(y_series, 100 - percentile))
+            y_upper_percentiles.append(np.percentile(y_series, percentile))
         plt.plot(x_values, y_means, label=tech['label'], alpha=0.7, lw=0.7, linestyle=style_ordering[style_num % 4])
         plt.fill_between(x_values, y_lower_percentiles, y_upper_percentiles, alpha=0.3)
         style_num += 1
@@ -44,6 +46,7 @@ def line_plot_old(data, plot_config, config, x_lab=None):
 
     # Add labels and title
     plt.xlabel(plot_config.get('x_label', ''))
+    plt.ylabel(plot_config.get('y_label', ''))
     plt.title(plot_config.get('title', ''))
     plt.title(plot_config.get('title', ''))
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -84,8 +87,8 @@ def line_plot(data, plot_config, config):
         for x_val in x_values:
             y_series = tech_data.loc[tech_data[x] == x_val, plot_config['y_metric']]
             y_means.append(np.mean(y_series))
-            y_lower_percentiles.append(np.percentile(y_series, 10))
-            y_upper_percentiles.append(np.percentile(y_series, 90))
+            y_lower_percentiles.append(np.percentile(y_series, 100 - percentile))
+            y_upper_percentiles.append(np.percentile(y_series, percentile))
         # sort the x values
         sorted_indices = np.argsort(x_values)
         x_values = np.array(x_values)[sorted_indices]
@@ -100,6 +103,7 @@ def line_plot(data, plot_config, config):
 
     # Add labels and title
     plt.xlabel(plot_config.get('x_label', ''))
+    plt.ylabel(plot_config.get('y_label', ''))
     plt.title(plot_config.get('title', ''))
     plt.title(plot_config.get('title', ''))
     plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
@@ -219,7 +223,7 @@ def line_plot_generic(data, x_col, y_cols):
     """
     for y in y_cols:
         plt.plot(data[x_col], np.mean(data[y]), label=y)
-        plt.fill_between(data[x_col], np.percentile(data[y], 10), np.percentile(data[y], 90), alpha=0.5)
+        plt.fill_between(data[x_col], np.percentile(data[y], 100 - percentile), np.percentile(data[y], percentile), alpha=0.5)
     plt.xlabel(x_col)
     plt.ylabel('Value')
     plt.title('Line Plot')
