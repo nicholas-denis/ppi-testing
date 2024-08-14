@@ -1,0 +1,291 @@
+paths:
+  src_path: ./src/
+  configs_path: ../configs/
+  experiments_path: ../experiments/
+  data_path: ../data/
+
+experiment:
+  name: 1kt_nc_lin_reg
+  description: Label shift, no clipping, linear data, linear regression
+  parameters:
+    training_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
+        size: 1000
+      y_population:
+        transformation: linear_gamma  # linear_univariate, random, or custom
+        m: 4
+        rho: .85
+        b: 0
+        alpha: 2
+        beta: 2
+    gold_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
+        size: 128
+      y_population:
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
+        m: 4
+        rho: .85
+        b: 0
+        alpha: 2
+        beta: 2
+    unlabelled_population:
+      x_population: 
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
+        size: 10000
+      y_population:
+        include: True  # Include a true y value if we want oracle, useles right now
+        transformation: linear_gamma  # linear_univariate, random, or custom
+        m: 4
+        rho: .85
+        b: 0
+        alpha: 2
+        beta: 2
+    true_value: null  # Compute this yourself, if not available, set to None
+    n_its: 1000
+    test_size: 0.2
+    use_active_inference: False
+    confidence_level: 0.95
+    cut_interval: True  # If True, will cut negative, upper lower intervals to 0
+  ind_var:
+    name: 
+      - alpha
+      - beta
+    vals:
+      - alpha: 2
+        beta: 3
+      - alpha: 3
+        beta: 2
+      - alpha: 2
+        beta: 4
+      - alpha: 4
+        beta: 2
+      - alpha: 2
+        beta: 2
+      - alpha: 3
+        beta: 3
+    paths:
+      alpha:
+        - experiment.parameters.gold_population.x_population.alpha
+        - experiment.parameters.unlabelled_population.x_population.alpha
+        - experiment.parameters.gold_population.y_population.alpha
+        - experiment.parameters.unlabelled_population.y_population.alpha
+      beta:
+        - experiment.parameters.gold_population.x_population.beta
+        - experiment.parameters.unlabelled_population.x_population.beta
+        - experiment.parameters.gold_population.y_population.beta
+        - experiment.parameters.unlabelled_population.y_population.beta
+  model:
+    name: linear_regression
+    optuna: True
+    # parameters: Will add later
+  model_bias: True  # If false, will not calculate.
+  estimate: mean
+  methods:
+    - type: ppi
+    - type: naive
+    - type: classical
+    - type: ppi_pp
+      lhat: null  # Set None here for estimated optimal lambda
+    - type: ratio
+      t_dist: True
+    #- type: stratified_ppi
+  metrics:  # Make sure these are plural
+    - widths
+    - coverages
+  distances:
+    - wasserstein
+    - tv
+  plot_distributions: True
+  dist_family: gamma
+  clipping: False
+  varying_true_value: True  # Indicates if the true value varies between independent variables
+  remove_gold: False
+
+plotting:
+  plots:
+    - type: line
+      x: wasserstein
+      y_metric: ci_width
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+      title: Widths vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      y_label: Widths
+      file_name: widthsplotwasserstein.png
+      show: False 
+    - type: line
+      x: tv
+      y_metric: ci_width
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+      title: Widths vs Total Variation Distance
+      x_label: Total Variation
+      y_label: Widths
+      file_name: widthsplottv.png
+      show: False 
+    - type: coverage
+      x: wasserstein
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+      title: Coverage vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      file_name: wassersteincoverage.png
+      show: False
+    - type: sample
+      x: wasserstein
+      y_metric: coverage
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+      title: Coverage vs rho (noise)
+      file_name: sampleplot.png
+      show: False
+    - file_name: widths_beta_shifts.png
+      processing:
+        - col: alpha
+          type: isolate_values
+          vals:
+            - 2
+      show: False
+      title: Widths vs Beta Value Shifts
+      type: line
+      x: beta
+      x_label: Beta Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+    - file_name: widths_alpha_shifts.png
+      processing:
+        - col: beta
+          type: isolate_values
+          vals:
+            - 2
+      show: False
+      title: Widths vs Alpha Value Shifts
+      type: line
+      x: alpha
+      x_label: Alpha Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: Classic
+          technique: classical
+        - label: Naive
+          technique: naive
+        - label: PPI++
+          technique: ppi_pp
+    - type: line
+      x: wasserstein
+      y_metric: relative_improvement
+      y_techniques:
+        - technique: ppi
+          label: PPI
+        - technique: ppi_pp
+          label: PPI++
+      title: Relative Improvement vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      y_label: Relative Improvement
+      file_name: relative_improvement_wass.png
+      show: False
+    - type: line
+      x: tv
+      y_metric: relative_improvement
+      y_techniques:
+        - technique: ppi
+          label: PPI
+        - technique: ppi_pp
+          label: PPI++
+      title: Relative Improvement vs Total Variation
+      x_label: Total Variation
+      y_label: Relative Improvement
+      file_name: relative_improvement_tv.png
+      show: False
+    - file_name: relative_alpha_shifts.png
+      processing:
+        - col: beta
+          type: isolate_values
+          vals:
+            - 2
+      show: false
+      title: Relative Improvement vs Alpha Value Shifts
+      type: line
+      x: alpha
+      x_label: Alpha Values
+      y_label: Relative Improvement
+      y_metric: relative_improvement
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: PPI++
+          technique: ppi_pp
+    - file_name: relative_beta_shifts.png
+      processing:
+        - col: alpha
+          type: isolate_values
+          vals:
+            - 2
+      show: false
+      title: Relative Improvement vs Beta Value Shifts
+      type: line
+      x: beta
+      x_label: Beta Values
+      y_label: Relative Improvement
+      y_metric: relative_improvement
+      y_techniques:
+        - label: PPI
+          technique: ppi
+        - label: PPI++
+          technique: ppi_pp
+
+reproducibility:
+  seed: 42
+
+logging:
+  log_level: INFO
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_file: ../logs/log.log
