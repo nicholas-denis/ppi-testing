@@ -16,6 +16,7 @@ experiment:
         size: 1000
       y_population:
         transformation: experimental_six  # linear_univariate, random, or custom
+        rho: 0.3
     gold_population:
       x_population: 
         distribution: normal_univariate
@@ -24,6 +25,7 @@ experiment:
         size: 128
       y_population:
         transformation: experimental_six  # linear_univariate, linear_mulivariate, random, or custom
+        rho: 0.3
     unlabelled_population:
       x_population: 
         distribution: normal_univariate
@@ -33,6 +35,7 @@ experiment:
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: experimental_six
+        rho: 0.3
     true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 1000
     test_size: 0.2

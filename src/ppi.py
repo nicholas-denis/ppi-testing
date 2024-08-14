@@ -227,8 +227,8 @@ def single_iteration(config, iter_num=0):
         if config['experiment'].get('remove_gold', False):
             x_gold_clip = x_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
             y_gold_clip = y_gold[(x_gold >= min_train_x) & (x_gold <= max_train_x)]
-            # check if either is empty
-            if not(x_ppi_clip.shape[0] >= 5 or x_gold_clip.shape[0] >= 5):
+            # check if either is nearly empty
+            if (x_ppi_clip.shape[0] >= 5 and x_gold_clip.shape[0] >= 5):
                 x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
                 x_gold, y_gold = np.array(x_gold_clip).reshape(-1, 1), np.array(y_gold_clip).reshape(-1, 1)
             else:
@@ -237,7 +237,7 @@ def single_iteration(config, iter_num=0):
                 pass
         else:
             # check if either is empty
-            if not(x_ppi_clip.shape[0] >= 5):
+            if  (x_ppi_clip.shape[0] >= 5):
                 x_ppi, y_ppi = np.array(x_ppi_clip).reshape(-1, 1), np.array(y_ppi_clip).reshape(-1, 1)
             else:
                 # log clipping removed too many points:
