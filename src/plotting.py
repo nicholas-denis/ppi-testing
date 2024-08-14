@@ -290,13 +290,3 @@ def plot_results(data, config):
             raise ValueError(f"Plot type {plot_config['type']} not supported")
         data = copy.deepcopy(data_old)
     return
-
-# Testing
-
-if __name__ == "__main__":
-    # Load the data
-    data = pd.read_csv('./experiments/Keep_5/results/results.csv')
-    config = yaml.load(open('./configs/basic_experiment.yaml'), Loader=yaml.FullLoader)
-
-    # Plot the data
-    plot_results(data, config)
