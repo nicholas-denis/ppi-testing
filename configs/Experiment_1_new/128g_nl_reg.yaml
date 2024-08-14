@@ -34,7 +34,7 @@ experiment:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: experimental_six
     true_value: null  # Compute this yourself, if not available, set to None
-    n_its: 2000
+    n_its: 1000
     test_size: 0.2
     use_active_inference: False
     confidence_level: 0.95
@@ -79,14 +79,14 @@ plotting:
       y_metric: ci_width
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
           label: Naive Widths
         - technique: ppi_pp
-          label: PPI PP Widths
-      title: Widths vs % noise
+          label: PPI++
+      title: Widths vs Percent Noise
       x_label: Method
       y_label: Widths
       file_name: widthsviolin.png
@@ -96,15 +96,15 @@ plotting:
       y_metric: ci_width
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
-      title: Widths vs % noise
-      x_label: Percent noise
+          label: PPI++
+      title: Widths vs Percent Noise
+      x_label: Percent Noise
       y_label: Widths
       file_name: widthsplot.png
       show: False
@@ -112,17 +112,17 @@ plotting:
       x: noise
       y_techniques:
         - technique: ppi
-          label: PPI Coverage
+          label: PPI
         - technique: classical
-          label: Classic Coverage
+          label: Classic
         - technique: naive
-          label: Naive Coverage
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Coverage
+          label: PPI++
         - technique: ratio
-          label: Ratio Coverage
-      title: Coverage vs % noise
-      x_label: Percent noise
+          label: Ratio
+      title: Coverage vs Percent Noise
+      x_label: Percent Noise
       file_name: coverageplotwithratio.png
       show: False
     - type: sample
@@ -130,32 +130,32 @@ plotting:
       y_metric: coverage
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++
         - technique: ratio
-          label: Ratio Widths
-      title: Coverage vs % noise
+          label: Ratio
+      title: Coverage vs Percent Noise
       file_name: sampleplotwithratio.png
       show: False
     - type: violin
       y_metric: ci_width
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++
         - technique: ratio
-          label: Ratio Widths
-      title: Widths vs % noise
+          label: Ratio
+      title: Widths vs Percent Noise
       x_label: Method
       y_label: Widths
       file_name: widthsviolinwithratio.png
@@ -165,17 +165,17 @@ plotting:
       y_metric: ci_width
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++
         - technique: ratio
-          label: Ratio Widths
-      title: Widths vs % noise
-      x_label: Percent noise
+          label: Ratio
+      title: Widths vs Percent Noise
+      x_label: Percent Noise
       y_label: Widths
       file_name: widthsplotwithratio.png
       show: False
@@ -183,32 +183,32 @@ plotting:
       x: noise
       y_techniques:
         - technique: ppi
-          label: PPI Coverage
+          label: PPI
         - technique: classical
-          label: Classic Coverage
+          label: Classic
         - technique: naive
-          label: Naive Coverage
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Coverage
+          label: PPI++
         - technique: ratio
-          label: Ratio Coverage
-      title: Coverage vs rho (noise)
-      x_label: Percent noise
+          label: Ratio
+      title: Coverage vs Percent Noise
+      x_label: Percent Noise
       file_name: coverageplotwithratio.png
       show: False
     - type: coverage
       x: noise
       y_techniques:
         - technique: ppi
-          label: PPI Coverage
+          label: PPI
         - technique: classical
-          label: Classic Coverage
+          label: Classic
         - technique: naive
-          label: Naive Coverage
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Coverage
-      title: Coverage vs % noise
-      x_label: Percent noise
+          label: PPI++
+      title: Coverage vs Percent Noise
+      x_label: Percent Noise
       file_name: coverageplot.png
       show: False
     - type: sample
@@ -216,14 +216,14 @@ plotting:
       y_metric: coverage
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
-      title: Coverage vs % noise
+          label: PPI++
+      title: Coverage vs Percent Noise
       file_name: sampleplot.png
       show: False
     - type: sample
@@ -231,17 +231,45 @@ plotting:
       y_metric: coverage
       y_techniques:
         - technique: ppi
-          label: PPI Widths
+          label: PPI
         - technique: classical
-          label: Classic Widths
+          label: Classic
         - technique: naive
-          label: Naive Widths
+          label: Naive
         - technique: ppi_pp
-          label: PPI PP Widths
+          label: PPI++
         - technique: ratio
-          label: Ratio Widths
-      title: Coverage vs % noise
+          label: Ratio
+      title: Coverage vs Percent Noise
       file_name: sampleplotwithratio.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: relative_improvement
+      y_techniques:
+        - technique: ppi
+          label: PPI
+        - technique: ppi_pp
+          label: PPI++
+      title: Relative Improvement vs Percent Noise
+      x_label: Percent Noise
+      y_label: Relative Improvement
+      file_name: relativeimprovement.png
+      show: False
+    - type: line
+      x: noise
+      y_metric: relative_improvement
+      y_techniques:
+        - technique: ppi
+          label: PPI
+        - technique: ppi_pp
+          label: PPI++
+        - technique: ratio
+          label: Ratio
+      title: Relative Improvement vs Percent Noise
+      x_label: Percent Noise
+      y_label: Relative Improvement
+      file_name: relativeimprovementwithratio.png
       show: False
       
 

@@ -189,5 +189,3 @@ if __name__ == '__main__':
     main(config)
 
     print(f"{MAGENTA}All done! {RESET}")
-
-
