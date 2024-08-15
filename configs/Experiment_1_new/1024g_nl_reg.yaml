@@ -5,8 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: 16g_nl_reg
-  description: 128 gold, non-linear data, regression
+  name: 1024g_nl_reg
+  description: 1024 gold, non-linear data, regression
   parameters:
     training_population:
       x_population: 

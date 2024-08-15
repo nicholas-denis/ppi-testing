@@ -5,8 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: 16g_nl_reg
-  description: 128 gold, non-linear data, regression
+  name: 1024g_nl_xgb
+  description: 1024 gold, non-linear data, regression
   parameters:
     training_population:
       x_population: 
@@ -55,7 +55,7 @@ experiment:
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
-    name: linear_regression
+    name: xgboost
     optuna: True
     trials: 5
   model_bias: True  # If false, will not calculate.
@@ -72,6 +72,7 @@ experiment:
   metrics:  # Make sure these are plural
     - widths
     - coverages 
+  train_once: True
   
 plotting:
   plots:

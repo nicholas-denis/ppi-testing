@@ -5,8 +5,8 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: 16g_nl_reg
-  description: 128 gold, non-linear data, regression
+  name: 512g_nl_reg
+  description: 512 gold, non-linear data, regression
   parameters:
     training_population:
       x_population: 
@@ -21,7 +21,7 @@ experiment:
         distribution: normal_univariate
         mean: 0
         std: 4
-        size: 1024
+        size: 512
       y_population:
         transformation: experimental_six
     unlabelled_population:

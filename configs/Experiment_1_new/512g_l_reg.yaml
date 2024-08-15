@@ -5,35 +5,50 @@ paths:
   data_path: ../data/
 
 experiment:
-  name: 16g_nl_reg
-  description: 128 gold, non-linear data, regression
+  name: 512g_l_reg
+  description: 512 gold, linear data, regression
   parameters:
     training_population:
       x_population: 
-        distribution: normal_univariate
-        mean: 0
-        std: 4
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
         size: 10000
       y_population:
-        transformation: experimental_six
+        transformation: linear_gamma  # linear_univariate, random, or custom
+        m: 4
+        rho: null
+        b: 0
+        alpha: 2
+        beta: 2
     gold_population:
       x_population: 
-        distribution: normal_univariate
-        mean: 0
-        std: 4
-        size: 1024
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
+        size: 512
       y_population:
-        transformation: experimental_six
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
+        m: 4
+        rho: null
+        b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
-        distribution: normal_univariate
-        mean: 0
-        std: 4
+        distribution: gamma_univariate
+        alpha: 2
+        beta: 2
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: experimental_six
-    true_value: null  # Compute this yourself, if not available, set to None
+        transformation: linear_gamma  # linear_univariate, random, or custom
+        m: 4
+        rho: null
+        b: 0
+        alpha: 2
+        beta: 2
+    true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 1000
     test_size: 0.2
     use_active_inference: False
@@ -57,7 +72,7 @@ experiment:
   model:
     name: linear_regression
     optuna: True
-    trials: 5
+    # parameters: Will add later
   model_bias: True  # If false, will not calculate.
   estimate: mean
   methods:
@@ -86,7 +101,7 @@ plotting:
           label: Naive Widths
         - technique: ppi_pp
           label: PPI++
-      title: Widths vs Percent Noise
+      title: Widths vs rho (correlation)
       x_label: Method
       y_label: Widths
       file_name: widthsviolin.png
@@ -103,8 +118,8 @@ plotting:
           label: Naive
         - technique: ppi_pp
           label: PPI++
-      title: Widths vs Percent Noise
-      x_label: Percent Noise
+      title: Widths vs rho (correlation)
+      x_label: Correlation
       y_label: Widths
       file_name: widthsplot.png
       show: False
@@ -121,8 +136,8 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      title: Coverage vs rho (correlation)
+      x_label: Correlation
       file_name: coverageplotwithratio.png
       show: False
     - type: sample
@@ -139,7 +154,7 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Coverage vs Percent Noise
+      title: Coverage vs rho (correlation)
       file_name: sampleplotwithratio.png
       show: False
     - type: violin
@@ -155,7 +170,7 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Widths vs Percent Noise
+      title: Widths vs rho (correlation)
       x_label: Method
       y_label: Widths
       file_name: widthsviolinwithratio.png
@@ -174,8 +189,8 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Widths vs Percent Noise
-      x_label: Percent Noise
+      title: Widths vs rho (correlation)
+      x_label: Correlation
       y_label: Widths
       file_name: widthsplotwithratio.png
       show: False
@@ -192,8 +207,8 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      title: Coverage vs rho (correlation)
+      x_label: Correlation
       file_name: coverageplotwithratio.png
       show: False
     - type: coverage
@@ -207,8 +222,8 @@ plotting:
           label: Naive
         - technique: ppi_pp
           label: PPI++
-      title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      title: Coverage vs rho (noise)
+      x_label: Correlation
       file_name: coverageplot.png
       show: False
     - type: sample
@@ -223,7 +238,7 @@ plotting:
           label: Naive
         - technique: ppi_pp
           label: PPI++
-      title: Coverage vs Percent Noise
+      title: Coverage vs rho (correlation)
       file_name: sampleplot.png
       show: False
     - type: sample
@@ -240,7 +255,7 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Coverage vs Percent Noise
+      title: Coverage vs rho (correlation)
       file_name: sampleplotwithratio.png
       show: False
     - type: line
@@ -251,8 +266,8 @@ plotting:
           label: PPI
         - technique: ppi_pp
           label: PPI++
-      title: Relative Improvement vs Percent Noise
-      x_label: Percent Noise
+      title: Relative Improvement vs rho (correlation)
+      x_label: Correlation
       y_label: Relative Improvement
       file_name: relativeimprovement.png
       show: False
@@ -266,8 +281,8 @@ plotting:
           label: PPI++
         - technique: ratio
           label: Ratio
-      title: Relative Improvement vs Percent Noise
-      x_label: Percent Noise
+      title: Relative Improvement vs rho (correlation)
+      x_label: Correlation
       y_label: Relative Improvement
       file_name: relativeimprovementwithratio.png
       show: False
