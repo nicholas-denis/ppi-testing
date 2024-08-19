@@ -96,6 +96,7 @@ experiment:
   clipping: False
   varying_true_value: True  # Indicates if the true value varies between independent variables
   remove_gold: False
+  train_once: True
 
 plotting:
   plots:
