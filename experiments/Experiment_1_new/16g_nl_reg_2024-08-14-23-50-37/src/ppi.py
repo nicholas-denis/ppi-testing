@@ -213,21 +213,34 @@ def single_iteration(config, iter_num=0, model_dict=None):
     if model_dict is None:
         x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
         x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
+        max_train_x = x_train.max()
+        min_train_x = x_train.min()
         model = ml.train_model(x_train, y_train, config['experiment']['model'])
+        # Residual testing
+        y_test_pred = model.predict(x_test)
+        residual = np.mean(np.abs(y_test_pred - y_test))  # Mean abs error
     else:
         model = model_dict['model']
         x_train = model_dict['x_train']
         y_train = model_dict['y_train']
         x_test = model_dict['x_test']
         y_test = model_dict['y_test']
+        max_train_x = model_dict['max_train_x']
+        min_train_x = model_dict['min_train_x']
+        residual = model_dict['residual']
 
     x_gold, y_gold = dist.sample_population(config['experiment']['parameters']['gold_population'])
     x_ppi, y_ppi = dist.sample_population(config['experiment']['parameters']['unlabelled_population'])
 
-    if config['experiment'].get('clipping', False):
-        min_train_x = x_train.min()
-        max_train_x = x_train.max()
+    # Fitting
+    y_gold_fitted = model.predict(x_gold)  # Gold standard fitted
+    y_fitted = model.predict(x_ppi)  # Unlabelled fitted
 
+    # Manual rectifier, variance computation
+    rectifier = np.var(y_gold_fitted - y_gold)
+    predictions_var = np.var(y_fitted)
+
+    if config['experiment'].get('clipping', False):
         # remove all x values in x_ppi that are outside the range and their corresponding y values
         x_ppi_clip = x_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
         y_ppi_clip = y_ppi[(x_ppi >= min_train_x) & (x_ppi <= max_train_x)]
@@ -261,17 +274,6 @@ def single_iteration(config, iter_num=0, model_dict=None):
         true_value = np.mean(y_ppi)
         config['experiment']['parameters']['true_value'] = true_value
 
-    # Residual testing
-    y_test_pred = model.predict(x_test)
-    residual = np.mean(np.abs(y_test_pred - y_test))  # Mean abs error
-
-    # Fitting
-    y_gold_fitted = model.predict(x_gold)  # Gold standard fitted
-    y_fitted = model.predict(x_ppi)  # Unlabelled fitted
-
-    # Manual rectifier, variance computation
-    rectifier = np.var(y_gold_fitted - y_gold)
-    predictions_var = np.var(y_fitted)
 
     # Model bias computation if called for
     if config['experiment']['parameters']['unlabelled_population'].get('include', False):
@@ -455,7 +457,19 @@ def experiment(config):
             x_train, y_train = dist.sample_population(config['experiment']['parameters']['training_population'])
             x_train, x_test, y_train, y_test = ml.train_test_split(x_train, y_train, test_size=config['experiment']['parameters'].get('test_size', 0.2))
             model = ml.train_model(x_train, y_train, config['experiment']['model'])
-            model_dict = {'model': model, 'x_train': x_train, 'y_train': y_train, 'x_test': x_test, 'y_test': y_test}
+            if config['experiment'].get('clipping', False):
+                max_train_x = x_train.max()
+                min_train_x = x_train.min()
+            else:
+                max_train_x = None
+                min_train_x = None
+            y_test_pred = model.predict(x_test)
+            residual = np.mean(np.abs(y_test_pred - y_test))  # Mean abs error
+
+            model_dict = {'model': model, 'x_train': x_train, 'y_train': y_train,
+                           'x_test': x_test, 'y_test': y_test,
+                             'max_train_x': max_train_x, 'min_train_x': min_train_x, 
+                             'residual': residual}
 
         for i in range(params['n_its']):
 
