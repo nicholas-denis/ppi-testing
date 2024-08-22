@@ -5,6 +5,8 @@ import pandas as pd
 import numpy as np
 import argparse
 
+# Buggy right now: experiment folder must be in the experiment folder and not in a subfolder.
+
 def plot_folder(folder_path):
     """
     Reruns the plotting function with the data and config file
