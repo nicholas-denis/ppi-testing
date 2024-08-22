@@ -60,6 +60,8 @@ def create_metrics_dict(config):
 def compute_metrics(config, conf_int):
     """
     Given a confidence interval tuple, computes and returns metrics
+
+    Main use case: For metrics that depends on the confidence interval computation method (i.e. PPI, Classical, etc.)
     """
     metrics = {} 
     metrics['estimate'] = [conf_int[0]]
@@ -339,7 +341,7 @@ def experiment(config):
 
     # prepare metric results storage
 
-    metrics = create_metrics_dict(config) 
+    metrics = create_metrics_dict(config)
     
     for ind_var in config['experiment']['ind_var']['name']:
         metrics[ind_var] = []
@@ -354,7 +356,7 @@ def experiment(config):
 
     if config['experiment']['parameters'].get('true_value', None) is None:
         pop_dict = copy.deepcopy(config['experiment']['parameters']['gold_population'])
-        pop_dict['x_population']['size'] = 10000
+        pop_dict['x_population']['size'] = 100000
         x_sample, y_sample = dist.sample_population(pop_dict)
         config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 
@@ -415,7 +417,7 @@ def experiment(config):
         # compute new true value if necessary
         if config['experiment'].get('varying_true_value', None):
             pop_dict = copy.deepcopy(config['experiment']['parameters']['gold_population'])
-            pop_dict['x_population']['size'] = 10000
+            pop_dict['x_population']['size'] = 100000
             x_sample, y_sample = dist.sample_population(pop_dict)
             config['experiment']['parameters']['true_value'] = np.mean(y_sample)
 

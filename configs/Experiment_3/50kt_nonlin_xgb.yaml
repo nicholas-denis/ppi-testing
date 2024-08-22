@@ -36,7 +36,7 @@ experiment:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: experimental_six
         rho: 0.3
-    true_value: 16  # Compute this yourself, if not available, set to None
+    true_value: null  # Compute this yourself, if not available, set to None
     n_its: 1000
     test_size: 0.2
     use_active_inference: False
