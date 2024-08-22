@@ -22,7 +22,7 @@ experiment:
         distribution: normal_univariate
         mean: 0
         std: 4
-        size: 128
+        size: 512
       y_population:
         transformation: experimental_six  # linear_univariate, linear_mulivariate, random, or custom
         rho: 0.3

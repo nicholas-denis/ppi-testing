@@ -1,9 +1,9 @@
 # run every config in experiment_2_new folder
 
-for file in ../configs/Experiment_2_new_unrun/*.yaml
+for file in ../experiments/*;
 do
-    echo "Running $file";
-    python main.py --config $file
+    echo "Replotting $file";
+    python plot_only.py --folder_path $file
 done
 
 

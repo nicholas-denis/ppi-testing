@@ -110,7 +110,7 @@ plotting:
         - technique: ppi_pp
           label: PPI++
       title: Widths vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       y_label: Widths
       file_name: widthsplot.png
       show: False
@@ -128,7 +128,7 @@ plotting:
         - technique: ratio
           label: Ratio
       title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       file_name: coverageplotwithratio.png
       show: False
     - type: sample
@@ -181,7 +181,7 @@ plotting:
         - technique: ratio
           label: Ratio
       title: Widths vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       y_label: Widths
       file_name: widthsplotwithratio.png
       show: False
@@ -199,7 +199,7 @@ plotting:
         - technique: ratio
           label: Ratio
       title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       file_name: coverageplotwithratio.png
       show: False
     - type: coverage
@@ -214,7 +214,7 @@ plotting:
         - technique: ppi_pp
           label: PPI++
       title: Coverage vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       file_name: coverageplot.png
       show: False
     - type: sample
@@ -258,7 +258,7 @@ plotting:
         - technique: ppi_pp
           label: PPI++
       title: Relative Improvement vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       y_label: Relative Improvement
       file_name: relativeimprovement.png
       show: False
@@ -273,7 +273,7 @@ plotting:
         - technique: ratio
           label: Ratio
       title: Relative Improvement vs Percent Noise
-      x_label: Percent Noise
+      x_label: Percent Noise (eta)
       y_label: Relative Improvement
       file_name: relativeimprovementwithratio.png
       show: False
