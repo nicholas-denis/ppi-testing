@@ -122,4 +122,7 @@ Too many plot types to specify, use example.yaml as a reference. The way plottin
 plotting functions, each plot under plotting\[plots\] creates a new plot, these plots have their own config, which is relatively straightforward. The only important thing to note is that x is the key of the pd_dataframe that you will want to use as plotting x variable (you do not have to in general worry about duplicates, plotting.py calls col.uniques())
 
 If you have a bunch of data, and want to just rerun the plotting, run plot_only.py, there are two options
-- run python plot_only.py "folder path", it will automatically rerun only the plotting section of the experiment_config
+- run python plot_only.py --folder_path "folder path", it will automatically rerun only the plotting section of the experiment_config inside the folder, however, this requires altering the
+config already copied from when the experiment was first run. You may use it if you do not mind it being change
+- run python plot_only.py --config "config path" --data "data path", this is another way of rerunning the plotting section, however, this can be done with any config, data path, hence you 
+do not have to alter the already saved experiment_config_folder.
