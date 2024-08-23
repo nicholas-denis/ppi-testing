@@ -364,6 +364,7 @@ def experiment(config):
     if config['experiment'].get('plot_distributions', False):
         if config['experiment'].get('dist_family', None) == 'gamma':
             lin_space = np.linspace(0, 40, 4000)
+            first = True
             for vals in config['experiment']['ind_var']['vals']:
                 for key in vals.keys():
                     if key == 'alpha':
@@ -371,7 +372,11 @@ def experiment(config):
                     elif key == 'beta':
                         beta = vals[key]
                 y = stats.gamma.pdf(lin_space, a=alpha, scale=beta)
-                plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}")
+                if first:
+                    plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}", linestyle='--')
+                    first = False
+                else:
+                    plt.plot(lin_space, y, label=f"Alpha: {alpha}, Beta: {beta}")
                 plt.legend()
 
             # save plot
@@ -380,6 +385,7 @@ def experiment(config):
             plt.close()
 
         elif config['experiment'].get('dist_family', None) == 'normal':
+            first = True
             lin_space = np.linspace(-40, 40, 4000)
             for vals in config['experiment']['ind_var']['vals']:
                 for key in vals.keys():
@@ -388,7 +394,11 @@ def experiment(config):
                     elif key == 'std':
                         std = vals[key]
                 y = stats.norm.pdf(lin_space, loc=mean, scale=std)
-                plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}")
+                if first:
+                    plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}", linestyle='--')
+                    first = False
+                else:
+                    plt.plot(lin_space, y, label=f"Mean: {mean}, Std: {std}")
                 plt.legend()
                 # move the legend to the upper left and anchor it to outside the plot
                 plt.legend(loc='upper left', bbox_to_anchor=(1, 1))
