@@ -1,0 +1,255 @@
+paths:
+  src_path: ./src/
+  configs_path: ../configs/
+  experiments_path: ../experiments/
+  data_path: ../data/
+
+experiment:
+  name: 1kt_nc_nl_xgb
+  description: Label shift, 1k training, no clipping, non-linear data, xgboost
+  parameters:
+    training_population:
+      x_population: 
+        distribution: normal_univariate
+        mean: 0
+        std: 3
+        size: 1000
+      y_population:
+        transformation: experimental_four  # linear_univariate, random, or custom
+    gold_population:
+      x_population: 
+        distribution: normal_univariate
+        mean: 0
+        std: 3
+        size: 128
+      y_population:
+        transformation: experimental_four  # linear_univariate, linear_mulivariate, random, or custom
+    unlabelled_population:
+      x_population: 
+        distribution: normal_univariate
+        alpha: 0
+        beta: 3
+        size: 10000
+      y_population:
+        include: True  # Include a true y value if we want oracle, useles right now
+        transformation: experimental_four
+    true_value: 16  # Compute this yourself, if not available, set to None
+    n_its: 200
+    test_size: 0.2
+    use_active_inference: False
+    confidence_level: 0.95
+    cut_interval: True  # If True, will cut negative, upper lower intervals to 0
+  ind_var:
+    name: 
+      - mean
+      - std
+    vals:
+      - mean: 0
+        std: 3
+      - mean: 2
+        std: 3
+      - mean: -2
+        std: 3
+      - mean: 4
+        std: 3
+      - mean: -4
+        std: 3
+      - mean: 0
+        std: 4
+      - mean: 0
+        std: 5
+    paths:
+      mean:
+        - experiment.parameters.gold_population.x_population.mean
+        - experiment.parameters.unlabelled_population.x_population.mean
+        - experiment.parameters.gold_population.y_population.mean
+        - experiment.parameters.unlabelled_population.y_population.mean
+      std:
+        - experiment.parameters.gold_population.x_population.std
+        - experiment.parameters.unlabelled_population.x_population.std
+        - experiment.parameters.gold_population.y_population.std
+        - experiment.parameters.unlabelled_population.y_population.std
+  model:
+    name: xgboost
+    optuna: True
+    trials: 5
+    # parameters: Will add later
+  model_bias: True  # If false, will not calculate.
+  estimate: mean
+  methods:
+    - type: ppi
+    - type: naive
+    - type: classical
+    - type: ppi_pp
+      lhat: null  # Set None here for estimated optimal lambda
+    - type: ratio
+      t_dist: True
+    #- type: stratified_ppi
+  metrics:  # Make sure these are plural
+    - widths
+    - coverages
+  distances:
+    - wasserstein
+    - tv
+  plot_distributions: True
+  clipping: False
+  varying_true_value: True  # Indicates if the true value varies between independent variables
+
+plotting:
+  plots:
+    - type: line
+      x: wasserstein
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs Wasserstein Distance
+      x_label: Wasserstein Distance
+      y_label: Widths
+      file_name: widthsplotwasserstein.png
+      show: False 
+    - type: line
+      x: tv
+      y_metric: ci_width
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Widths vs Total Variation Distance
+      x_label: Wasserstein Distance
+      y_label: Widths
+      file_name: widthsplottv.png
+      show: False 
+    - type: coverage
+      x: wasserstein
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs Wasserstein Distance
+      x_label: Noise
+      file_name: wassersteincoverage.png
+      show: False
+    - type: sample
+      x: wasserstein
+      y_metric: coverage
+      y_techniques:
+        - technique: ppi
+          label: PPI Widths
+        - technique: classical
+          label: Classic Widths
+        - technique: naive
+          label: Naive Widths
+        - technique: ppi_pp
+          label: PPI PP Widths
+      title: Coverage vs rho (noise)
+      file_name: sampleplot.png
+      show: False
+    - file_name: widths_std_shifts.png
+      processing:
+      - col: mean
+        type: isolate_values
+        vals:
+          - 0
+      show: false
+      title: Widths vs Std Value Shifts
+      type: line
+      x: std
+      x_label: Std Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+      - label: PPI Widths
+        technique: ppi
+      - label: Classic Widths
+        technique: classical
+      - label: Naive Widths
+        technique: naive
+      - label: PPI PP Widths
+        technique: ppi_pp
+    - file_name: widths_mean_shifts.png
+      processing:
+      - col: std
+        type: isolate_values
+        vals:
+          - 3
+      show: false
+      title: Widths vs mean Value Shifts
+      type: line
+      x: mean
+      x_label: Mean Values
+      y_label: Widths
+      y_metric: ci_width
+      y_techniques:
+      - label: PPI Widths
+        technique: ppi
+      - label: Classic Widths
+        technique: classical
+      - label: Naive Widths
+        technique: naive
+      - label: PPI PP Widths
+        technique: ppi_pp
+    - type: coverage
+      x: mean
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs Mean Shift
+      x_label: Mean Value
+      file_name: mean_shift_coverage.png
+      show: False
+      processing:
+      - col: std
+        type: isolate_values
+        vals:
+          - 3
+    - type: coverage
+      x: std
+      y_techniques:
+        - technique: ppi
+          label: PPI Coverage
+        - technique: classical
+          label: Classic Coverage
+        - technique: naive
+          label: Naive Coverage
+        - technique: ppi_pp
+          label: PPI PP Coverage
+      title: Coverage vs Mean Shift
+      x_label: Standard Deviation Value
+      file_name: std_shift_coverage.png
+      show: False
+      processing:
+      - col: mean
+        type: isolate_values
+        vals:
+          - 0
+
+reproducibility:
+  seed: 42
+
+logging:
+  log_level: INFO
+  log_format: '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+  log_file: ../logs/log.log

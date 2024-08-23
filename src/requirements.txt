@@ -6,3 +6,4 @@ scipy
 pyyaml
 optuna
 xgboost
+pandas
