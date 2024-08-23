@@ -15,15 +15,15 @@ experiment:
         std: 4
         size: 10000
       y_population:
-        transformation: experimental_six  # linear_univariate, random, or custom
+        transformation: experimental_six  
     gold_population:
       x_population: 
         distribution: normal_univariate
         mean: 0
         std: 4
-        size: 128
+        size: 512
       y_population:
-        transformation: experimental_six  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: experimental_six  
     unlabelled_population:
       x_population: 
         distribution: normal_univariate
@@ -33,7 +33,7 @@ experiment:
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
         transformation: experimental_six
-    true_value: 16  # Compute this yourself, if not available, set to None
+    true_value: 16 
     n_its: 1000
     test_size: 0.2
     use_active_inference: False
