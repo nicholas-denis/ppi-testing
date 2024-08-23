@@ -15,10 +15,12 @@ experiment:
         beta: 2
         size: 10000
       y_population:
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     gold_population:
       x_population: 
         distribution: gamma_univariate
@@ -26,10 +28,12 @@ experiment:
         beta: 2
         size: 128
       y_population:
-        transformation: linear_univariate  # linear_univariate, linear_mulivariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, linear_mulivariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     unlabelled_population:
       x_population: 
         distribution: gamma_univariate
@@ -38,10 +42,12 @@ experiment:
         size: 10000
       y_population:
         include: True  # Include a true y value if we want oracle, useles right now
-        transformation: linear_univariate  # linear_univariate, random, or custom
+        transformation: linear_gamma  # linear_univariate, random, or custom
         m: 4
         rho: null
         b: 0
+        alpha: 2
+        beta: 2
     true_value: 16  # Compute this yourself, if not available, set to None
     n_its: 2000
     test_size: 0.2
@@ -49,16 +55,18 @@ experiment:
     confidence_level: 0.95
     cut_interval: True  # If True, will cut negative, upper lower intervals to 0
   ind_var:
-    name: noise  # this is really confusing right now because of rho/noise, will think of solution later
+    name: 
+      - noise  # this is really confusing right now because of rho/noise, will think of solution later
     vals:
-      - 0.3
-      - 0.5
-      - 0.75
-      - 0.9
+      - noise: 0.3
+      - noise: 0.5
+      - noise: 0.75
+      - noise: 0.9
     paths:
-      - experiment.parameters.training_population.y_population.rho
-      - experiment.parameters.gold_population.y_population.rho
-      - experiment.parameters.unlabelled_population.y_population.rho
+      noise:
+        - experiment.parameters.training_population.y_population.rho
+        - experiment.parameters.gold_population.y_population.rho
+        - experiment.parameters.unlabelled_population.y_population.rho
     plot_description: Noise between x and y
     label_description: Level of noise
   model:
